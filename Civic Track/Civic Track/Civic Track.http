@@ -1,0 +1,6 @@
+@Civic_Track_HostAddress = http://localhost:5079
+
+GET {{Civic_Track_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
