@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CivicTrack</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body style="margin:0; font-family:Arial;">
+
+    
+    <div style="background:#1e293b; color:white; padding:15px;">
+        <h2 style="margin:0;">CivicTrack</h2>
+    </div>
+
+    <div style="display:flex;">
+
+       
+        <div style="width:220px; background:#0f172a; color:white; height:100vh; padding:20px;">
+            <h3>Menu</h3>
+            <p><a href="/Dashboard" style="color:white; text-decoration:none;">Dashboard</a></p>
+            <p><a href="/Complaints" style="color:white; text-decoration:none;">Complaints</a></p>
+            <p><a href="/Login" style="color:white; text-decoration:none;">Login</a></p>
+        </div>
+
+        
+        <div style="flex:1; padding:30px; background:#f1f5f9;">
+            @RenderBody()
+        </div>
+
+    </div>
+
+</body>
+</html>
