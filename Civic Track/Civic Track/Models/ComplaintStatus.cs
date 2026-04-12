@@ -5,6 +5,7 @@ public enum ComplaintStatus
     Pending,
     UnderReview,
     Investigating,
+    Escalated,
     Resolved,
     Rejected
 }

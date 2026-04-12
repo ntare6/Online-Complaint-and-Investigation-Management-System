@@ -10,7 +10,10 @@ public class Complaint
 
     public string Description { get; set; } = string.Empty;
 
-    public ComplaintCategory Category { get; set; }
+    public string? Location { get; set; }
+
+    public Guid CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
 
     public ComplaintPriority Priority { get; set; } = ComplaintPriority.Medium;
 
@@ -18,7 +21,9 @@ public class Complaint
 
     public bool IsAnonymous { get; set; } = false;
 
-    public string? Location { get; set; }
+    public bool IsEscalatedToLegal { get; set; } = false;
+
+    public string? LegalEscalationNote { get; set; }
 
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
@@ -31,4 +36,10 @@ public class Complaint
     public User? AssignedOfficer { get; set; }
 
     public ICollection<ComplaintStatusHistory> StatusHistory { get; set; } = [];
+
+    public ICollection<Comment> Comments { get; set; } = [];
+
+    public ICollection<Evidence> Evidences { get; set; } = [];
+
+    public ICollection<Notification> Notifications { get; set; } = [];
 }
