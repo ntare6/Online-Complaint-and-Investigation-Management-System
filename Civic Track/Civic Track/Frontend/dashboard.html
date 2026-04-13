@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Area | CivicTrack</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1.5rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 { margin-bottom: 2.5rem; font-size: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 1rem;}
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 0.5rem; cursor: pointer; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 500; transition: 0.2s;}
+        .sidebar li:hover { background-color: var(--accent-color); }
+        .active-tab { background-color: var(--accent-color); }
+
+        
+        .content-area {
+            padding: 3rem 5%;
+            background-color: var(--background-light);
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);}
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            background-color: #f8fafc;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+    
+        <aside class="sidebar">
+            <h2>🏛️ CivicTrack</h2>
+            <ul>
+                <li class="active-tab">📝 Lodge Complaint</li>
+                <li>📊 My Timeline (Cases)</li>
+                <li>⚙️ Settings</li>
+                <li style="margin-top: 2rem; color: #fca5a5;">🚪 Logout</li>
+            </ul>
+        </aside>
+
+        
+        <main class="content-area">
+            
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">Lodge a New Complaint</h2>
+                <p style="margin-bottom: 2rem; color: var(--text-light);">Please provide detailed information so our Officers can assist you promptly.</p>
+                
+                <form id="complaintForm">
+                    <div class="form-group">
+                        <label>Complaint Title</label>
+                        <input type="text" placeholder="Brief summary of the issue (e.g., Broken water pipe)...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="categoryDropdown">
+                            
+                            <option value="">Loading categories...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Incident Location</label>
+                        <input type="text" placeholder="e.g., Gasabo / Remera / Amahoro">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Detailed Description</label>
+                        <textarea rows="5" placeholder="Please describe exactly what happened..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Evidence Upload (Optional)</label>
+                        <input type="file" accept="image/*,.pdf">
+                    </div>
+
+                    <button type="button" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">Submit Investigation Request</button>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
