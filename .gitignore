@@ -2,3 +2,6 @@
 bin
 bin/
 obj/
+
+appsettings.Development.json
+
