@@ -13,9 +13,12 @@ public class EvidenceDto
 
 public class CreateEvidenceDto
 {
+    
     public Guid ComplaintId { get; set; }
-    public string FileName { get; set; } = string.Empty;
-    public string FilePath { get; set; } = string.Empty;
-    public string FileType { get; set; } = string.Empty;
-    public long FileSizeInBytes { get; set; }
+    
+    
+    public Guid UploadedByUserId { get; set; }
+    
+    
+    public IFormFile File { get; set; } = null!;
 }
