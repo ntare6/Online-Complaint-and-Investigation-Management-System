@@ -3,26 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivicTrack | Transparent Complaint Management</title>
+    <title>CivicTrack | Official Government Portal</title>
+    <!-- We are utilizing our newly authored Enterprise Design System -->
     <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Specific overrides for the Auth Page */
+        .auth-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            margin: 0 auto;
+            border-top: 4px solid var(--primary-blue);
+        }
+
+        .auth-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .auth-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .seal {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-divider:not(:empty)::before { margin-right: .5em; }
+        .auth-divider:not(:empty)::after { margin-left: .5em; }
+
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">🏛️ CivicTrack</div>
-        <nav>
-            <button class="btn-primary" onclick="alert('Login portal coming in Phase 3!')">Login</button>
-        </nav>
-    </header>
+    <div class="split-layout">
+        
+        <!-- Left Side: Official Institutional Branding (Dark/Dense) -->
+        <div class="split-left">
+            <div class="seal">🏛️</div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">CivicTrack Portal</h1>
+            <p style="font-size: 1.1rem; color: #cbd5e1; max-width: 400px; line-height: 1.6;">
+                The official secure platform for citizens and authorized personnel to report, track, and manage civil incidents. 
+                <br><br>
+                Unauthorized access to this government system is strictly prohibited and monitored.
+            </p>
+        </div>
 
-    <main>
-        <section class="hero">
-            <h1>Report. Track. Resolve.</h1>
-            <p>A purely digital bridge between citizens and authorities. Submit your complaints securely and track the investigation process in real-time with an immutable digital timeline.</p>
-            <button class="btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">Lodge a Complaint</button>
-        </section>
-    </main>
+        <!-- Right Side: Interaction Form (Light/Clean) -->
+        <div class="split-right">
+            
+            <div class="card auth-card">
+                <div class="auth-header">
+                    <h2>Secure Login</h2>
+                    <p>Enter your credentials to access the system.</p>
+                </div>
 
-    <script src="app.js"></script>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email Address or Citizen ID</label>
+                        <input type="email" class="form-control" placeholder="user@official.gov" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Secure Password</label>
+                        <input type="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="button" class="btn-primary" style="width: 100%; padding: 0.85rem;" onclick="alert('Login Endpoint pending Phase 3!')">Authenticate</button>
+                    
+                    <div class="auth-divider">OR</div>
+
+                    <button type="button" class="btn-secondary" style="width: 100%; padding: 0.85rem;" onclick="window.location.href='dashboard.html'">
+                        Register as a New Citizen
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </body>
 </html>
