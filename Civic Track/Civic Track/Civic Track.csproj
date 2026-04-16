@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
   </ItemGroup>
 
   <ItemGroup>
