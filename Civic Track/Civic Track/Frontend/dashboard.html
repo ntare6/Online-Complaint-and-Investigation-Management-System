@@ -85,7 +85,7 @@
                 <form id="complaintForm">
                     <div class="form-group">
                         <label>Complaint Title</label>
-                        <input type="text" placeholder="Brief summary of the issue (e.g., Broken water pipe)...">
+                        <input type="text" id="complaintTitle" placeholder="Brief summary of the issue (e.g., Broken water pipe)...">
                     </div>
                     
                     <div class="form-group">
@@ -98,12 +98,12 @@
 
                     <div class="form-group">
                         <label>Incident Location</label>
-                        <input type="text" placeholder="e.g., Gasabo / Remera / Amahoro">
+                        <input type="text" id="incidentLocation" placeholder="e.g., Gasabo / Remera / Amahoro">
                     </div>
 
                     <div class="form-group">
                         <label>Detailed Description</label>
-                        <textarea rows="5" placeholder="Please describe exactly what happened..."></textarea>
+                        <textarea id="complaintDescription" rows="5" placeholder="Please describe exactly what happened..."></textarea>
                     </div>
 
                     <div class="form-group">
@@ -111,7 +111,7 @@
                         <input type="file" accept="image/*,.pdf">
                     </div>
 
-                    <button type="button" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">Submit Investigation Request</button>
+                    <button type="button" id="submitBtn" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">Submit Investigation Request</button>
                 </form>
             </div>
 
