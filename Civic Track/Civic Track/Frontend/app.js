@@ -1,11 +1,17 @@
 const API_BASE_URL = 'http://localhost:5079/api'; 
 let currentAdminCaseId = null; // Stores the UUID of the case being inspected by the Officer
 
-// --- Authentication Mock ---
+// --- Local User Session ---
 function getCurrentUserId() {
-    // Best Practice: Abstract Auth logic. Until a JWT layer is built, we return a mock Guid.
-    // The lecturer will see that replacing this logic will integrate the whole system securely.
-    return '00000000-0000-0000-0000-000000000000'; // Default Empty Guid structure
+    const session = localStorage.getItem('civicUser');
+    if (session) {
+        try {
+            const user = JSON.parse(session);
+            return user.id;
+        } catch(e) {}
+    }
+    // Fallback if accessed without Gateway Login
+    return '00000000-0000-0000-0000-000000000000'; 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
