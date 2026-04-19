@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Portal | CivicTrack</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-card {
+            border-top: 4px solid var(--sidebar-dark); 
+        }
+        
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            padding: 0.75rem 1rem;
+            width: 300px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: white;
+            transition: 0.2s;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+    
+        <aside class="sidebar sidebar-officer">
+            <h2>🛡️ Officer Portal</h2>
+            <ul>
+                <li class="active-tab">📋 All Cases</li>
+                <li>📊 Analytics & Reports</li>
+                <div class="sidebar-divider"></div>
+                <li>⚙️ System Settings</li>
+                <li style="margin-top: 2rem; color: #fca5a5; cursor: pointer;" onclick="window.location.href='index.html'">🚪 Logout</li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            
+            <!-- 1. Top Summary Section -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Cases</div>
+                    <div class="stat-value" id="statTotal">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Pending</div>
+                    <div class="stat-value" id="statPending" style="color: #ca8a04;">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">In Progress</div>
+                    <div class="stat-value" id="statInvestigating" style="color: var(--primary-blue);">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Resolved</div>
+                    <div class="stat-value" id="statResolved" style="color: #16a34a;">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">High Priority</div>
+                    <div class="stat-value" id="statHighPriority" style="color: var(--priority-high);">--</div>
+                </div>
+            </div>
+
+            <!-- 2. Interactive Control Bar -->
+            <div class="control-bar">
+                <h1 style="color: var(--text-dark); font-size: 1.5rem;">Incident Registry</h1>
+                <div>
+                    <input type="text" class="search-box" placeholder="Search Tracking Code or Title...">
+                    <button class="btn-secondary" style="margin-left: 0.5rem;">Filter Status</button>
+                    <button class="btn-primary" style="margin-left: 0.5rem;" onclick="loadAdminComplaints()">Refresh</button>
+                </div>
+            </div>
+
+            <!-- 3. Enhanced Table -->
+            <div class="card admin-card" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tracking Code</th>
+                                <th>Case Title</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date Logged</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsTableBody">
+                            <tr><td colspan="6" style="text-align:center; padding: 4rem; color: var(--text-muted);">
+                                <div class="spinner"></div> Loading securely...
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 4. Right-Side Slide-Over Panel -->
+    <div class="slide-over-overlay" id="slideOverOverlay" onclick="closeAdvancedPanel()"></div>
+    
+    <div class="slide-over-panel" id="caseDetailPanel">
+        <div class="slide-header">
+            <div>
+                <h3 id="panelTrackingCode" class="tracking-code" style="font-size: 1rem; display:inline-block; margin-bottom:0.25rem;">CT-XXXXXX</h3>
+                <div id="panelDate" style="font-size:0.75rem; color: var(--text-muted);">Logged: --</div>
+            </div>
+            <button class="btn-close" onclick="closeAdvancedPanel()">&times;</button>
+        </div>
+        
+        <div class="slide-body">
+            
+            <div class="detail-group">
+                <div class="detail-label">Status & Priority</div>
+                <div style="margin-top: 0.5rem;">
+                    <span id="panelStatusBadge" class="badge badge-pending">PENDING</span>
+                    <span id="panelPriority" style="margin-left: 1rem; font-weight: 600; font-size: 0.85rem;">Medium Priority</span>
+                </div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Incident Category</div>
+                <div class="detail-value" id="panelCategory">General Loading...</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Exact Location</div>
+                <div class="detail-value" id="panelLocation">Kigali / Loading...</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Case Title</div>
+                <div class="detail-value" id="panelTitle" style="font-weight: 600;">Loading...</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Full Description (Citizen Report)</div>
+                <div class="detail-value" id="panelDescription" style="background-color: #f8fafc; padding: 1rem; border-radius: 4px; border: 1px solid var(--border-color); white-space: pre-wrap; font-size: 0.9rem;">
+                    Loading report body...
+                </div>
+            </div>
+
+            <div class="detail-group" style="margin-top: 2rem;">
+                <div class="detail-label">Assigned Officer</div>
+                <div class="detail-value" id="panelOfficer">Unassigned</div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <select id="updateStatusSelect" class="form-control" style="flex:1;">
+                <option value="Pending">Pending</option>
+                <option value="Investigating">Investigating</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+            <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Update</button>
+            <button class="btn-secondary" onclick="alert('Evidence Module coming soon!')">Files</button>
+        </div>
+    </div>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
