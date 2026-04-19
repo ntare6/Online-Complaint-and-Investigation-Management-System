@@ -120,6 +120,13 @@ async function submitComplaint() {
 
         if (response.ok) {
             const result = await response.json();
+            
+            // --- NEW: Evidence Upload Module ---
+            const fileInput = document.getElementById('evidenceFile');
+            if (fileInput && fileInput.files.length > 0) {
+                await uploadEvidence(result.id, fileInput.files[0]);
+            }
+
             alert(`Success! Your case was submitted. Your tracking code is: ${result.trackingCode}`);
             document.getElementById('complaintForm').reset();
             
@@ -353,5 +360,49 @@ async function updateCaseStatus() {
     } catch (error) {
         console.error("Network Error during update:", error);
         alert("Failed to connect to the backend securely.");
+    }
+}
+
+// ==========================================
+// 6. Evidence Module Integration
+// ==========================================
+async function uploadEvidence(complaintId, file) {
+    const formData = new FormData();
+    formData.append("ComplaintId", complaintId);
+    formData.append("UploadedByUserId", getCurrentUserId()); 
+    formData.append("File", file);
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Evidence/upload`, {
+            method: 'POST',
+            body: formData 
+        });
+        
+        if (!res.ok) {
+            console.error("Warning: Case was created, but Evidence upload failed.", await res.text());
+        }
+    } catch (e) {
+        console.error("Evidence network error", e);
+    }
+}
+
+async function loadCaseEvidence() {
+    if (!currentAdminCaseId) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/Evidence/complaint/${currentAdminCaseId}`);
+        if (!response.ok) return alert("Failed to fetch evidence securely.");
+        
+        const files = await response.json();
+        if (files.length === 0) {
+            alert("No evidence files assigned to this case.");
+            return;
+        }
+
+        let fileList = files.map(f => `📄 ${f.fileName} (${(f.fileSizeInBytes / 1024).toFixed(1)} KB)`).join("\n");
+        alert(`Attached Evidence Documents:\n\n${fileList}\n\n(A dedicated file-viewing dashboard panel is in development!)`);
+
+    } catch (e) {
+        console.error(e);
+        alert("System error fetching case documents.");
     }
 }
