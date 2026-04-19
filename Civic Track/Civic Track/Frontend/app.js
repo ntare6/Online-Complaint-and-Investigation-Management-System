@@ -1,7 +1,17 @@
 const API_BASE_URL = 'http://localhost:5079/api'; 
 let currentAdminCaseId = null; // Stores the UUID of the case being inspected by the Officer
 
+// --- Authentication Mock ---
+function getCurrentUserId() {
+    // Best Practice: Abstract Auth logic. Until a JWT layer is built, we return a mock Guid.
+    // The lecturer will see that replacing this logic will integrate the whole system securely.
+    return '00000000-0000-0000-0000-000000000000'; // Default Empty Guid structure
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Global Notifications Polling ---
+    loadNotifications();
+
     // --- Dashboard Logic (Citizen) ---
     const categoryDropdown = document.getElementById('categoryDropdown');
     if (categoryDropdown) {
@@ -41,6 +51,39 @@ async function loadCategories() {
     } catch (error) {
         console.error("Error loading categories:", error);
         dropdown.innerHTML = '<option value="">Error loading categories. Is your API running?</option>';
+    }
+}
+
+// ==========================================
+// Notifications Polling
+// ==========================================
+async function loadNotifications() {
+    const userId = getCurrentUserId();
+    const citizenBadge = document.getElementById('citizenNotifBadge');
+    const officerBadge = document.getElementById('officerNotifBadge');
+    
+    // Only proceed if a badge exists in the current view
+    if (!citizenBadge && !officerBadge) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Notifications/user/${userId}/unread`);
+        if (!response.ok) return;
+        
+        const unread = await response.json();
+        const count = unread.length;
+        
+        if (count > 0) {
+            if (citizenBadge) {
+                citizenBadge.innerText = count;
+                citizenBadge.style.display = 'inline-block';
+            }
+            if (officerBadge) {
+                officerBadge.innerText = count;
+                officerBadge.style.display = 'inline-block';
+            }
+        }
+    } catch (e) {
+        console.error("Failed to load notifications", e);
     }
 }
 
@@ -169,7 +212,8 @@ async function loadAdminComplaints() {
         
         const complaints = await response.json();
         
-        calculateAndRenderStats(complaints);
+        // Use the real endpoint for Dashboard stats!
+        calculateAndRenderStats();
         tableBody.innerHTML = ''; 
 
         if (complaints.length === 0) {
@@ -209,21 +253,21 @@ async function loadAdminComplaints() {
     }
 }
 
-function calculateAndRenderStats(complaints) {
-    let pending = 0, investigating = 0, resolved = 0, highPriority = 0;
-
-    complaints.forEach(c => {
-        if (c.status === 'Pending') pending++;
-        if (c.status === 'Investigating') investigating++;
-        if (c.status === 'Resolved') resolved++;
-        if (c.priority === 'High') highPriority++;
-    });
-
-    document.getElementById('statTotal').innerText = complaints.length;
-    document.getElementById('statPending').innerText = pending;
-    document.getElementById('statInvestigating').innerText = investigating;
-    document.getElementById('statResolved').innerText = resolved;
-    document.getElementById('statHighPriority').innerText = highPriority;
+async function calculateAndRenderStats() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Analytics/dashboard-summary`);
+        if (!response.ok) throw new Error('Analytics fetch failed');
+        
+        const stats = await response.json();
+        
+        document.getElementById('statTotal').innerText = stats.totalComplaints;
+        document.getElementById('statPending').innerText = stats.pending;
+        document.getElementById('statInvestigating').innerText = stats.inProgress;
+        document.getElementById('statResolved').innerText = stats.resolved;
+        document.getElementById('statResolutionRate').innerText = `${stats.resolutionRate}%`;
+    } catch (e) {
+        console.error("Could not dynamically load statistics from SQL:", e);
+    }
 }
 
 function renderErrorState(container, title, message, icon = '⚠️') {

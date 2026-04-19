@@ -9,10 +9,7 @@
 
 
 
-  <ItemGroup>
-    <Compile Include="Controllers\AnalyticsController.cs" />
-    <Compile Include="Controllers\NotificationsController.cs" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />

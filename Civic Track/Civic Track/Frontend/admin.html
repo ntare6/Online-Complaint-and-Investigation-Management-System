@@ -40,6 +40,7 @@
             <ul>
                 <li class="active-tab">📋 All Cases</li>
                 <li>📊 Analytics & Reports</li>
+                <li id="tabNotifications">🔔 Notifications <span id="officerNotifBadge" class="badge badge-pending" style="display:none; transform: scale(0.85); margin-left: 0.5rem; background-color:#ef4444; color:white;">0</span></li>
                 <div class="sidebar-divider"></div>
                 <li>⚙️ System Settings</li>
                 <li style="margin-top: 2rem; color: #fca5a5; cursor: pointer;" onclick="window.location.href='index.html'">🚪 Logout</li>
@@ -67,8 +68,8 @@
                     <div class="stat-value" id="statResolved" style="color: #16a34a;">--</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-title">High Priority</div>
-                    <div class="stat-value" id="statHighPriority" style="color: var(--priority-high);">--</div>
+                    <div class="stat-title">Resolution Rate</div>
+                    <div class="stat-value" id="statResolutionRate" style="color: var(--priority-low);">--%</div>
                 </div>
             </div>
 

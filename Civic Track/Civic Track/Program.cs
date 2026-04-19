@@ -7,10 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Add scoped services
+builder.Services.AddScoped<NotificationService>();
+
 // ADD THIS CORS POLICY:
 builder.Services.AddCors(options =>
 {
-    builder.Services.AddScoped<NotificationService>();
     options.AddPolicy("AllowFrontend",
         policy =>
         {
