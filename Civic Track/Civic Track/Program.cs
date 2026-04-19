@@ -1,4 +1,5 @@
 using Civic_Track.Data;
+using Civic_Track.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 // ADD THIS CORS POLICY:
 builder.Services.AddCors(options =>
 {
+    builder.Services.AddScoped<NotificationService>();
     options.AddPolicy("AllowFrontend",
         policy =>
         {
