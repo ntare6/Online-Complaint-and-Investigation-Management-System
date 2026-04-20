@@ -24,81 +24,144 @@
         <aside class="sidebar">
             <div class="sidebar-title">Citizen Menu</div>
             <ul>
-                <li class="active-tab" data-role-visible="Citizen,Client">Dashboard</li>
+                <li id="tabOverview" class="active-tab" onclick="switchCitizenTab('overview')" data-role-visible="Citizen,Client">Overview</li>
                 <li id="tabLodge" onclick="switchCitizenTab('lodge')" data-role-visible="Citizen,Client">Submit Complaint</li>
                 <li id="tabTrack" onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client">My Complaints</li>
-                <li onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client">Complaint Tracking</li>
-                <li data-role-visible="Officer,Admin">Investigations</li>
-                <li data-role-visible="Officer,Admin">Reports</li>
-                <li data-role-visible="Admin" onclick="window.location.href='superadmin.html'">Admin Panel</li>
-                <li id="tabNotifications">Notifications <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span></li>
+                <li id="tabNotifications" onclick="switchCitizenTab('notifications')" data-role-visible="Citizen,Client">
+                    Notifications <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
+                </li>
+                <div class="sidebar-divider"></div>
+                <li data-role-visible="Admin" onclick="window.location.href='superadmin.html'">System Admin</li>
             </ul>
         </aside>
 
         <main class="content-area">
 
-            <div class="card">
-                <h1 style="margin-bottom:8px;">Citizen Dashboard</h1>
-                <p style="color:var(--text-muted);">Submit new complaints, track status updates, and view official case progress.</p>
+            <!-- 1. Overview View (Dashboard Home) -->
+            <div id="overviewView" class="citizen-view">
+                <div class="card">
+                    <h1 style="margin-bottom:8px;">Citizen Dashboard</h1>
+                    <p style="color:var(--text-muted);">Welcome to the official CivicTrack portal. Monitor your civil reports and track real-time progress.</p>
+                </div>
+
+                <div class="grid-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Pending Case</div>
+                        <div class="stat-value" style="color:#d97706;">Received</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Active Investigation</div>
+                        <div class="stat-value" style="color:var(--primary-blue);">In Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Resolved Case</div>
+                        <div class="stat-value" style="color:#16a34a;">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">System Status</div>
+                        <div class="stat-value" style="color:var(--text-muted);">Online</div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">System Guidelines</h3>
+                    <ul style="color: var(--text-muted); font-size: 0.9rem; padding-left: 1.5rem;">
+                        <li>Ensure all evidence files are clear and under 5MB.</li>
+                        <li>Track your case status using the unique tracking code.</li>
+                        <li>Notification alerts will appear when an officer updates your case.</li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="grid-4">
-                <div class="stat-card"><div class="stat-title">Pending</div><div class="stat-value" style="color:#9a7a12;">Pending</div></div>
-                <div class="stat-card"><div class="stat-title">In Progress</div><div class="stat-value" style="color:var(--primary-blue);">Investigating</div></div>
-                <div class="stat-card"><div class="stat-title">Legal Action</div><div class="stat-value" style="color:#9a7a12;">Escalated</div></div>
-                <div class="stat-card"><div class="stat-title">Closed</div><div class="stat-value" style="color:var(--success-green);">Resolved</div></div>
-            </div>
-
-            <div class="card" id="lodgeView">
-                <h2 style="margin-bottom:8px;">Submit Complaint</h2>
-                <p style="margin-bottom:16px; color:var(--text-muted);">Provide accurate details for faster investigation and assignment.</p>
+            <!-- 2. Submit Complaint View -->
+            <div class="card citizen-view" id="lodgeView" style="display: none;">
+                <h2 style="margin-bottom:8px;">Lodge New Complaint</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);">Please provide accurate details. All information is handled securely according to government regulations.</p>
+                
                 <form id="complaintForm">
                     <div class="form-group">
                         <label class="form-label" for="complaintTitle">Complaint Title</label>
-                        <input type="text" id="complaintTitle" class="form-control" placeholder="Brief summary">
+                        <input type="text" id="complaintTitle" class="form-control" placeholder="e.g., Damaged Infrastructure in Gasabo">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="categoryDropdown">Category</label>
+                        <label class="form-label" for="categoryDropdown">Legal Category</label>
                         <select id="categoryDropdown" class="form-control">
-                            <option value="">Select category</option>
+                            <option value="">Loading categories...</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="incidentLocation">Incident Location</label>
+                        <label class="form-label" for="incidentLocation">Exact Location</label>
                         <input type="text" id="incidentLocation" class="form-control" placeholder="District / Sector / Cell">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="complaintDescription">Detailed Description</label>
-                        <textarea id="complaintDescription" rows="5" class="form-control" placeholder="Provide complete details"></textarea>
+                        <label class="form-label" for="complaintDescription">Detailed Incident Description</label>
+                        <textarea id="complaintDescription" rows="6" class="form-control" placeholder="Provide as much detail as possible about the incident..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="evidenceFile">Evidence Upload (Optional)</label>
-                        <input type="file" id="evidenceFile" accept="image/*,.pdf" class="form-control">
+                        <label class="form-label" for="evidenceFile">Upload Evidence Document (Optional)</label>
+                        <input type="file" id="evidenceFile" accept="image/*,.pdf" class="form-control" style="background-color: transparent; border: none; padding-left: 0;">
                     </div>
-                    <button type="button" id="submitBtn" class="btn-primary" style="width:100%;">Create Complaint</button>
+                    <button type="button" id="submitBtn" class="btn-primary" style="width:100%; padding: 1rem; font-weight: 700;">Submit Investigation Request</button>
                 </form>
             </div>
 
-            <div class="card" id="trackView" style="display: none;">
-                <h2 style="margin-bottom:8px;">My Complaints</h2>
-                <p style="margin-bottom:16px; color:var(--text-muted);">Track complaint status and review timeline updates.</p>
-                <div class="toolbar" style="margin-bottom:16px;">
+            <!-- 3. My Complaints (Tracking) View -->
+            <div class="card citizen-view" id="trackView" style="display: none;">
+                <h2 style="margin-bottom:8px;">My Investigation History</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);">View all cases submitted by your identity or search via tracking code.</p>
+                
+                <div class="toolbar" style="margin-bottom:24px; display: flex; gap: 0.5rem;">
                     <input type="text" id="trackInput" class="form-control" style="font-family: monospace; font-size: 1.1rem; text-transform: uppercase;" placeholder="CT-XXXXXXXX">
-                    <button class="btn-primary" onclick="trackCase()">Search</button>
+                    <button class="btn-primary" onclick="trackCase()">Search Registry</button>
                 </div>
-                <div id="trackResult" style="margin-top: 2rem; display: none;">
+
+                <!-- Case List Table (Populated by app.js) -->
+                <div class="table-container" id="userCasesTableContainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Date Logged</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userCasesTableBody">
+                            <!-- List of cases will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Detailed Tracking Result Box -->
+                <div id="trackResult" style="margin-top: 2rem; display: none; padding: 2rem; border: 1px solid var(--border-color); border-radius: 4px; background-color: #f8fafc;">
+                    <button class="btn-secondary" style="float: right; padding: 0.25rem 0.75rem;" onclick="document.getElementById('trackResult').style.display='none'">Close</button>
                     <h3 id="trackTitle" style="margin-bottom:8px;">-</h3>
                     <div style="margin-bottom:6px;"><strong>Status:</strong> <span class="badge" id="trackBadge">-</span></div>
                     <div style="margin-bottom:6px;"><strong>Category:</strong> <span id="trackCategory">-</span></div>
                     <div style="margin-bottom:12px;"><strong>Date Logged:</strong> <span id="trackDate">-</span></div>
-                    <div class="timeline">
-                        <div class="timeline-item">Pending: complaint received</div>
-                        <div class="timeline-item">Investigating: assigned to officer</div>
-                        <div class="timeline-item">Escalated: legal action when required</div>
-                        <div class="timeline-item">Resolved: case closure and feedback</div>
+                    
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">System Timeline</h4>
+                        <div class="timeline" id="trackTimeline">
+                            <div class="timeline-item">Case Received: Your report is awaiting officer assignment.</div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 4. Notifications View -->
+            <div class="card citizen-view" id="notificationsView" style="display: none;">
+                <h2 style="margin-bottom:8px;">Official Notifications</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);">Critical alerts regarding your submitted cases and system updates.</p>
+                
+                <div id="notificationsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Notification items will be injected here -->
+                    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        No unread official notifications at this time.
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
