@@ -1,4 +1,4 @@
-﻿using Civic_Track.Data;
+using Civic_Track.Data;
 using Civic_Track.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +20,7 @@ namespace Civic_Track.Controllers
         public async Task<IActionResult> GetUserNotifications(Guid userId)
         {
             var query = _context.Notifications
+                .Include(n => n.Complaint)
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.CreatedAt);
 
@@ -32,6 +33,7 @@ namespace Civic_Track.Controllers
         public async Task<IActionResult> GetUnread(Guid userId)
         {
             var query = _context.Notifications
+                .Include(n => n.Complaint)
                 .Where(n => n.UserId == userId && !n.IsRead);
 
             var notifications = await query.ToListAsync();

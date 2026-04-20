@@ -157,7 +157,7 @@ async function submitComplaint() {
         categoryId: categoryId,
         priority: "Medium",
         isAnonymous: false,
-        citizenId: null 
+        citizenId: getCurrentUserId() 
     };
 
     try {
@@ -197,22 +197,78 @@ async function submitComplaint() {
 // ==========================================
 // 3. Citizen Case Tracking
 // ==========================================
-function switchCitizenTab(tab) {
-    const lodgeView = document.getElementById('lodgeView');
-    const trackView = document.getElementById('trackView');
-    const tabLodge = document.getElementById('tabLodge');
-    const tabTrack = document.getElementById('tabTrack');
+// ==========================================
+// 3. Citizen Case Tracking & View Management
+// ==========================================
+    // 1. Reset All Views by Class (Harden against artifacts)
+    document.querySelectorAll('.citizen-view').forEach(view => {
+        view.style.display = 'none';
+    });
 
-    if (tab === 'lodge') {
-        lodgeView.style.display = 'block';
-        trackView.style.display = 'none';
-        tabLodge.classList.add('active-tab');
-        tabTrack.classList.remove('active-tab');
-    } else {
-        lodgeView.style.display = 'none';
-        trackView.style.display = 'block';
-        tabLodge.classList.remove('active-tab');
-        tabTrack.classList.add('active-tab');
+    // 2. Clear Active States from Tabs
+    const tabs = {
+        overview: document.getElementById('tabOverview'),
+        lodge: document.getElementById('tabLodge'),
+        track: document.getElementById('tabTrack'),
+        notifications: document.getElementById('tabNotifications')
+    };
+    Object.keys(tabs).forEach(key => {
+        if (tabs[key]) tabs[key].classList.remove('active-tab');
+    });
+
+    // 3. Activate Target View & Tab
+    const targetView = document.getElementById(`${tab}View`);
+    if (targetView) targetView.style.display = 'block';
+    if (tabs[tab]) tabs[tab].classList.add('active-tab');
+
+    // 4. Activate Targeted
+    if (views[tab]) views[tab].style.display = 'block';
+    if (tabs[tab]) tabs[tab].classList.add('active-tab');
+
+    // 5. Contextual Data Loading
+    if (tab === 'track') loadUserComplaints();
+    if (tab === 'notifications') renderNotificationsList();
+}
+
+async function loadUserComplaints() {
+    const userId = getCurrentUserId();
+    const tbody = document.getElementById('userCasesTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">Retrieving your case history from the registry...</td></tr>';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Complaints/citizen/${userId}`);
+        if (!response.ok) throw new Error('Fetch failed');
+        
+        const complaints = await response.json();
+        tbody.innerHTML = '';
+
+        if (complaints.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:3rem; color:var(--text-muted);">You have not submitted any report requests yet.</td></tr>';
+            return;
+        }
+
+        complaints.forEach(c => {
+            const rawDate = new Date(c.submittedAt);
+            const formattedDate = rawDate.toLocaleDateString('en-GB');
+
+            const row = document.createElement('tr');
+            row.style.cursor = 'pointer';
+            row.innerHTML = `
+                <td style="font-family: monospace; font-weight: bold;">${c.trackingCode}</td>
+                <td>${c.title}</td>
+                <td><span class="badge ${c.status === 'Resolved' ? 'badge-resolved' : c.status === 'Investigating' ? 'badge-investigating' : 'badge-pending'}">${c.status}</span></td>
+                <td>${formattedDate}</td>
+            `;
+            row.onclick = () => {
+                document.getElementById('trackInput').value = c.trackingCode;
+                trackCase();
+            };
+            tbody.appendChild(row);
+        });
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:red;">Unable to load your case history.</td></tr>';
     }
 }
 
@@ -225,7 +281,7 @@ async function trackCase() {
         const resultBox = document.getElementById('trackResult');
 
         if (!response.ok) {
-            alert("Case not found. Check tracking code.");
+            alert("Case not found in the national registry.");
             resultBox.style.display = 'none';
             return;
         }
@@ -244,8 +300,68 @@ async function trackCase() {
         else if (data.status === 'Resolved') badge.classList.add('badge-resolved');
         else badge.classList.add('badge-pending');
 
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+
     } catch (error) {
-        alert("Unable to connect to server.");
+        alert("Unable to connect to government servers.");
+    }
+}
+
+async function renderNotificationsList() {
+    const userId = getCurrentUserId();
+    const list = document.getElementById('notificationsList');
+    if (!list) return;
+
+    list.innerHTML = '<div style="text-align:center; padding:2rem;">Fetching your official alerts...</div>';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Notifications/user/${userId}`);
+        if (!response.ok) return;
+        
+        const notifications = await response.json();
+        if (notifications.length === 0) {
+            list.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--text-muted);">No official notifications found.</div>';
+            return;
+        }
+
+        list.innerHTML = notifications.sort((a,b) => new Date(b.sentAt) - new Date(a.sentAt)).map(n => {
+            const hasComplaint = n.complaint && n.complaint.trackingCode;
+            const trackingCode = hasComplaint ? n.complaint.trackingCode : '';
+            
+            return `
+            <div 
+                style="padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 4px; border-left: 4px solid var(--primary-blue); background-color: ${n.isRead ? 'white' : '#f0f9ff'}; cursor: pointer; transition: transform 0.1s;"
+                onmouseover="this.style.transform='translateX(5px)'"
+                onmouseout="this.style.transform='translateX(0)'"
+                onclick="handleNotificationClick('${n.id}', '${trackingCode}')"
+            >
+                <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--text-dark);">CivicTrack System Alert</strong>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(n.sentAt || n.createdAt).toLocaleString()}</span>
+                </div>
+                <div style="font-size: 0.9rem;">${n.message}</div>
+                ${hasComplaint ? `<div style="margin-top:0.5rem; font-size:0.75rem; color:var(--primary-blue); font-weight:600;">Click to view Case Details (${trackingCode}) ↓</div>` : ''}
+            </div>
+            `;
+        }).join('');
+    } catch (e) {
+        list.innerHTML = '<div style="text-align:center; padding:2rem; color:red;">Failed to sync notifications.</div>';
+    }
+}
+
+async function handleNotificationClick(notifId, trackingCode) {
+    try {
+        // 1. Mark as Read in Background
+        fetch(`${API_BASE_URL}/Notifications/mark-as-read/${notifId}`, { method: 'PUT' });
+        
+        // 2. Navigate if linked to a case
+        if (trackingCode) {
+            switchCitizenTab('track');
+            document.getElementById('trackInput').value = trackingCode;
+            trackCase();
+        }
+    } catch (e) {
+        console.error("Link error", e);
     }
 }
 
