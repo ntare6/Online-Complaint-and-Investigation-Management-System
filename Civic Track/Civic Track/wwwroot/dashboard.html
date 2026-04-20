@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard | CivicTrack</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav class="top-navbar">
+        <div class="nav-brand">
+            <span class="gov-mark">RW</span>
+            <span>CivicTrack</span>
+        </div>
+        <div class="nav-profile">
+            <span id="userRoleLabel">Role: Citizen</span>
+            <button class="btn-small" onclick="logoutUser()">Sign out</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-title">Citizen Menu</div>
+            <ul>
+                <li class="active-tab" data-role-visible="Citizen,Client">Dashboard</li>
+                <li id="tabLodge" onclick="switchCitizenTab('lodge')" data-role-visible="Citizen,Client">Submit Complaint</li>
+                <li id="tabTrack" onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client">My Complaints</li>
+                <li onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client">Complaint Tracking</li>
+                <li data-role-visible="Officer,Admin">Investigations</li>
+                <li data-role-visible="Officer,Admin">Reports</li>
+                <li data-role-visible="Admin" onclick="window.location.href='superadmin.html'">Admin Panel</li>
+                <li id="tabNotifications">Notifications <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+
+            <div class="card">
+                <h1 style="margin-bottom:8px;">Citizen Dashboard</h1>
+                <p style="color:var(--text-muted);">Submit new complaints, track status updates, and view official case progress.</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card"><div class="stat-title">Pending</div><div class="stat-value" style="color:#9a7a12;">Pending</div></div>
+                <div class="stat-card"><div class="stat-title">In Progress</div><div class="stat-value" style="color:var(--primary-blue);">Investigating</div></div>
+                <div class="stat-card"><div class="stat-title">Legal Action</div><div class="stat-value" style="color:#9a7a12;">Escalated</div></div>
+                <div class="stat-card"><div class="stat-title">Closed</div><div class="stat-value" style="color:var(--success-green);">Resolved</div></div>
+            </div>
+
+            <div class="card" id="lodgeView">
+                <h2 style="margin-bottom:8px;">Submit Complaint</h2>
+                <p style="margin-bottom:16px; color:var(--text-muted);">Provide accurate details for faster investigation and assignment.</p>
+                <form id="complaintForm">
+                    <div class="form-group">
+                        <label class="form-label" for="complaintTitle">Complaint Title</label>
+                        <input type="text" id="complaintTitle" class="form-control" placeholder="Brief summary">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="categoryDropdown">Category</label>
+                        <select id="categoryDropdown" class="form-control">
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="incidentLocation">Incident Location</label>
+                        <input type="text" id="incidentLocation" class="form-control" placeholder="District / Sector / Cell">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="complaintDescription">Detailed Description</label>
+                        <textarea id="complaintDescription" rows="5" class="form-control" placeholder="Provide complete details"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="evidenceFile">Evidence Upload (Optional)</label>
+                        <input type="file" id="evidenceFile" accept="image/*,.pdf" class="form-control">
+                    </div>
+                    <button type="button" id="submitBtn" class="btn-primary" style="width:100%;">Create Complaint</button>
+                </form>
+            </div>
+
+            <div class="card" id="trackView" style="display: none;">
+                <h2 style="margin-bottom:8px;">My Complaints</h2>
+                <p style="margin-bottom:16px; color:var(--text-muted);">Track complaint status and review timeline updates.</p>
+                <div class="toolbar" style="margin-bottom:16px;">
+                    <input type="text" id="trackInput" class="form-control" style="font-family: monospace; font-size: 1.1rem; text-transform: uppercase;" placeholder="CT-XXXXXXXX">
+                    <button class="btn-primary" onclick="trackCase()">Search</button>
+                </div>
+                <div id="trackResult" style="margin-top: 2rem; display: none;">
+                    <h3 id="trackTitle" style="margin-bottom:8px;">-</h3>
+                    <div style="margin-bottom:6px;"><strong>Status:</strong> <span class="badge" id="trackBadge">-</span></div>
+                    <div style="margin-bottom:6px;"><strong>Category:</strong> <span id="trackCategory">-</span></div>
+                    <div style="margin-bottom:12px;"><strong>Date Logged:</strong> <span id="trackDate">-</span></div>
+                    <div class="timeline">
+                        <div class="timeline-item">Pending: complaint received</div>
+                        <div class="timeline-item">Investigating: assigned to officer</div>
+                        <div class="timeline-item">Escalated: legal action when required</div>
+                        <div class="timeline-item">Resolved: case closure and feedback</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
