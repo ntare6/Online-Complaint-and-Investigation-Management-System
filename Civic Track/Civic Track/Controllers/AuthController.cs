@@ -1,4 +1,4 @@
-﻿using Civic_Track.Data;
+using Civic_Track.Data;
 using Civic_Track.DTOs;
 using Civic_Track.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +21,29 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
+        // 1. Check for Duplicate Email (Return structured error for UI icons)
         if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-            return BadRequest("User with this email already exists.");
+        {
+            return BadRequest(new { errors = new { Email = new[] { "An account with this official email already exists in our registry." } } });
+        }
 
+        // 2. IDENTITY CHALLENGE: Simulated OTP
+        // If the request doesn't have an OTP, we stop here and ask the frontend to show the OTP screen.
+        if (string.IsNullOrEmpty(dto.OtpCode))
+        {
+            return Ok(new { 
+                verificationRequired = true, 
+                message = "Verification Challenge: A 6-digit security code has been generated for " + dto.Email 
+            });
+        }
+
+        // 3. Verify OTP (Hardcoded for demo/defense: 123456)
+        if (dto.OtpCode != "123456")
+        {
+            return BadRequest(new { errors = new { OtpCode = new[] { "Invalid verification code. Please check your official documents or inbox." } } });
+        }
+
+        // 4. Final Enrollment
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -31,13 +51,14 @@ public class AuthController : ControllerBase
             Email = dto.Email,
             Phone = dto.Phone ?? string.Empty,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = UserRole.Citizen 
+            Role = UserRole.Citizen,
+            IsActive = true
         };
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Registration successful." });
+        return Ok(new { message = "Identity verified. Enrollment successful." });
     }
 
     [HttpPost("login")]
