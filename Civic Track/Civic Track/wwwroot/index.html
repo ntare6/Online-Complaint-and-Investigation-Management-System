@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicTrack | Government Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="split-layout">
+        <section class="split-left">
+            <div class="sidebar-title">Republic of Rwanda</div>
+            <h1 style="color: var(--primary-blue); margin-bottom: 16px;">CivicTrack</h1>
+            <p style="margin-bottom: 16px; color: var(--text-muted);">
+                Online Complaint and Investigation Management System for citizens, investigation officers, and administrators.
+            </p>
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 12px;">Platform Services</h3>
+                <ul style="padding-left: 18px; color: var(--text-muted);">
+                    <li>Submit and track complaints</li>
+                    <li>View investigation progress and legal escalation</li>
+                    <li>Receive official updates and notifications</li>
+                    <li>Access reports and dashboards by role</li>
+                </ul>
+            </div>
+        </section>
+        <section class="split-right">
+            <div class="auth-card">
+                <div class="sidebar-title">Secure Access</div>
+                <h2 style="margin-bottom: 8px;">Sign in</h2>
+                <p style="color: var(--text-muted); margin-bottom: 16px;">Use your registered account credentials.</p>
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Password">
+                </div>
+                <button type="button" class="btn-primary" style="width:100%;" onclick="secureLogin()">Sign in</button>
+                <button type="button" class="btn-secondary" style="width:100%; margin-top:8px;" onclick="window.location.href='register.html'">
+                    Register as citizen
+                </button>
+                <p style="margin-top: 16px; color: var(--text-muted); font-size: 13px;">
+                    By signing in, you agree to use this platform for official complaint management only.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5079/api';
+
+        async function secureLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) return alert("Please enter credentials.");
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    localStorage.setItem('civicUser', JSON.stringify(user));
+                    if (user.role === 'Admin') {
+                        window.location.href = 'superadmin.html';
+                    } else if (user.role === 'Officer') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                } else {
+                    alert("Login failed. Check your email and password.");
+                }
+            } catch (error) {
+                alert("Unable to connect to server.");
+            }
+        }
+    </script>
+</body>
+</html>

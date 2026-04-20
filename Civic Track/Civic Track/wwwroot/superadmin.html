@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Administrator | CivicTrack</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="top-navbar">
+        <div class="nav-brand">
+            <span class="gov-mark">RW</span>
+            <span>CivicTrack</span>
+        </div>
+        <div class="nav-profile">
+            <span>Role: Administrator</span>
+            <button class="btn-small" onclick="logoutUser()">Sign out</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-title">Admin Menu</div>
+            <ul>
+                <li onclick="window.location.href='dashboard.html'">Dashboard</li>
+                <li onclick="window.location.href='admin.html'">Investigations</li>
+                <li class="active-tab">Admin Panel</li>
+                <li>Reports</li>
+                <li>System Logs</li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <div class="card">
+                <h1 style="margin-bottom:8px;">Administrator Panel</h1>
+                <p style="color:var(--text-muted);">Manage users, monitor access status, and review role-based account activity.</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-title">User Registry</div>
+                    <div class="stat-value" id="userCountValue">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Active Users</div>
+                    <div class="stat-value" id="activeCountValue">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Suspended Users</div>
+                    <div class="stat-value" id="inactiveCountValue">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Admin Accounts</div>
+                    <div class="stat-value" id="adminCountValue">--</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="toolbar">
+                    <input type="text" id="userSearchInput" class="form-control" style="max-width:280px;" placeholder="Search by name or email">
+                    <button class="btn-primary" onclick="loadUsers()">Refresh Registry</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 8px;">Reporting Module</h3>
+                <p style="color: var(--text-muted); margin-bottom: 12px;">Filter reports by date, category, and user. Export in PDF or Excel format.</p>
+                <div class="toolbar" style="margin-bottom: 12px;">
+                    <input type="date" class="form-control" style="width:auto;">
+                    <input type="date" class="form-control" style="width:auto;">
+                    <select class="form-control" style="width:auto;">
+                        <option>All Categories</option>
+                        <option>Infrastructure</option>
+                        <option>Security</option>
+                        <option>Health</option>
+                    </select>
+                    <select class="form-control" style="width:auto;">
+                        <option>All Users</option>
+                        <option>Citizens</option>
+                        <option>Officers</option>
+                    </select>
+                    <button class="btn-secondary" onclick="window.print()">Export PDF</button>
+                    <button class="btn-secondary">Export Excel</button>
+                </div>
+                <div class="grid-2">
+                    <div class="card" style="margin:0;">
+                        <div class="stat-title">Complaints by Status</div>
+                        <div style="margin-top:10px;">
+                            <div style="margin-bottom:8px;">Pending <div style="height:10px;background:#fff9e6;border:1px solid #f2e3a8;width:60%;"></div></div>
+                            <div style="margin-bottom:8px;">In Progress <div style="height:10px;background:#e6f0ff;border:1px solid #c8daf8;width:45%;"></div></div>
+                            <div>Resolved <div style="height:10px;background:#e9f5ea;border:1px solid #c7e5c9;width:70%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin:0;">
+                        <div class="stat-title">Report Summary Table</div>
+                        <table style="margin-top:10px;">
+                            <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+                            <tbody>
+                                <tr><td>Total Complaints</td><td>--</td></tr>
+                                <tr><td>Escalated Cases</td><td>--</td></tr>
+                                <tr><td>Resolved Cases</td><td>--</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="7" style="text-align:center; padding:24px; color: var(--text-muted);">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5079/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('civicUser');
+            if (session) {
+                try {
+                    const user = JSON.parse(session);
+                    if (user.role !== 'Admin') {
+                        alert("Unauthorized: Administrator clearance required.");
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                } catch(e) { window.location.href = 'index.html'; return; }
+            } else {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadUsers();
+        });
+
+        function logoutUser() {
+            localStorage.removeItem('civicUser');
+            window.location.href = 'index.html';
+        }
+
+        async function loadUsers() {
+            const tableBody = document.getElementById('usersTableBody');
+            const search = (document.getElementById('userSearchInput')?.value || '').toLowerCase();
+            try {
+                const response = await fetch(`${API_BASE_URL}/Users`);
+                if (!response.ok) throw new Error('Failed to load users');
+                
+                const allUsers = await response.json();
+                const users = allUsers.filter(u => {
+                    if (!search) return true;
+                    return (u.fullName || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search);
+                });
+
+                document.getElementById('userCountValue').textContent = allUsers.length;
+                document.getElementById('activeCountValue').textContent = allUsers.filter(u => u.isActive).length;
+                document.getElementById('inactiveCountValue').textContent = allUsers.filter(u => !u.isActive).length;
+                document.getElementById('adminCountValue').textContent = allUsers.filter(u => u.role === 'Admin').length;
+
+                tableBody.innerHTML = '';
+
+                users.forEach(u => {
+                    const statusColor = u.isActive ? 'color: #166534;' : 'color: #991b1b;';
+                    const statusText = u.isActive ? 'Active' : 'Revoked';
+                    const actionText = u.isActive ? 'Suspend' : 'Restore';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${u.id.substring(0,8).toUpperCase()}...</td>
+                        <td style="font-weight: 500;">${u.fullName}</td>
+                        <td>${u.email}</td>
+                        <td>${u.phone || 'N/A'}</td>
+                        <td><span class="badge ${u.role === 'Admin' ? 'badge-investigating' : 'badge-pending'}">${u.role}</span></td>
+                        <td style="font-weight:600; ${statusColor}">${statusText}</td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="toggleAccess('${u.id}')">${actionText}</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Failed to connect to user service.</td></tr>';
+            }
+        }
+
+        async function toggleAccess(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/Users/${userId}/deactivate`, { method: 'PUT' });
+                if (response.ok) {
+                    loadUsers(); 
+                } else {
+                    alert("Failed to modify user access.");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

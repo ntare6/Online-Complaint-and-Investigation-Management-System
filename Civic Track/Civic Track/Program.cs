@@ -36,6 +36,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Serve HTML natively from wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // ACTIVATE THE CORS POLICY HERE (Must be BEFORE UseAuthorization)
 app.UseCors("AllowFrontend");
 

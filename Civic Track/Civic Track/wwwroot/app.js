@@ -2,23 +2,67 @@ const API_BASE_URL = 'http://localhost:5079/api';
 let currentAdminCaseId = null; // Stores the UUID of the case being inspected by the Officer
 
 // --- Local User Session ---
-function getCurrentUserId() {
+function getCurrentUser() {
     const session = localStorage.getItem('civicUser');
-    if (session) {
-        try {
-            const user = JSON.parse(session);
-            return user.id;
-        } catch(e) {}
-    }
-    // Fallback if accessed without Gateway Login
+    if (!session) return null;
+    try { return JSON.parse(session); } catch { return null; }
+}
+
+function getCurrentUserId() {
+    const user = getCurrentUser();
+    if (user?.id) return user.id;
     return '00000000-0000-0000-0000-000000000000'; 
 }
 
+function logoutUser() {
+    localStorage.removeItem('civicUser');
+    window.location.href = 'index.html';
+}
+
+function applyRoleNavigation() {
+    const user = getCurrentUser();
+    const role = user?.role || '';
+    const roleItems = document.querySelectorAll('[data-role-visible]');
+    roleItems.forEach(item => {
+        const allowedRoles = (item.getAttribute('data-role-visible') || '')
+            .split(',')
+            .map(r => r.trim())
+            .filter(Boolean);
+        if (allowedRoles.length && !allowedRoles.includes(role)) {
+            item.classList.add('role-hidden');
+        } else {
+            item.classList.remove('role-hidden');
+        }
+    });
+}
+
+function enforceRoleAccess() {
+    const user = getCurrentUser();
+    const isDashboard = Boolean(document.getElementById('categoryDropdown'));
+    const isOfficer = Boolean(document.getElementById('complaintsTableBody'));
+
+    if (!user && (isDashboard || isOfficer)) {
+        window.location.href = 'index.html';
+        return;
+    }
+    if (isDashboard && user && !['Citizen', 'Client'].includes(user.role)) {
+        window.location.href = user.role === 'Officer' ? 'admin.html' : 'superadmin.html';
+        return;
+    }
+    if (isOfficer && user && user.role !== 'Officer') {
+        window.location.href = user.role === 'Admin' ? 'superadmin.html' : 'dashboard.html';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Global Notifications Polling ---
+    enforceRoleAccess();
+    applyRoleNavigation();
     loadNotifications();
 
-    // --- Dashboard Logic (Citizen) ---
+    const user = getCurrentUser();
+    const roleLabel = document.getElementById('userRoleLabel');
+    if (roleLabel && user?.role) roleLabel.textContent = `Role: ${user.role}`;
+
     const categoryDropdown = document.getElementById('categoryDropdown');
     if (categoryDropdown) {
         loadCategories();
@@ -29,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.addEventListener('click', submitComplaint);
     }
 
-    // --- Admin Portal Logic (Officer) ---
     const adminTableBody = document.getElementById('complaintsTableBody');
     if (adminTableBody) {
         loadAdminComplaints();
@@ -103,7 +146,7 @@ async function submitComplaint() {
     const description = document.getElementById('complaintDescription')?.value;
 
     if (!title || !categoryId) {
-        alert("Please fill in the Title and Category!");
+        alert("Title and category are required.");
         return;
     }
 
@@ -133,7 +176,7 @@ async function submitComplaint() {
                 await uploadEvidence(result.id, fileInput.files[0]);
             }
 
-            alert(`Success! Your case was submitted. Your tracking code is: ${result.trackingCode}`);
+            alert(`Complaint submitted. Tracking code: ${result.trackingCode}`);
             document.getElementById('complaintForm').reset();
             
             // Auto switch to tracking view specifically for them!
@@ -143,12 +186,11 @@ async function submitComplaint() {
 
         } else {
             const error = await response.text();
-            alert("API Error: " + error);
+            alert("Unable to submit complaint: " + error);
         }
 
     } catch (error) {
-        console.error("Network Error:", error);
-        alert("Failed to connect to the server.");
+        alert("Unable to connect to server.");
     }
 }
 
@@ -183,7 +225,7 @@ async function trackCase() {
         const resultBox = document.getElementById('trackResult');
 
         if (!response.ok) {
-            alert("Case not found or Invalid Tracking Code.");
+            alert("Case not found. Check tracking code.");
             resultBox.style.display = 'none';
             return;
         }
@@ -203,8 +245,7 @@ async function trackCase() {
         else badge.classList.add('badge-pending');
 
     } catch (error) {
-        console.error("Tracking Error:", error);
-        alert("Failed to connect to database.");
+        alert("Unable to connect to server.");
     }
 }
 
@@ -224,20 +265,30 @@ async function loadAdminComplaints() {
         }
         
         const complaints = await response.json();
+        const searchInput = (document.getElementById('searchCaseInput')?.value || '').trim().toLowerCase();
+        const statusFilter = (document.getElementById('statusCaseFilter')?.value || '').trim();
+        const filteredComplaints = complaints.filter(c => {
+            const matchesSearch = !searchInput
+                || (c.trackingCode || '').toLowerCase().includes(searchInput)
+                || (c.title || '').toLowerCase().includes(searchInput);
+            const matchesStatus = !statusFilter || c.status === statusFilter;
+            return matchesSearch && matchesStatus;
+        });
         
         // Use the real endpoint for Dashboard stats!
         calculateAndRenderStats();
         tableBody.innerHTML = ''; 
 
-        if (complaints.length === 0) {
-            renderErrorState(tableBody, 'No Cases Found', 'There are currently no active cases in the system registry.', '📁');
+        if (filteredComplaints.length === 0) {
+            renderErrorState(tableBody, 'No Cases Found', 'No cases match the current filter.');
             return;
         }
 
-        complaints.forEach(c => {
+        filteredComplaints.forEach(c => {
             let badgeClass = 'badge-pending';
             if (c.status === 'Investigating') badgeClass = 'badge-investigating';
             else if (c.status === 'Resolved') badgeClass = 'badge-resolved';
+            else if (c.status === 'Rejected') badgeClass = 'badge-rejected';
 
             let dotClass = 'Medium';
             if (c.priority === 'High') dotClass = 'High';
@@ -261,8 +312,7 @@ async function loadAdminComplaints() {
             tableBody.appendChild(row);
         });
     } catch (error) {
-        console.error("Error loading complaints:", error);
-        renderErrorState(tableBody, 'System Failure', 'Failed to connect securely to the CivicTrack database backend. Is the C# server running?', '⚠️');
+        renderErrorState(tableBody, 'System Failure', 'Failed to connect to backend.');
     }
 }
 
@@ -283,15 +333,18 @@ async function calculateAndRenderStats() {
     }
 }
 
-function renderErrorState(container, title, message, icon = '⚠️') {
+function renderErrorState(container, title, message) {
+    const isError = title.includes('Failure') || title.includes('Error');
+    const bgColor = isError ? '#fee2e2' : '#f8fafc';
+    const borderColor = isError ? '#fca5a5' : 'var(--border-color)';
+    const textColor = isError ? '#9f1239' : 'var(--text-muted)';
+    
     container.innerHTML = `
         <tr>
-            <td colspan="6">
-                <div class="error-state">
-                    <div class="error-icon">${icon}</div>
-                    <div class="error-title">${title}</div>
-                    <div>${message}</div>
-                    <button class="btn-secondary" style="margin-top: 1.5rem;" onclick="loadAdminComplaints()">Retry Connection</button>
+            <td colspan="6" style="padding: 1.5rem;">
+                <div style="background-color: ${bgColor}; border: 1px solid ${borderColor}; border-radius: var(--radius-sm); padding: 1rem; color: ${textColor}; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500;">${isError ? 'Unable to connect to the server. Please try again.' : 'No records available.'}</span>
+                    <button class="btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background-color: white;" onclick="loadAdminComplaints()">Retry</button>
                 </div>
             </td>
         </tr>
@@ -333,6 +386,9 @@ function openAdvancedPanel(caseData) {
     document.getElementById('slideOverOverlay').classList.add('active');
     document.getElementById('caseDetailPanel').classList.add('open');
     document.body.style.overflow = 'hidden'; 
+    
+    // NEW: Auto-fetch communications
+    loadComments(caseData.id);
 }
 
 function closeAdvancedPanel() {
@@ -361,11 +417,10 @@ async function updateCaseStatus() {
             loadAdminComplaints();
         } else {
             console.error("Failed to update status");
-            alert("Database Error: Could not update the case status.");
+            alert("Could not update case status.");
         }
     } catch (error) {
-        console.error("Network Error during update:", error);
-        alert("Failed to connect to the backend securely.");
+        alert("Unable to connect to backend.");
     }
 }
 
@@ -396,19 +451,83 @@ async function loadCaseEvidence() {
     if (!currentAdminCaseId) return;
     try {
         const response = await fetch(`${API_BASE_URL}/Evidence/complaint/${currentAdminCaseId}`);
-        if (!response.ok) return alert("Failed to fetch evidence securely.");
+        if (!response.ok) return alert("Failed to fetch evidence files.");
         
         const files = await response.json();
         if (files.length === 0) {
-            alert("No evidence files assigned to this case.");
+            alert("No evidence files available.");
             return;
         }
 
-        let fileList = files.map(f => `📄 ${f.fileName} (${(f.fileSizeInBytes / 1024).toFixed(1)} KB)`).join("\n");
-        alert(`Attached Evidence Documents:\n\n${fileList}\n\n(A dedicated file-viewing dashboard panel is in development!)`);
+        let fileList = files.map(f => `${f.fileName} (${(f.fileSizeInBytes / 1024).toFixed(1)} KB)`).join("\n");
+        alert(`Attached evidence files:\n\n${fileList}`);
 
     } catch (e) {
         console.error(e);
-        alert("System error fetching case documents.");
+        alert("Error fetching case documents.");
+    }
+}
+
+// ==========================================
+// 7. Transparency Engine (Comments)
+// ==========================================
+async function loadComments(complaintId) {
+    const commentsBox = document.getElementById('panelComments');
+    if (!commentsBox) return;
+
+    commentsBox.innerHTML = 'Loading communications...';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Comments/complaint/${complaintId}`);
+        if (!response.ok) throw new Error('Failed to fetch');
+        
+        const comments = await response.json();
+        
+        if (comments.length === 0) {
+            commentsBox.innerHTML = '<span style="color:var(--text-muted)">No official remarks registered yet.</span>';
+            return;
+        }
+
+        commentsBox.innerHTML = comments.map(c => `
+            <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border-color);">
+                <strong style="color:var(--text-dark);">${c.authorName} (${c.authorRole})</strong>
+                <span style="font-size: 0.75rem; color:var(--text-muted); float:right;">${new Date(c.createdAt).toLocaleString()}</span>
+                <div style="margin-top: 0.25rem;">${c.content}</div>
+            </div>
+        `).join('');
+        commentsBox.scrollTop = commentsBox.scrollHeight;
+    } catch (e) {
+        commentsBox.innerHTML = '<span style="color:red">Failed to load communications.</span>';
+    }
+}
+
+async function postComment() {
+    if (!currentAdminCaseId) return alert("No case selected.");
+    
+    const input = document.getElementById('newCommentInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const payload = {
+        complaintId: currentAdminCaseId,
+        authorId: getCurrentUserId(),
+        content: text
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            input.value = '';
+            loadComments(currentAdminCaseId); // Immediately auto-refresh the log!
+        } else {
+            alert("Failed to post official remark.");
+        }
+    } catch (error) {
+        console.error("Comment Error:", error);
     }
 }
