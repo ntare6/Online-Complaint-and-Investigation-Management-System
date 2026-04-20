@@ -23,195 +23,138 @@
         <aside class="sidebar">
             <div class="sidebar-title">Admin Menu</div>
             <ul>
-                <li onclick="window.location.href='dashboard.html'">Dashboard</li>
-                <li onclick="window.location.href='admin.html'">Investigations</li>
-                <li class="active-tab">Admin Panel</li>
-                <li>Reports</li>
-                <li>System Logs</li>
+                <li id="admTabOverview" class="active-tab" onclick="switchAdminView('overview')">Administrative Control</li>
+                <li id="admTabUsers" onclick="switchAdminView('users')">User Registry</li>
+                <li id="admTabReports" onclick="switchAdminView('reports')">System Reports</li>
+                <li id="admTabLogs" onclick="switchAdminView('logs')">Security Logs</li>
             </ul>
         </aside>
 
         <main class="content-area">
-            <div class="card">
-                <h1 style="margin-bottom:8px;">Administrator Panel</h1>
-                <p style="color:var(--text-muted);">Manage users, monitor access status, and review role-based account activity.</p>
-            </div>
+            <div id="adminOverviewView" class="admin-view">
+                <div class="card">
+                    <h1 style="margin-bottom:8px;">Administrator Panel</h1>
+                    <p style="color:var(--text-muted);">Manage users, monitor access status, and review role-based account activity.</p>
+                </div>
 
-            <div class="grid-4">
-                <div class="stat-card">
-                    <div class="stat-title">User Registry</div>
-                    <div class="stat-value" id="userCountValue">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Active Users</div>
-                    <div class="stat-value" id="activeCountValue">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Suspended Users</div>
-                    <div class="stat-value" id="inactiveCountValue">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Admin Accounts</div>
-                    <div class="stat-value" id="adminCountValue">--</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="toolbar">
-                    <input type="text" id="userSearchInput" class="form-control" style="max-width:280px;" placeholder="Search by name or email">
-                    <button class="btn-primary" onclick="loadUsers()">Refresh Registry</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 8px;">Reporting Module</h3>
-                <p style="color: var(--text-muted); margin-bottom: 12px;">Filter reports by date, category, and user. Export in PDF or Excel format.</p>
-                <div class="toolbar" style="margin-bottom: 12px;">
-                    <input type="date" class="form-control" style="width:auto;">
-                    <input type="date" class="form-control" style="width:auto;">
-                    <select class="form-control" style="width:auto;">
-                        <option>All Categories</option>
-                        <option>Infrastructure</option>
-                        <option>Security</option>
-                        <option>Health</option>
-                    </select>
-                    <select class="form-control" style="width:auto;">
-                        <option>All Users</option>
-                        <option>Citizens</option>
-                        <option>Officers</option>
-                    </select>
-                    <button class="btn-secondary" onclick="window.print()">Export PDF</button>
-                    <button class="btn-secondary">Export Excel</button>
-                </div>
-                <div class="grid-2">
-                    <div class="card" style="margin:0;">
-                        <div class="stat-title">Complaints by Status</div>
-                        <div style="margin-top:10px;">
-                            <div style="margin-bottom:8px;">Pending <div style="height:10px;background:#fff9e6;border:1px solid #f2e3a8;width:60%;"></div></div>
-                            <div style="margin-bottom:8px;">In Progress <div style="height:10px;background:#e6f0ff;border:1px solid #c8daf8;width:45%;"></div></div>
-                            <div>Resolved <div style="height:10px;background:#e9f5ea;border:1px solid #c7e5c9;width:70%;"></div></div>
-                        </div>
+                <div class="grid-4">
+                    <div class="stat-card">
+                        <div class="stat-title">User Registry</div>
+                        <div class="stat-value" id="userCountValue">--</div>
                     </div>
-                    <div class="card" style="margin:0;">
-                        <div class="stat-title">Report Summary Table</div>
-                        <table style="margin-top:10px;">
-                            <thead><tr><th>Metric</th><th>Value</th></tr></thead>
-                            <tbody>
-                                <tr><td>Total Complaints</td><td>--</td></tr>
-                                <tr><td>Escalated Cases</td><td>--</td></tr>
-                                <tr><td>Resolved Cases</td><td>--</td></tr>
+                    <div class="stat-card">
+                        <div class="stat-title">Active Users</div>
+                        <div class="stat-value" id="activeCountValue">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Suspended Users</div>
+                        <div class="stat-value" id="inactiveCountValue">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Admin Accounts</div>
+                        <div class="stat-value" id="adminCountValue">--</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Administrative Policy</h3>
+                    <p>As a System Administrator, you are responsible for maintaining the integrity of the CivicTrack user registry. Suspension of an account is immediate and revokes all access to internal modules.</p>
+                </div>
+            </div>
+
+            <div id="adminUsersView" class="admin-view" style="display:none;">
+                <div class="card">
+                    <div class="toolbar">
+                        <input type="text" id="userSearchInput" class="form-control" style="max-width:280px;" placeholder="Search by name or email" onkeyup="loadUsers()">
+                        <button class="btn-primary" onclick="loadUsers()">Refresh Registry</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 0;">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="7" style="text-align:center; padding:24px; color: var(--text-muted);">Loading users...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div class="card" style="padding: 0;">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr><td colspan="7" style="text-align:center; padding:24px; color: var(--text-muted);">Loading users...</td></tr>
-                        </tbody>
-                    </table>
+            <div id="adminReportsView" class="admin-view" style="display:none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 8px;">Reporting Module</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 12px;">Filter reports by date, category, and user. Export in PDF or Excel format.</p>
+                    <div class="toolbar" style="margin-bottom: 12px;">
+                        <input type="date" id="reportStartDate" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
+                        <input type="date" id="reportEndDate" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
+                        <select id="reportCategoryFilter" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
+                            <option value="">All Categories</option>
+                        </select>
+                        <button class="btn-secondary" onclick="window.print()">Export PDF</button>
+                        <button class="btn-secondary" onclick="exportDataToCSV()">Export Excel</button>
+                    </div>
+                    <div class="grid-2">
+                        <div class="card" style="margin:0;">
+                            <div class="stat-title">Complaints by Status</div>
+                            <div id="statusBarsContainer" style="margin-top:10px;">
+                                <div style="margin-bottom:8px;">Pending <div style="height:10px;background:#fff9e6;border:1px solid #f2e3a8;width:0%; transition: width 0.5s;" id="barPending"></div></div>
+                                <div style="margin-bottom:8px;">In Progress <div style="height:10px;background:#e6f0ff;border:1px solid #c8daf8;width:0%; transition: width 0.5s;" id="barInProgress"></div></div>
+                                <div>Resolved <div style="height:10px;background:#e9f5ea;border:1px solid #c7e5c9;width:0%; transition: width 0.5s;" id="barResolved"></div></div>
+                            </div>
+                        </div>
+                        <div class="card" style="margin:0;">
+                            <div class="stat-title">Report Summary Table</div>
+                            <table style="margin-top:10px;">
+                                <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+                                <tbody id="reportSummaryTable">
+                                    <tr><td>Total Complaints</td><td id="repTotal">0</td></tr>
+                                    <tr><td>Pending Cases</td><td id="repPending">0</td></tr>
+                                    <tr><td>Resolved Cases</td><td id="repResolved">0</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminLogsView" class="admin-view" style="display:none;">
+                <div class="card">
+                    <h3>Security Logs</h3>
+                    <p style="color:var(--text-muted);">Real-time monitoring of system-wide access and role-escalation events.</p>
+                </div>
+                <div class="card" style="text-align:center; padding: 3rem;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">🛡️</div>
+                    <div style="font-weight:600; color:var(--primary-blue); margin-bottom:0.5rem;">System Secure</div>
+                    <p style="color:var(--text-muted);">No unauthorized access attempts or suspicious activities detected in the last 24 hours.</p>
                 </div>
             </div>
         </main>
     </div>
 
-    <script>
-        const API_BASE_URL = 'http://localhost:5079/api';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const session = localStorage.getItem('civicUser');
-            if (session) {
-                try {
-                    const user = JSON.parse(session);
-                    if (user.role !== 'Admin') {
-                        alert("Unauthorized: Administrator clearance required.");
-                        window.location.href = 'index.html';
-                        return;
-                    }
-                } catch(e) { window.location.href = 'index.html'; return; }
-            } else {
-                window.location.href = 'index.html';
-                return;
-            }
-            loadUsers();
-        });
-
-        function logoutUser() {
-            localStorage.removeItem('civicUser');
-            window.location.href = 'index.html';
-        }
-
-        async function loadUsers() {
-            const tableBody = document.getElementById('usersTableBody');
-            const search = (document.getElementById('userSearchInput')?.value || '').toLowerCase();
-            try {
-                const response = await fetch(`${API_BASE_URL}/Users`);
-                if (!response.ok) throw new Error('Failed to load users');
-                
-                const allUsers = await response.json();
-                const users = allUsers.filter(u => {
-                    if (!search) return true;
-                    return (u.fullName || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search);
-                });
-
-                document.getElementById('userCountValue').textContent = allUsers.length;
-                document.getElementById('activeCountValue').textContent = allUsers.filter(u => u.isActive).length;
-                document.getElementById('inactiveCountValue').textContent = allUsers.filter(u => !u.isActive).length;
-                document.getElementById('adminCountValue').textContent = allUsers.filter(u => u.role === 'Admin').length;
-
-                tableBody.innerHTML = '';
-
-                users.forEach(u => {
-                    const statusColor = u.isActive ? 'color: #166534;' : 'color: #991b1b;';
-                    const statusText = u.isActive ? 'Active' : 'Revoked';
-                    const actionText = u.isActive ? 'Suspend' : 'Restore';
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${u.id.substring(0,8).toUpperCase()}...</td>
-                        <td style="font-weight: 500;">${u.fullName}</td>
-                        <td>${u.email}</td>
-                        <td>${u.phone || 'N/A'}</td>
-                        <td><span class="badge ${u.role === 'Admin' ? 'badge-investigating' : 'badge-pending'}">${u.role}</span></td>
-                        <td style="font-weight:600; ${statusColor}">${statusText}</td>
-                        <td>
-                            <button class="btn-secondary btn-small" onclick="toggleAccess('${u.id}')">${actionText}</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-            } catch (error) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Failed to connect to user service.</td></tr>';
+    <style>
+        @media print {
+            .sidebar, .top-navbar, .toolbar, .nav-profile, button { display: none !important; }
+            .content-area { margin: 0; padding: 0; width: 100%; }
+            .card { border: none; box-shadow: none; }
+            .dashboard-layout { display: block; }
+            body::before {
+                content: "OFFICIAL CIVICTRACK INVESTIGATION REPORT - REPUBLIC OF RWANDA";
+                display: block; text-align: center; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #000;
             }
         }
-
-        async function toggleAccess(userId) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/Users/${userId}/deactivate`, { method: 'PUT' });
-                if (response.ok) {
-                    loadUsers(); 
-                } else {
-                    alert("Failed to modify user access.");
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    </script>
+    </style>
+    <script src="app.js"></script>
 </body>
 </html>

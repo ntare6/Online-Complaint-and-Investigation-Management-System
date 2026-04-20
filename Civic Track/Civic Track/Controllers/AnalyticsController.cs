@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Civic_Track.Data;
 
@@ -75,14 +75,13 @@ namespace Civic_Track.Controllers
             var total = await _context.Complaints.CountAsync();
 
             var pending = await _context.Complaints
-                .CountAsync(c => c.Status.ToString() == "Pending");
+                .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Pending);
 
             var inProgress = await _context.Complaints
-                .CountAsync(c => c.Status.ToString() == "InProgress"
-                              || c.Status.ToString() == "In_Progress");
+                .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Investigating);
 
             var resolved = await _context.Complaints
-                .CountAsync(c => c.Status.ToString() == "Resolved");
+                .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Resolved);
 
             var resolutionRate = total == 0
                 ? 0
@@ -95,6 +94,46 @@ namespace Civic_Track.Controllers
                 inProgress,
                 resolved,
                 resolutionRate = Math.Round(resolutionRate, 2)
+            });
+        }
+
+        [HttpGet("report-detailed")]
+        public async Task<IActionResult> GetReportDetailed(
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate,
+            [FromQuery] Guid? categoryId)
+        {
+            var query = _context.Complaints.AsQueryable();
+
+            if (startDate.HasValue)
+                query = query.Where(c => c.SubmittedAt >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(c => c.SubmittedAt <= endDate.Value);
+
+            if (categoryId.HasValue)
+                query = query.Where(c => c.CategoryId == categoryId.Value);
+
+            var complaints = await query.ToListAsync();
+
+            var total = complaints.Count;
+            var pending = complaints.Count(c => c.Status == Civic_Track.Models.ComplaintStatus.Pending);
+            var inProgress = complaints.Count(c => c.Status == Civic_Track.Models.ComplaintStatus.Investigating);
+            var resolved = complaints.Count(c => c.Status == Civic_Track.Models.ComplaintStatus.Resolved);
+            var rejected = complaints.Count(c => c.Status == Civic_Track.Models.ComplaintStatus.Rejected);
+
+            return Ok(new
+            {
+                total,
+                pending,
+                inProgress,
+                resolved,
+                rejected,
+                breakdown = new[] {
+                    new { label = "Pending", count = pending, color = "#fff9e6" },
+                    new { label = "In Progress", count = inProgress, color = "#e6f0ff" },
+                    new { label = "Resolved", count = resolved, color = "#e9f5ea" }
+                }
             });
         }
     }
