@@ -3,225 +3,754 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivicTrack | Government Portal</title>
-    <link rel="stylesheet" href="styles.css?v=1.3">
+    <title>CivicTrack | Republic of Rwanda</title>
+    <link rel="stylesheet" href="styles.css?v=1.5">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #F5F7FA;
+            color: #111827;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── HEADER ─────────────────────────────────────── */
+        .gov-header {
+            background: #ffffff;
+            border-bottom: 3px solid #1E4FA1;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .gov-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .gov-brand img {
+            height: 48px;
+            width: auto;
+        }
+
+        .gov-brand-text .gov-country {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .gov-brand-text .gov-subtitle {
+            font-size: 11px;
+            color: #6B7280;
+            margin-top: 1px;
+        }
+
+        .gov-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #F0F4FF;
+            border: 1px solid #C7D7F8;
+            color: #1E4FA1;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── MAIN LAYOUT ─────────────────────────────────── */
+        .page-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            max-width: 1160px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 48px 40px;
+            gap: 64px;
+            align-items: start;
+        }
+
+        /* ── LEFT SECTION ────────────────────────────────── */
+        .info-panel {}
+
+        .system-tag {
+            display: inline-block;
+            background: #EEF2FF;
+            color: #1E4FA1;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 4px 10px;
+            margin-bottom: 20px;
+        }
+
+        .system-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1E4FA1;
+            line-height: 1.15;
+            margin-bottom: 14px;
+        }
+
+        .system-desc {
+            font-size: 15px;
+            color: #4B5563;
+            line-height: 1.65;
+            margin-bottom: 36px;
+            max-width: 420px;
+        }
+
+        .services-block {
+            border-top: 2px solid #E5E7EB;
+            padding-top: 24px;
+        }
+
+        .services-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #9CA3AF;
+            margin-bottom: 16px;
+        }
+
+        .service-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .service-check {
+            width: 20px;
+            height: 20px;
+            background: #1E4FA1;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .service-text strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .service-text span {
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        /* Quick track on left */
+        .quick-track-block {
+            margin-top: 36px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #E5E7EB;
+            border-left: 4px solid #1E4FA1;
+        }
+
+        .quick-track-block h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E4FA1;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .quick-track-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quick-track-row input {
+            flex: 1;
+            height: 38px;
+            border: 1px solid #D1D5DB;
+            padding: 0 10px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            background: #F9FAFB;
+            outline: none;
+        }
+
+        .quick-track-row input:focus {
+            border-color: #1E4FA1;
+            background: #fff;
+        }
+
+        .btn-track {
+            height: 38px;
+            padding: 0 16px;
+            background: #1E4FA1;
+            color: #fff;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-track:hover { background: #172F6B; }
+
+        .track-result {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            font-size: 13px;
+        }
+
+        .track-result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        /* ── RIGHT: LOGIN CARD ───────────────────────────── */
+        .login-panel {}
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #E5E7EB;
+            padding: 32px;
+        }
+
+        /* Language toggle */
+        .lang-toggle {
+            display: flex;
+            border: 1px solid #E5E7EB;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .lang-toggle button {
+            flex: 1;
+            height: 34px;
+            border: none;
+            background: #F9FAFB;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B7280;
+            cursor: pointer;
+            border-right: 1px solid #E5E7EB;
+            transition: all 0.15s;
+        }
+
+        .lang-toggle button:last-child { border-right: none; }
+
+        .lang-toggle button:hover {
+            background: #EEF2FF;
+            color: #1E4FA1;
+        }
+
+        .lang-toggle button.active {
+            background: #1E4FA1;
+            color: #ffffff;
+        }
+
+        /* Card header */
+        .card-header {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        /* Form */
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .field-input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #D1D5DB;
+            padding: 0 12px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .field-input:focus {
+            border-color: #1E4FA1;
+            box-shadow: 0 0 0 3px rgba(30, 79, 161, 0.08);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap .field-input {
+            padding-right: 44px;
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 42px;
+            width: 42px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #9CA3AF;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-pw:hover { color: #1E4FA1; }
+
+        .field-row-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .forgot-link {
+            font-size: 12px;
+            color: #1E4FA1;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover { text-decoration: underline; }
+
+        /* Error */
+        .login-error {
+            display: none;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            padding: 10px 12px;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        /* Buttons */
+        .btn-signin {
+            width: 100%;
+            height: 44px;
+            background: #1E4FA1;
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: background 0.15s;
+            margin-top: 4px;
+        }
+
+        .btn-signin:hover { background: #172F6B; }
+        .btn-signin:disabled { background: #93A8D4; cursor: not-allowed; }
+
+        .divider-or {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+            color: #9CA3AF;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .divider-or::before,
+        .divider-or::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+        }
+
+        .btn-register {
+            width: 100%;
+            height: 42px;
+            background: #fff;
+            color: #1E4FA1;
+            border: 1px solid #1E4FA1;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-register:hover {
+            background: #EEF2FF;
+        }
+
+        /* Trust note */
+        .trust-note {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #F3F4F6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+            color: #9CA3AF;
+            line-height: 1.5;
+        }
+
+        .trust-note .lock-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ── FOOTER ──────────────────────────────────────── */
+        .gov-footer {
+            background: #fff;
+            border-top: 1px solid #E5E7EB;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #9CA3AF;
+            flex-shrink: 0;
+        }
+
+        .gov-footer a {
+            color: #9CA3AF;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .gov-footer a:hover { color: #1E4FA1; text-decoration: underline; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #E5E7EB;
+        }
+
+        .badge-pending      { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
+        .badge-investigating{ background: #EFF6FF; color: #1E4FA1; border-color: #BFDBFE; }
+        .badge-resolved     { background: #F0FDF4; color: #166534; border-color: #BBF7D0; }
+        .badge-rejected     { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .page-body {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                padding: 32px 20px;
+            }
+            .gov-header { padding: 0 20px; }
+            .gov-footer { padding: 16px 20px; flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
 </head>
 <body>
-    <header class="official-header">
-        <div class="header-container">
-            <div class="gov-identity">
-                <img src="assets/coat%20of%20arms.jpg" alt="Republic of Rwanda" class="gov-logo" height="54">
-                <div class="gov-text">
-                    <div class="gov-name" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
-                    <div class="gov-portal" data-i18n="gov_portal">Official Government Portal</div>
-                </div>
+
+    <!-- HEADER -->
+    <header class="gov-header">
+        <div class="gov-brand">
+            <img src="assets/coat%20of%20arms.jpg" alt="Rwanda Coat of Arms">
+            <div class="gov-brand-text">
+                <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
+                <div class="gov-subtitle" data-i18n="gov_portal">Official Government Portal</div>
             </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div class="header-tag" data-i18n="portal_title">CivicTrack Portal</div>
+        </div>
+        <div class="gov-header-right">
+            <div class="secure-badge">
+                🔒 <span data-i18n="portal_title">CivicTrack Portal</span>
             </div>
         </div>
     </header>
 
-    <main class="institutional-layout">
-        <section class="info-workspace">
-            <div class="content-box">
-                <h1 class="institutional-title">CivicTrack</h1>
-                <p class="institutional-desc">
-                    National Complaint and Investigation Management System. A formal platform for citizen engagement, case oversight, and administrative accountability.
-                </p>
-                
-                <div class="services-registry">
-                    <h3 style="margin-bottom: 24px; font-weight: 600; color: var(--text-dark);" data-i18n="core_ops">Core Operations</h3>
-                    <div class="service-item">
-                        <div class="checkmark">✓</div>
-                        <div>
-                            <strong data-i18n="submit_comp">Submit Complaints</strong>
-                            <p data-i18n="submit_desc">Register official reports for review by relevant national authorities.</p>
-                        </div>
+    <!-- MAIN -->
+    <div class="page-body">
+
+        <!-- LEFT -->
+        <section class="info-panel">
+            <div class="system-tag">e-Government Service</div>
+            <h1 class="system-title">CivicTrack</h1>
+            <p class="system-desc" data-i18n="system_desc">
+                A secure platform for submitting and tracking public complaints. Every report is logged, assigned, and resolved through an official digital process.
+            </p>
+
+            <div class="services-block">
+                <div class="services-label" data-i18n="core_ops">Core Services</div>
+
+                <div class="service-row">
+                    <div class="service-check">✓</div>
+                    <div class="service-text">
+                        <strong data-i18n="submit_comp">Submit Complaints</strong>
+                        <span data-i18n="submit_desc">Register official reports for review by relevant national authorities.</span>
                     </div>
-                    <div class="service-item">
-                        <div class="checkmark">✓</div>
-                        <div>
-                            <strong data-i18n="track_prog">Track Case Progress</strong>
-                            <p data-i18n="track_desc">Monitor the real-time status and development of pending investigations.</p>
-                        </div>
+                </div>
+
+                <div class="service-row">
+                    <div class="service-check">✓</div>
+                    <div class="service-text">
+                        <strong data-i18n="track_prog">Track Case Progress</strong>
+                        <span data-i18n="track_desc">Monitor the real-time status and development of pending investigations.</span>
                     </div>
-                    <div class="service-item">
-                        <div class="checkmark">✓</div>
-                        <div>
-                            <strong data-i18n="escalate_legal">Escalate Cases for Legal Review</strong>
-                            <p data-i18n="escalate_desc">Request formal legal assessment for specialized or complex caseloads.</p>
-                        </div>
+                </div>
+
+                <div class="service-row">
+                    <div class="service-check">✓</div>
+                    <div class="service-text">
+                        <strong data-i18n="receive_feedback">Receive Official Feedback</strong>
+                        <span data-i18n="receive_feedback_desc">Get notified when your case is updated or resolved by authorities.</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Quick Track -->
+            <div class="quick-track-block">
+                <h4 data-i18n="quick_track">Quick Case Track</h4>
+                <div class="quick-track-row">
+                    <input type="text" id="quickTrackingCode" placeholder="CT-XXXXXXXX" data-i18n="track_placeholder">
+                    <button class="btn-track" onclick="publicTrackCase()" data-i18n="track_btn">Track</button>
+                </div>
+                <div class="track-result" id="quickTrackResult">
+                    <div class="track-result-row">
+                        <span style="font-family:monospace; font-weight:700; font-size:12px;" id="ptCode"></span>
+                        <span class="badge" id="ptStatus"></span>
+                    </div>
+                    <div style="font-weight:600; margin-bottom:2px;" id="ptTitle"></div>
+                    <div style="color:#6B7280; font-size:12px;">Last update: <span id="ptLastUpdate"></span></div>
                 </div>
             </div>
         </section>
 
-        <section class="access-portal">
+        <!-- RIGHT -->
+        <section class="login-panel">
             <div class="login-card">
-                <!-- Language Selector — prominent, top of card -->
-                <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:2px solid #f3f4f6;">
-                    <p style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;" data-i18n="select_lang">Choose your language to continue</p>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                        <button onclick="setLanguage('en')" class="lang-btn" id="langBtnEn" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
-                            🇬🇧 <span data-i18n="lang_en">English</span>
-                        </button>
-                        <button onclick="setLanguage('rw')" class="lang-btn" id="langBtnRw" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
-                            🇷🇼 <span data-i18n="lang_rw">Kinyarwanda</span>
-                        </button>
-                        <button onclick="setLanguage('fr')" class="lang-btn" id="langBtnFr" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
-                            🇫🇷 <span data-i18n="lang_fr">Français</span>
-                        </button>
-                    </div>
-                </div>
-                <h2 style="margin-bottom: 8px; font-weight: 600; color: var(--text-dark);" data-i18n="portal_access">Portal Access</h2>
-                <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 13px;" data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
-                
-                <div class="form-group">
-                    <label class="form-label" for="loginEmail" style="font-size: 13px;" data-i18n="email_label">Official Email Address</label>
-                    <input type="email" id="loginEmail" class="form-control" placeholder="name@domain.gov.rw">
-                </div>
-                <div class="form-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                        <label class="form-label" for="loginPassword" style="margin-bottom:0; font-size: 13px;" data-i18n="password_label">Security Password</label>
-                        <a href="#" style="font-size: 11px; color: var(--primary-blue); font-weight: 600; text-transform: uppercase;" data-i18n="forgot_password">Forgot Password?</a>
-                    </div>
-                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••">
-                </div>
-                
-                <button type="button" class="btn-primary" style="width:100%; height: 44px; margin-top: 10px; font-size: 14px;" onclick="secureLogin()" data-i18n="sign_in">Sign In to Portal</button>
-                
-                <div class="auth-divider">
-                    <span>or</span>
+
+                <!-- Language Toggle -->
+                <div class="lang-toggle">
+                    <button id="langBtnEn" onclick="chooseLang('en')" class="active">🇬🇧 EN</button>
+                    <button id="langBtnRw" onclick="chooseLang('rw')">🇷🇼 RW</button>
+                    <button id="langBtnFr" onclick="chooseLang('fr')">🇫🇷 FR</button>
                 </div>
 
-                <button type="button" class="btn-secondary" style="width:100%; height: 44px; font-size: 14px; margin-bottom: 24px;" onclick="window.location.href='register.html'" data-i18n="create_account">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <h2 data-i18n="portal_access">Portal Access</h2>
+                    <p data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
+                </div>
+
+                <!-- Error -->
+                <div class="login-error" id="loginError"></div>
+
+                <!-- Email -->
+                <div class="field-group">
+                    <label class="field-label" data-i18n="email_label">Email Address</label>
+                    <input type="email" id="loginEmail" class="field-input" placeholder="name@domain.gov.rw">
+                </div>
+
+                <!-- Password -->
+                <div class="field-group">
+                    <div class="field-row-meta">
+                        <label class="field-label" style="margin-bottom:0;" data-i18n="password_label">Password</label>
+                        <a href="#" class="forgot-link" data-i18n="forgot_password">Forgot Password?</a>
+                    </div>
+                    <div class="password-wrap">
+                        <input type="password" id="loginPassword" class="field-input" placeholder="••••••••">
+                        <button class="toggle-pw" onclick="togglePassword()" id="togglePwBtn" title="Show/hide password">
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sign In -->
+                <button class="btn-signin" id="loginBtn" onclick="secureLogin()" data-i18n="sign_in">
+                    Sign In
+                </button>
+
+                <div class="divider-or">or</div>
+
+                <!-- Register -->
+                <button class="btn-register" onclick="window.location.href='register.html'" data-i18n="create_account">
                     Create Citizen Account
                 </button>
 
-                <div class="quick-track-section" style="padding-top: 24px; border-top: 2px solid #F3F4F6;">
-                    <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary-blue);" data-i18n="quick_track">Quick Case Track</h3>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="quickTrackingCode" class="form-control" placeholder="CT-XXXXXXXX" style="flex: 1; height: 38px; text-transform: uppercase;">
-                        <button class="btn-primary" style="height: 38px; padding: 0 12px; font-size: 12px;" onclick="publicTrackCase()" data-i18n="track_btn">Track</button>
-                    </div>
-                    <div id="quickTrackResult" style="display: none; margin-top: 16px; padding: 12px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 4px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <span style="font-weight:700; font-size:12px;" id="ptCode"></span>
-                            <span class="badge" id="ptStatus" style="font-size:10px;"></span>
-                        </div>
-                        <div style="font-size:13px; font-weight:600; margin-bottom:4px;" id="ptTitle"></div>
-                        <div style="font-size:11px; color:var(--text-muted);">
-                            Last Update: <span id="ptLastUpdate"></span>
-                        </div>
-                        <button class="btn-small" style="width:100%; margin-top:12px; height:28px; font-size:11px;" onclick="window.location.href='index.html'">Detailed View (Login Required)</button>
-                    </div>
+                <!-- Trust Note -->
+                <div class="trust-note">
+                    <span class="lock-icon">🔒</span>
+                    <span data-i18n="disclaimer">This is a secure government system. Unauthorized access is strictly prohibited under the Laws of the Republic of Rwanda.</span>
                 </div>
-                
-                <div class="legal-disclaimer" data-i18n="disclaimer">
-                    This is an official government system. All activities are monitored. Unauthorized access is strictly prohibited under the Laws of the Republic of Rwanda.
-                </div>
+
             </div>
         </section>
-    </main>
 
-    <footer class="official-footer">
-        <div class="footer-container">
-            <div>&copy; 2026 Government of the Republic of Rwanda</div>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Use</a>
-                <a href="#">Contact Support</a>
-            </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="gov-footer">
+        <div>&copy; 2026 Government of the Republic of Rwanda</div>
+        <div>
+            <a href="#" data-i18n="privacy_policy">Privacy Policy</a>
+            <a href="#" data-i18n="terms_use">Terms of Use</a>
+            <a href="#" data-i18n="contact_support">Contact Support</a>
         </div>
     </footer>
 
     <script src="translations.js"></script>
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
+        let pwVisible = false;
 
-        // Highlight active language button
-        const _origSetLang = setLanguage;
-        function setLanguage(lang) {
-            _origSetLang(lang);
-            document.querySelectorAll('.lang-btn').forEach(b => {
-                b.style.borderColor = 'var(--border-color)';
-                b.style.background = '#fff';
-                b.style.color = 'var(--text-dark)';
-            });
-            const active = document.getElementById('langBtn' + lang.charAt(0).toUpperCase() + lang.slice(1));
-            if (active) {
-                active.style.borderColor = 'var(--primary-blue)';
-                active.style.background = '#eff6ff';
-                active.style.color = 'var(--primary-blue)';
-            }
+        /* ── Language ── */
+        function chooseLang(lang) {
+            setLanguage(lang);
+            document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+            const map = { en: 'langBtnEn', rw: 'langBtnRw', fr: 'langBtnFr' };
+            const btn = document.getElementById(map[lang]);
+            if (btn) btn.classList.add('active');
         }
 
-        async function secureLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+        /* ── Password toggle ── */
+        function togglePassword() {
+            pwVisible = !pwVisible;
+            const input = document.getElementById('loginPassword');
+            const btn   = document.getElementById('togglePwBtn');
+            input.type  = pwVisible ? 'text' : 'password';
+            btn.textContent = pwVisible ? '🙈' : '👁';
+        }
 
-            if (!email || !password) return alert("Please enter credentials.");
+        /* ── Login ── */
+        async function secureLogin() {
+            const email    = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl  = document.getElementById('loginError');
+            const btn      = document.getElementById('loginBtn');
+            errorEl.style.display = 'none';
+
+            if (!email || !password) {
+                errorEl.textContent = 'Please enter your email and password.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled    = true;
+            btn.textContent = '...';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+                const res = await fetch(`${API_BASE_URL}/Auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
-                if (response.ok) {
-                    const user = await response.json();
-                    localStorage.setItem('civicUser', JSON.stringify(user));
-                    if (user.role === 'Admin') {
-                        window.location.href = 'superadmin.html';
-                    } else if (user.role === 'Officer') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'dashboard.html';
-                    }
-                } else {
-                    const errorMsg = await response.text();
-                    alert(errorMsg || "Login failed. Check your email and password.");
-                }
-            } catch (error) {
-                alert("Unable to connect to server.");
-            }
-        }
-
-        async function publicTrackCase() {
-            const code = document.getElementById('quickTrackingCode').value.trim().toUpperCase();
-            const resultBox = document.getElementById('quickTrackResult');
-            if (!code) return;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/Complaints/public-track/${code}`);
-                if (!response.ok) {
-                    alert("Tracking code not found.");
-                    resultBox.style.display = 'none';
+                if (!res.ok) {
+                    errorEl.textContent = await res.text() || 'Invalid email or password.';
+                    errorEl.style.display = 'block';
                     return;
                 }
 
-                const data = await response.json();
-                resultBox.style.display = 'block';
-                document.getElementById('ptCode').innerText = data.trackingCode;
-                document.getElementById('ptTitle').innerText = data.title;
-                document.getElementById('ptLastUpdate').innerText = new Date(data.lastUpdatedAt).toLocaleString();
-                
-                const statusBadge = document.getElementById('ptStatus');
-                statusBadge.innerText = data.status;
-                
-                // Set badge class
-                statusBadge.className = 'badge';
-                if (data.status === 'Resolved') statusBadge.classList.add('badge-resolved');
-                else if (['Investigating', 'UnderReview'].includes(data.status)) statusBadge.classList.add('badge-investigating');
-                else if (data.status === 'Rejected') statusBadge.classList.add('badge-rejected');
-                else statusBadge.classList.add('badge-pending');
+                const user = await res.json();
+                localStorage.setItem('civicUser', JSON.stringify(user));
 
-            } catch (e) {
-                alert("Unable to reach the tracking server.");
+                if      (user.role === 'Admin')   window.location.href = 'superadmin.html';
+                else if (user.role === 'Officer') window.location.href = 'admin.html';
+                else                              window.location.href = 'dashboard.html';
+
+            } catch {
+                errorEl.textContent = 'Unable to connect to server. Is the API running?';
+                errorEl.style.display = 'block';
+            } finally {
+                const lang = localStorage.getItem('civicLang') || 'en';
+                btn.textContent = translations[lang]?.sign_in || 'Sign In';
+                btn.disabled = false;
             }
         }
+
+        /* ── Public Track ── */
+        async function publicTrackCase() {
+            const code = document.getElementById('quickTrackingCode').value.trim().toUpperCase();
+            const box  = document.getElementById('quickTrackResult');
+            if (!code) return;
+            try {
+                const res = await fetch(`${API_BASE_URL}/Complaints/public-track/${code}`);
+                if (!res.ok) { alert('Tracking code not found.'); box.style.display = 'none'; return; }
+                const d = await res.json();
+                box.style.display = 'block';
+                document.getElementById('ptCode').innerText       = d.trackingCode;
+                document.getElementById('ptTitle').innerText      = d.title;
+                document.getElementById('ptLastUpdate').innerText = new Date(d.lastUpdatedAt).toLocaleString();
+                const badge = document.getElementById('ptStatus');
+                badge.innerText = d.status;
+                badge.className = 'badge';
+                if      (d.status === 'Resolved')                                badge.classList.add('badge-resolved');
+                else if (['Investigating','UnderReview'].includes(d.status))     badge.classList.add('badge-investigating');
+                else if (d.status === 'Rejected')                                badge.classList.add('badge-rejected');
+                else                                                              badge.classList.add('badge-pending');
+            } catch { alert('Unable to reach the tracking server.'); }
+        }
+
+        /* ── Enter key ── */
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') secureLogin(); });
+
+        /* ── Init ── */
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('civicLang') || 'en';
+            chooseLang(lang);
+        });
     </script>
 </body>
 </html>
