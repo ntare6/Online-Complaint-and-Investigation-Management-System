@@ -204,11 +204,21 @@
 <body>
 
     <header class="gov-header">
-        <div class="gov-container">
-            <div class="gov-logo-box" style="width: 40px; height: 40px; border: 2px solid var(--irembo-blue); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--irembo-blue); font-size: 18px;">RW</div>
-            <div class="gov-title-text">
-                <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
-                <div class="gov-portal-name" data-i18n="gov_portal">Official Citizen Service Portal</div>
+        <div class="gov-container" style="justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div class="gov-logo-box" style="width: 40px; height: 40px; border: 2px solid var(--irembo-blue); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--irembo-blue); font-size: 18px;">RW</div>
+                <div class="gov-title-text">
+                    <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
+                    <div class="gov-portal-name" data-i18n="gov_portal">Official Citizen Service Portal</div>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; border:1px solid #e2e8f0; padding:4px 10px; border-radius:4px;">
+                <span style="font-size:13px;">🌐</span>
+                <select id="langSelect" style="background:transparent; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none; color:#1E4FA1;" onchange="setLanguage(this.value)">
+                    <option value="en">EN - English</option>
+                    <option value="rw">RW - Kinyarwanda</option>
+                    <option value="fr">FR - Français</option>
+                </select>
             </div>
         </div>
     </header>
