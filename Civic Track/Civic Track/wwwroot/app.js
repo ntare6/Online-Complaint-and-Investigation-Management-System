@@ -107,13 +107,12 @@ function setupLocationHierarchy() {
 
     if (!districtSel) return;
 
-    // Full Rwanda geographical data
+    // Rwanda geographical data — 10 key districts
     const rwandaData = {
         'Gasabo': {
             'Bumbogo':   ['Bibare', 'Gasagara', 'Kabukuba', 'Nyamugari', 'Rugarama'],
             'Gisozi':    ['Cyimo', 'Gisozi', 'Kabeza', 'Karuruma', 'Ndera'],
             'Jabana':    ['Bwiza', 'Jabana', 'Kagugu', 'Kibenga', 'Muyange'],
-            'Jali':      ['Batsinda', 'Gasabo', 'Jali', 'Karuruma', 'Nyundo'],
             'Kacyiru':   ['Kamatamu', 'Kacyiru', 'Kibaza', 'Kabutare', 'Rurembwe'],
             'Kimironko': ['Bibare', 'Kamukina', 'Kimironko', 'Kibagabaga', 'Nyabisindu'],
             'Kinyinya':  ['Gasanze', 'Kabuga', 'Kinyinya', 'Ruramba', 'Ryanyuma'],
@@ -124,93 +123,118 @@ function setupLocationHierarchy() {
             'Rutunga':   ['Gakoroba', 'Gishyeshye', 'Kibumba', 'Rutunga', 'Shyorongi']
         },
         'Kicukiro': {
-            'Gahanga':   ['Akabuga', 'Gahanga', 'Karukanka', 'Kigarama', 'Murambi'],
-            'Gatenga':   ['Gatenga', 'Kagarama', 'Kagera', 'Kibaya', 'Rusave'],
-            'Gikondo':   ['Agakiriro', 'Gikondo', 'Kabuye', 'Nyabarongo', 'Rugunga'],
-            'Kagarama':  ['Bibare', 'Gako', 'Kagarama', 'Kimisagara', 'Kinyinya'],
-            'Kanombe':   ['Gahanga', 'Kabuga', 'Kanombe', 'Kibaya', 'Nyarugunga'],
-            'Kicukiro':  ['Gatare', 'Kicukiro', 'Masaka', 'Nyanza', 'Rugunga'],
-            'Masaka':    ['Gasanze', 'Kanombe', 'Karama', 'Masaka', 'Nyarugunga'],
-            'Niboye':    ['Gikumba', 'Kabeza', 'Kanombe', 'Kibare', 'Niboye'],
-            'Nyarugunga':['Gahanga', 'Kanombe', 'Kigarama', 'Nyarugunga', 'Rebero']
+            'Gahanga':    ['Akabuga', 'Gahanga', 'Karukanka', 'Kigarama', 'Murambi'],
+            'Gatenga':    ['Gatenga', 'Kagarama', 'Kagera', 'Kibaya', 'Rusave'],
+            'Gikondo':    ['Agakiriro', 'Gikondo', 'Kabuye', 'Nyabarongo', 'Rugunga'],
+            'Kagarama':   ['Bibare', 'Gako', 'Kagarama', 'Kimisagara', 'Kinyinya'],
+            'Kanombe':    ['Gahanga', 'Kabuga', 'Kanombe', 'Kibaya', 'Nyarugunga'],
+            'Kicukiro':   ['Gatare', 'Kicukiro', 'Masaka', 'Nyanza', 'Rugunga'],
+            'Masaka':     ['Gasanze', 'Kanombe', 'Karama', 'Masaka', 'Nyarugunga'],
+            'Niboye':     ['Gikumba', 'Kabeza', 'Kanombe', 'Kibare', 'Niboye'],
+            'Nyarugunga': ['Gahanga', 'Kanombe', 'Kigarama', 'Nyarugunga', 'Rebero']
         },
         'Nyarugenge': {
-            'Gitega':    ['Agatare', 'Biryogo', 'Gatare', 'Gitega', 'Kigarama'],
-            'Kanyinya':  ['Akabahizi', 'Gaculiro', 'Kanyinya', 'Mabuye', 'Rwezamenyo'],
-            'Kimisagara':['Akabahizi', 'Kimisagara', 'Nyarugenge', 'Rugunga', 'Rwezamenyo'],
-            'Mageragere':['Bweramana', 'Kabuye', 'Mageragere', 'Rubirizi', 'Rubungo'],
-            'Muhima':    ['Kimisagara', 'Muhima', 'Nyarugenge', 'Rugando', 'Rwezamenyo'],
-            'Nyamirambo':['Biryogo', 'Gitega', 'Kiyovu', 'Nyamirambo', 'Rugarama'],
-            'Nyarugenge':['Biryogo', 'Kimicanga', 'Nyarugenge', 'Rwezamenyo', 'Umujyi'],
-            'Rwezamenyo':['Gihanga', 'Kiyovu', 'Nyarugenge', 'Rugando', 'Rwezamenyo']
+            'Gitega':     ['Agatare', 'Biryogo', 'Gatare', 'Gitega', 'Kigarama'],
+            'Kanyinya':   ['Akabahizi', 'Gaculiro', 'Kanyinya', 'Mabuye', 'Rwezamenyo'],
+            'Kimisagara': ['Akabahizi', 'Kimisagara', 'Nyarugenge', 'Rugunga', 'Rwezamenyo'],
+            'Mageragere': ['Bweramana', 'Kabuye', 'Mageragere', 'Rubirizi', 'Rubungo'],
+            'Muhima':     ['Kimisagara', 'Muhima', 'Nyarugenge', 'Rugando', 'Rwezamenyo'],
+            'Nyamirambo': ['Biryogo', 'Gitega', 'Kiyovu', 'Nyamirambo', 'Rugarama'],
+            'Nyarugenge': ['Biryogo', 'Kimicanga', 'Nyarugenge', 'Rwezamenyo', 'Umujyi'],
+            'Rwezamenyo': ['Gihanga', 'Kiyovu', 'Nyarugenge', 'Rugando', 'Rwezamenyo']
         },
         'Bugesera': {
-            'Gashora':   ['Gashora', 'Kabeza', 'Kagina', 'Karenge', 'Nyamata'],
-            'Juru':      ['Gihanga', 'Juru', 'Kabuga', 'Kayenzi', 'Kirehe'],
-            'Kamabuye':  ['Cyasemakamba', 'Gashora', 'Kamabuye', 'Nyamata', 'Rusagara'],
-            'Mareba':    ['Bugesera', 'Gashora', 'Karambi', 'Mareba', 'Nyamata'],
-            'Mayange':   ['Bugesera', 'Kagina', 'Karambi', 'Mayange', 'Nyamata'],
-            'Musenyi':   ['Cyasemakamba', 'Gahinga', 'Kabyaza', 'Musenyi', 'Nyagasambu'],
-            'Mwogo':     ['Gasambya', 'Kagina', 'Kamabuye', 'Mwogo', 'Nyagasambu'],
-            'Ngeruka':   ['Gahinga', 'Kagina', 'Ngeruka', 'Nyamata', 'Rweru'],
-            'Ntarama':   ['Bugesera', 'Kabeza', 'Ntarama', 'Nyamata', 'Rubona'],
-            'Nyamata':   ['Bugesera', 'Gashora', 'Kayumbu', 'Nyamata', 'Rubona'],
-            'Rilima':    ['Bugesera', 'Gashora', 'Karama', 'Karambi', 'Rilima'],
-            'Ruhuha':    ['Gashora', 'Kabeza', 'Kayumbu', 'Ruhuha', 'Rweru'],
-            'Rweru':     ['Gashora', 'Karambi', 'Karama', 'Rweru', 'Rubona'],
-            'Shyara':    ['Bugesera', 'Gashora', 'Karambi', 'Nyamata', 'Shyara']
+            'Gashora':  ['Gashora', 'Kabeza', 'Kagina', 'Karenge', 'Nyamata'],
+            'Juru':     ['Gihanga', 'Juru', 'Kabuga', 'Kayenzi', 'Kirehe'],
+            'Kamabuye': ['Cyasemakamba', 'Gashora', 'Kamabuye', 'Nyamata', 'Rusagara'],
+            'Mareba':   ['Bugesera', 'Gashora', 'Karambi', 'Mareba', 'Nyamata'],
+            'Mayange':  ['Bugesera', 'Kagina', 'Karambi', 'Mayange', 'Nyamata'],
+            'Ntarama':  ['Bugesera', 'Kabeza', 'Ntarama', 'Nyamata', 'Rubona'],
+            'Nyamata':  ['Bugesera', 'Gashora', 'Kayumbu', 'Nyamata', 'Rubona'],
+            'Rilima':   ['Bugesera', 'Gashora', 'Karama', 'Karambi', 'Rilima'],
+            'Ruhuha':   ['Gashora', 'Kabeza', 'Kayumbu', 'Ruhuha', 'Rweru'],
+            'Rweru':    ['Gashora', 'Karambi', 'Karama', 'Rweru', 'Rubona']
         },
         'Musanze': {
-            'Cyuve':     ['Bikumba', 'Cyuve', 'Kabingo', 'Kagano', 'Nyange'],
-            'Gacaca':    ['Biruyi', 'Gacaca', 'Kidomo', 'Rugarama', 'Rwerere'],
-            'Gashaki':   ['Biruyi', 'Gashaki', 'Karwaza', 'Munanira', 'Nyakarenzo'],
-            'Gataraga':  ['Bwiza', 'Gataraga', 'Kagitega', 'Kiraro', 'Rugaragara'],
-            'Kimonyi':   ['Birambo', 'Kimonyi', 'Kagano', 'Nyange', 'Rugarama'],
-            'Kinigi':    ['Bisoke', 'Karisimbi', 'Kinigi', 'Rugarama', 'Shingiro'],
-            'Muhoza':    ['Kabingo', 'Kagano', 'Muhoza', 'Musanze', 'Nyange'],
-            'Muko':      ['Binyamini', 'Kabingo', 'Muko', 'Rugaragara', 'Ryamateke'],
-            'Nkotsi':    ['Cyinzuzi', 'Kagano', 'Nkotsi', 'Nyakabungo', 'Rugarama'],
-            'Nyange':    ['Biruyi', 'Kidomo', 'Muhoza', 'Nyange', 'Rugarama'],
-            'Remera':    ['Biruyi', 'Birambo', 'Kabingo', 'Remera', 'Rugarama'],
-            'Rwaza':     ['Biruyi', 'Kagano', 'Kidomo', 'Rwaza', 'Shingiro'],
-            'Shingiro':  ['Bisoke', 'Kagano', 'Rugarama', 'Shingiro', 'Virunga']
+            'Cyuve':    ['Bikumba', 'Cyuve', 'Kabingo', 'Kagano', 'Nyange'],
+            'Gataraga': ['Bwiza', 'Gataraga', 'Kagitega', 'Kiraro', 'Rugaragara'],
+            'Kimonyi':  ['Birambo', 'Kimonyi', 'Kagano', 'Nyange', 'Rugarama'],
+            'Kinigi':   ['Bisoke', 'Karisimbi', 'Kinigi', 'Rugarama', 'Shingiro'],
+            'Muhoza':   ['Kabingo', 'Kagano', 'Muhoza', 'Musanze', 'Nyange'],
+            'Muko':     ['Binyamini', 'Kabingo', 'Muko', 'Rugaragara', 'Ryamateke'],
+            'Nyange':   ['Biruyi', 'Kidomo', 'Muhoza', 'Nyange', 'Rugarama'],
+            'Rwaza':    ['Biruyi', 'Kagano', 'Kidomo', 'Rwaza', 'Shingiro'],
+            'Shingiro': ['Bisoke', 'Kagano', 'Rugarama', 'Shingiro', 'Virunga']
         },
         'Huye': {
-            'Gishamvu':  ['Gishamvu', 'Karambi', 'Kayenzi', 'Mukangara', 'Nyanza'],
-            'Karama':    ['Gaseke', 'Karama', 'Maraba', 'Nyakibanda', 'Ruhashya'],
-            'Kigoma':    ['Cyarwa', 'Kigoma', 'Murama', 'Nyamiyaga', 'Sovu'],
-            'Kinazi':    ['Butare', 'Kinazi', 'Maraba', 'Mukangara', 'Nyanza'],
-            'Mbazi':     ['Cyarwa', 'Mbazi', 'Mugombwa', 'Rusatira', 'Sovu'],
-            'Mukura':    ['Butare', 'Gaseke', 'Mukura', 'Rusatira', 'Simbi'],
-            'Ngoma':     ['Butare', 'Maraba', 'Ngoma', 'Nyakibanda', 'Tumba'],
-            'Ruhashya':  ['Butare', 'Cyarwa', 'Maraba', 'Ruhashya', 'Simbi'],
-            'Rusatira':  ['Butare', 'Gaseke', 'Maraba', 'Rusatira', 'Sovu'],
-            'Rwaniro':   ['Butare', 'Gaseke', 'Maraba', 'Rwaniro', 'Simbi'],
-            'Simbi':     ['Butare', 'Cyarwa', 'Maraba', 'Simbi', 'Sovu'],
-            'Tumba':     ['Cyarwa', 'Maraba', 'Nyakibanda', 'Tumba', 'Sovu']
+            'Gishamvu': ['Gishamvu', 'Karambi', 'Kayenzi', 'Mukangara', 'Nyanza'],
+            'Karama':   ['Gaseke', 'Karama', 'Maraba', 'Nyakibanda', 'Ruhashya'],
+            'Kigoma':   ['Cyarwa', 'Kigoma', 'Murama', 'Nyamiyaga', 'Sovu'],
+            'Kinazi':   ['Butare', 'Kinazi', 'Maraba', 'Mukangara', 'Nyanza'],
+            'Mbazi':    ['Cyarwa', 'Mbazi', 'Mugombwa', 'Rusatira', 'Sovu'],
+            'Mukura':   ['Butare', 'Gaseke', 'Mukura', 'Rusatira', 'Simbi'],
+            'Ngoma':    ['Butare', 'Maraba', 'Ngoma', 'Nyakibanda', 'Tumba'],
+            'Ruhashya': ['Butare', 'Cyarwa', 'Maraba', 'Ruhashya', 'Simbi'],
+            'Simbi':    ['Butare', 'Cyarwa', 'Maraba', 'Simbi', 'Sovu'],
+            'Tumba':    ['Cyarwa', 'Maraba', 'Nyakibanda', 'Tumba', 'Sovu']
         },
         'Rubavu': {
-            'Bugeshi':   ['Bugeshi', 'Kamegeri', 'Kayenzi', 'Kidomo', 'Rugerero'],
-            'Busasamana':['Busasamana', 'Gisenyi', 'Kamegeri', 'Kanama', 'Rugaragara'],
-            'Cyanzarwe': ['Cyanzarwe', 'Gisenyi', 'Kanama', 'Kayenzi', 'Rugerero'],
-            'Gisenyi':   ['Bugoyi', 'Gisenyi', 'Kamegeri', 'Lac Kivu', 'Rubavu'],
-            'Kanama':    ['Bugeshi', 'Gisenyi', 'Kanama', 'Kayenzi', 'Rubavu'],
-            'Kanzenze':  ['Bugeshi', 'Kanzenze', 'Kayenzi', 'Rubavu', 'Rugerero'],
-            'Mudende':   ['Bugeshi', 'Kamegeri', 'Kayenzi', 'Mudende', 'Rugaragara'],
-            'Nyakiliba':  ['Bugeshi', 'Kamegeri', 'Nyakiliba', 'Rugerero', 'Rubavu'],
-            'Nyamyumba': ['Bugeshi', 'Gisenyi', 'Nyamyumba', 'Rubavu', 'Rugerero'],
-            'Nyundo':    ['Bugeshi', 'Gisenyi', 'Kayenzi', 'Nyundo', 'Rubavu'],
-            'Rubavu':    ['Bugeshi', 'Gisenyi', 'Rubavu', 'Rugerero', 'Urugwiro'],
-            'Rugerero':  ['Bugeshi', 'Gisenyi', 'Kamegeri', 'Rugerero', 'Urugwiro']
+            'Bugeshi':    ['Bugeshi', 'Kamegeri', 'Kayenzi', 'Kidomo', 'Rugerero'],
+            'Busasamana': ['Busasamana', 'Gisenyi', 'Kamegeri', 'Kanama', 'Rugaragara'],
+            'Cyanzarwe':  ['Cyanzarwe', 'Gisenyi', 'Kanama', 'Kayenzi', 'Rugerero'],
+            'Gisenyi':    ['Bugoyi', 'Gisenyi', 'Kamegeri', 'Lac Kivu', 'Rubavu'],
+            'Kanama':     ['Bugeshi', 'Gisenyi', 'Kanama', 'Kayenzi', 'Rubavu'],
+            'Mudende':    ['Bugeshi', 'Kamegeri', 'Kayenzi', 'Mudende', 'Rugaragara'],
+            'Nyamyumba':  ['Bugeshi', 'Gisenyi', 'Nyamyumba', 'Rubavu', 'Rugerero'],
+            'Nyundo':     ['Bugeshi', 'Gisenyi', 'Kayenzi', 'Nyundo', 'Rubavu'],
+            'Rubavu':     ['Bugeshi', 'Gisenyi', 'Rubavu', 'Rugerero', 'Urugwiro'],
+            'Rugerero':   ['Bugeshi', 'Gisenyi', 'Kamegeri', 'Rugerero', 'Urugwiro']
+        },
+        'Rwamagana': {
+            'Fumbwe':   ['Fumbwe', 'Gahengeri', 'Karenge', 'Munyiginya', 'Rugarama'],
+            'Gahengeri':['Gahengeri', 'Karenge', 'Munyiginya', 'Rwamagana', 'Rugarama'],
+            'Karenge':  ['Fumbwe', 'Karenge', 'Munyiginya', 'Rwamagana', 'Rugarama'],
+            'Kigabiro': ['Gahengeri', 'Kigabiro', 'Munyiginya', 'Rwamagana', 'Rugarama'],
+            'Muhazi':   ['Fumbwe', 'Gahengeri', 'Muhazi', 'Munyiginya', 'Rugarama'],
+            'Munyaga':  ['Fumbwe', 'Gahengeri', 'Munyaga', 'Munyiginya', 'Rugarama'],
+            'Munyiginya':['Fumbwe', 'Gahengeri', 'Munyiginya', 'Rwamagana', 'Rugarama'],
+            'Nzige':    ['Fumbwe', 'Gahengeri', 'Munyiginya', 'Nzige', 'Rugarama'],
+            'Rubona':   ['Fumbwe', 'Gahengeri', 'Munyiginya', 'Rubona', 'Rugarama']
+        },
+        'Nyagatare': {
+            'Gatunda':   ['Gatunda', 'Kagitumba', 'Karama', 'Matimba', 'Rwempasha'],
+            'Karama':    ['Gatunda', 'Karama', 'Matimba', 'Nyagatare', 'Rwempasha'],
+            'Karangazi': ['Karangazi', 'Matimba', 'Nyagatare', 'Rwempasha', 'Tabagwe'],
+            'Katabagemu':['Katabagemu', 'Matimba', 'Nyagatare', 'Rwempasha', 'Tabagwe'],
+            'Mimuli':    ['Karama', 'Matimba', 'Mimuli', 'Nyagatare', 'Rwempasha'],
+            'Mukama':    ['Karama', 'Matimba', 'Mukama', 'Nyagatare', 'Rwempasha'],
+            'Nyagatare': ['Karama', 'Matimba', 'Nyagatare', 'Rwempasha', 'Tabagwe'],
+            'Rwempasha': ['Gatunda', 'Karama', 'Matimba', 'Nyagatare', 'Rwempasha'],
+            'Tabagwe':   ['Karama', 'Matimba', 'Nyagatare', 'Rwempasha', 'Tabagwe']
+        },
+        'Muhanga': {
+            'Cyeza':     ['Cyeza', 'Kabacuzi', 'Karama', 'Muhanga', 'Nyamabuye'],
+            'Kabacuzi':  ['Cyeza', 'Kabacuzi', 'Karama', 'Muhanga', 'Nyamabuye'],
+            'Kibangu':   ['Cyeza', 'Kabacuzi', 'Kibangu', 'Muhanga', 'Nyamabuye'],
+            'Kiyumba':   ['Cyeza', 'Kabacuzi', 'Kiyumba', 'Muhanga', 'Nyamabuye'],
+            'Muhanga':   ['Cyeza', 'Kabacuzi', 'Karama', 'Muhanga', 'Nyamabuye'],
+            'Mushishiro':['Cyeza', 'Kabacuzi', 'Muhanga', 'Mushishiro', 'Nyamabuye'],
+            'Nyamabuye': ['Cyeza', 'Kabacuzi', 'Muhanga', 'Nyamabuye', 'Rongi'],
+            'Nyamiyaga': ['Cyeza', 'Kabacuzi', 'Muhanga', 'Nyamiyaga', 'Nyamabuye'],
+            'Rongi':     ['Cyeza', 'Kabacuzi', 'Muhanga', 'Nyamabuye', 'Rongi'],
+            'Rugendabari':['Cyeza', 'Kabacuzi', 'Muhanga', 'Nyamabuye', 'Rugendabari']
         }
     };
 
     districtSel.onchange = () => {
         const district = districtSel.value;
-        sectorSel.innerHTML = '<option value="">-- Select Sector --</option>';
-        cellSel.innerHTML   = '<option value="">-- Select Cell --</option>';
+        const lang = localStorage.getItem('civicLang') || 'en';
+        const sectorPlaceholder = (typeof translations !== 'undefined' && translations[lang]?.select_sector) || '-- Select Sector --';
+        const cellPlaceholder   = (typeof translations !== 'undefined' && translations[lang]?.select_cell)   || '-- Select Cell --';
+        sectorSel.innerHTML = `<option value="">${sectorPlaceholder}</option>`;
+        cellSel.innerHTML   = `<option value="">${cellPlaceholder}</option>`;
         if (!district || !rwandaData[district]) return;
-        Object.keys(rwandaData[district]).forEach(sector => {
+        Object.keys(rwandaData[district]).sort().forEach(sector => {
             const opt = document.createElement('option');
             opt.value = sector; opt.textContent = sector;
             sectorSel.appendChild(opt);
@@ -220,9 +244,11 @@ function setupLocationHierarchy() {
     sectorSel.onchange = () => {
         const district = districtSel.value;
         const sector   = sectorSel.value;
-        cellSel.innerHTML = '<option value="">-- Select Cell --</option>';
+        const lang = localStorage.getItem('civicLang') || 'en';
+        const cellPlaceholder = (typeof translations !== 'undefined' && translations[lang]?.select_cell) || '-- Select Cell --';
+        cellSel.innerHTML = `<option value="">${cellPlaceholder}</option>`;
         if (!district || !sector || !rwandaData[district]?.[sector]) return;
-        rwandaData[district][sector].forEach(cell => {
+        rwandaData[district][sector].sort().forEach(cell => {
             const opt = document.createElement('option');
             opt.value = cell; opt.textContent = cell;
             cellSel.appendChild(opt);
@@ -257,10 +283,12 @@ async function loadCategories() {
         const response = await fetch(`${API_BASE_URL}/Category`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const categories = await response.json();
-        dropdown.innerHTML = '<option value="">-- Select a Category --</option>';
+        const lang = localStorage.getItem('civicLang') || 'en';
+        const placeholder = (typeof translations !== 'undefined' && translations[lang]?.select_category) || '-- Select a Category --';
+        dropdown.innerHTML = `<option value="">${placeholder}</option>`;
         categories.forEach(category => {
             const option = document.createElement('option');
-            option.value = category.id;        
+            option.value = category.id;
             option.textContent = category.name;
             dropdown.appendChild(option);
         });
