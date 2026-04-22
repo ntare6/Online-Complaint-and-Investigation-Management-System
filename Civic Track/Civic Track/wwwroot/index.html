@@ -18,14 +18,6 @@
             </div>
             <div style="display:flex; align-items:center; gap:15px;">
                 <div class="header-tag" data-i18n="portal_title">CivicTrack Portal</div>
-                <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); padding:4px 10px; border-radius:4px;">
-                    <span style="color:white; font-size:14px;">🌐</span>
-                    <select id="langSelect" style="background:transparent; color:white; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none;" onchange="setLanguage(this.value)">
-                        <option value="en" style="color:black; font-weight:normal;">EN - English</option>
-                        <option value="rw" style="color:black; font-weight:normal;">RW - Kinyarwanda</option>
-                        <option value="fr" style="color:black; font-weight:normal;">FR - Français</option>
-                    </select>
-                </div>
             </div>
         </div>
     </header>
@@ -67,6 +59,21 @@
 
         <section class="access-portal">
             <div class="login-card">
+                <!-- Language Selector — prominent, top of card -->
+                <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:2px solid #f3f4f6;">
+                    <p style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;" data-i18n="select_lang">Choose your language to continue</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                        <button onclick="setLanguage('en')" class="lang-btn" id="langBtnEn" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
+                            🇬🇧 <span data-i18n="lang_en">English</span>
+                        </button>
+                        <button onclick="setLanguage('rw')" class="lang-btn" id="langBtnRw" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
+                            🇷🇼 <span data-i18n="lang_rw">Kinyarwanda</span>
+                        </button>
+                        <button onclick="setLanguage('fr')" class="lang-btn" id="langBtnFr" style="padding:8px 4px; border:2px solid var(--border-color); background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;">
+                            🇫🇷 <span data-i18n="lang_fr">Français</span>
+                        </button>
+                    </div>
+                </div>
                 <h2 style="margin-bottom: 8px; font-weight: 600; color: var(--text-dark);" data-i18n="portal_access">Portal Access</h2>
                 <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 13px;" data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
                 
@@ -132,6 +139,23 @@
     <script src="translations.js"></script>
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
+
+        // Highlight active language button
+        const _origSetLang = setLanguage;
+        function setLanguage(lang) {
+            _origSetLang(lang);
+            document.querySelectorAll('.lang-btn').forEach(b => {
+                b.style.borderColor = 'var(--border-color)';
+                b.style.background = '#fff';
+                b.style.color = 'var(--text-dark)';
+            });
+            const active = document.getElementById('langBtn' + lang.charAt(0).toUpperCase() + lang.slice(1));
+            if (active) {
+                active.style.borderColor = 'var(--primary-blue)';
+                active.style.background = '#eff6ff';
+                active.style.color = 'var(--primary-blue)';
+            }
+        }
 
         async function secureLogin() {
             const email = document.getElementById('loginEmail').value;
