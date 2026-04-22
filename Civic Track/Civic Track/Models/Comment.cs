@@ -13,4 +13,5 @@ public class Comment
 
     public Guid AuthorId { get; set; }
     public User Author { get; set; } = null!;
+    public string? AuthorRole { get; set; }
 }

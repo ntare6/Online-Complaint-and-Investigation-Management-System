@@ -5,36 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Administrator | CivicTrack</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="translations.js"></script>
 </head>
 <body>
     <nav class="top-navbar">
         <div class="nav-brand">
             <span class="gov-mark">RW</span>
             <span>CivicTrack</span>
-            <span class="gov-label">Republic of Rwanda</span>
+            <span class="gov-label" data-i18n="official_gov">Republic of Rwanda</span>
         </div>
         <div class="nav-profile">
-            <span>Role: Administrator</span>
-            <button class="btn-small" onclick="logoutUser()">Sign out</button>
+            <span data-i18n="admin_role">Role: Administrator</span>
+            <button class="btn-small" onclick="logoutUser()" data-i18n="sign_out">Sign out</button>
         </div>
     </nav>
 
     <div class="dashboard-layout">
         <aside class="sidebar">
-            <div class="sidebar-title">Admin Menu</div>
+            <div class="sidebar-title" data-i18n="admin_menu">Admin Menu</div>
             <ul>
-                <li id="admTabOverview" class="active-tab" onclick="switchAdminView('overview')">Administrative Control</li>
-                <li id="admTabUsers" onclick="switchAdminView('users')">User Registry</li>
-                <li id="admTabReports" onclick="switchAdminView('reports')">System Reports</li>
-                <li id="admTabLogs" onclick="switchAdminView('logs')">Security Logs</li>
+                <li id="admTabOverview" class="active-tab" onclick="switchAdminView('overview')" data-i18n="admin_control">Administrative Control</li>
+                <li id="admTabComplaints" onclick="switchAdminView('complaints')" data-i18n="comp_bureau">Complaint Bureau</li>
+                <li id="admTabUsers" onclick="switchAdminView('users')" data-i18n="user_registry">User Registry</li>
+                <li id="admTabReports" onclick="switchAdminView('reports')" data-i18n="sys_reports">System Reports</li>
+                <li id="admTabLogs" onclick="switchAdminView('logs')" data-i18n="security_logs">Security Logs</li>
             </ul>
         </aside>
 
         <main class="content-area">
             <div id="adminOverviewView" class="admin-view">
                 <div class="card">
-                    <h1 style="margin-bottom:8px;">Administrator Panel</h1>
-                    <p style="color:var(--text-muted);">Manage users, monitor access status, and review role-based account activity.</p>
+                    <h1 style="margin-bottom:8px;">Superadmin Command Center</h1>
+                    <p style="color:var(--text-muted);">Centralized oversight of national complaints, user identities, and system security.</p>
                 </div>
 
                 <div class="grid-4">
@@ -59,6 +61,42 @@
                 <div class="card">
                     <h3>Administrative Policy</h3>
                     <p>As a System Administrator, you are responsible for maintaining the integrity of the CivicTrack user registry. Suspension of an account is immediate and revokes all access to internal modules.</p>
+                </div>
+            </div>
+
+            <div id="adminComplaintsView" class="admin-view" style="display:none;">
+                <div class="card">
+                    <h3>National Case Registry</h3>
+                    <p style="color:var(--text-muted);">Oversee all submitted reports and assign them to Investigation Officers.</p>
+                    <div class="toolbar" style="margin-top:10px;">
+                        <input type="text" id="adminSearchCaseInput" class="form-control" style="max-width:300px;" placeholder="Search codes/titles" onkeyup="loadAdminComplaints()">
+                        <select id="adminStatusCaseFilter" class="form-control" style="width:auto;" onchange="loadAdminComplaints()">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Investigating">Investigating</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                        <button class="btn-primary" onclick="loadAdminComplaints()">Sync Bureau</button>
+                    </div>
+                </div>
+                <div class="card" style="padding:0;">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Officer</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintsTableBody">
+                                <tr><td colspan="6" style="text-align:center; padding:24px; color: var(--text-muted);">Loading national registry...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -141,6 +179,68 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <div class="slide-over-overlay" id="slideOverOverlay" onclick="closeAdvancedPanel()"></div>
+    <div class="slide-over-panel" id="caseDetailPanel">
+        <div class="slide-header">
+            <div>
+                <h3 id="panelTrackingCode" class="tracking-code">CT-XXXXXX</h3>
+                <div id="panelDate" style="font-size:12px; color: var(--text-muted);">Bureau Registry Log</div>
+            </div>
+            <button class="btn-close" onclick="closeAdvancedPanel()">&times;</button>
+        </div>
+        <div class="slide-body">
+            <div id="assignmentSection" class="detail-group" style="background: #f0f9ff; padding: 12px; border: 1px solid #bae6fd; border-radius: 4px; display:none;">
+                <div class="detail-label" style="color:var(--primary-blue); font-weight:700;">ADMIN: CASE ASSIGNMENT</div>
+                <div class="toolbar" style="margin-top:8px;">
+                    <select id="caseOfficerSelect" class="form-control" style="flex:1;">
+                        <option value="">-- Choose Officer --</option>
+                    </select>
+                    <button class="btn-primary" onclick="assignCaseToOfficer()">Assign</button>
+                </div>
+            </div>
+            <div class="detail-group">
+                <div class="detail-label">Current Status</div>
+                <div>
+                    <span id="panelStatusBadge" class="badge">--</span>
+                    <span id="panelOfficer" style="margin-left: 10px; font-weight:600; font-size: 0.85rem;"></span>
+                </div>
+            </div>
+            <div class="detail-group">
+                <div class="detail-label">Case Title</div>
+                <div class="detail-value" id="panelTitle">--</div>
+            </div>
+            <div class="detail-group">
+                <div class="detail-label">Detailed Description</div>
+                <div class="detail-value" id="panelDescription" style="background:#f9fafb; padding:10px; border:1px solid var(--border-color); white-space:pre-wrap;">--</div>
+            </div>
+            <div class="detail-group">
+                <div class="detail-label">Communication Notes</div>
+                <div id="panelComments" style="max-height:150px; overflow-y:auto; background:#f9fafb; padding:10px; border:1px solid var(--border-color); margin-bottom:10px;">--</div>
+                <div class="toolbar">
+                    <input type="text" id="newCommentInput" class="form-control" placeholder="Add official note">
+                    <button class="btn-secondary" onclick="postComment()">Post</button>
+                </div>
+            </div>
+            <!-- Formal Resolution Box -->
+            <div id="resolutionField" class="detail-group" style="display:none; background: #f0fdf4; padding: 12px; border: 1px solid #bbf7d0; border-radius: 4px;">
+                <div class="detail-label" style="color:#166534; font-weight:700;">OFFICIAL RESOLUTION SUMMARY</div>
+                <div id="resolutionDisplay" style="font-size: 14px; margin-bottom: 8px; display:none;"></div>
+                <textarea id="caseResolutionNote" class="form-control" rows="3" placeholder="Describe the final outcome..."></textarea>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <select id="updateStatusSelect" class="form-control" style="flex:1;" onchange="toggleResolutionField()">
+                <option value="Pending">Pending</option>
+                <option value="Investigating">Investigating</option>
+                <option value="Escalated">Escalated</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+            <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Save Updates</button>
+            <button class="btn-secondary" onclick="loadCaseEvidence()">Files</button>
+        </div>
     </div>
 
     <style>

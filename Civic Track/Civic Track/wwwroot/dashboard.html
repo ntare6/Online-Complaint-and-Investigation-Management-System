@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citizen Dashboard | CivicTrack</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="translations.js"></script>
 </head>
 <body>
 
@@ -12,23 +13,23 @@
         <div class="nav-brand">
             <span class="gov-mark">RW</span>
             <span>CivicTrack</span>
-            <span class="gov-label">Republic of Rwanda</span>
+            <span class="gov-label" data-i18n="official_gov">Republic of Rwanda</span>
         </div>
         <div class="nav-profile">
-            <span id="userRoleLabel">Role: Citizen</span>
-            <button class="btn-small" onclick="logoutUser()">Sign out</button>
+            <span id="userRoleLabel" data-i18n="role_citizen">Role: Citizen</span>
+            <button class="btn-small" onclick="logoutUser()" data-i18n="sign_out">Sign out</button>
         </div>
     </nav>
 
     <div class="dashboard-layout">
         <aside class="sidebar">
-            <div class="sidebar-title">Citizen Menu</div>
+            <div class="sidebar-title" data-i18n="citizen_menu">Citizen Menu</div>
             <ul>
-                <li id="tabOverview" class="active-tab" onclick="switchCitizenTab('overview')" data-role-visible="Citizen,Client">Overview</li>
-                <li id="tabLodge" onclick="switchCitizenTab('lodge')" data-role-visible="Citizen,Client">Submit Complaint</li>
-                <li id="tabTrack" onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client">My Complaints</li>
+                <li id="tabOverview" class="active-tab" onclick="switchCitizenTab('overview')" data-role-visible="Citizen,Client" data-i18n="overview">Overview</li>
+                <li id="tabLodge" onclick="switchCitizenTab('lodge')" data-role-visible="Citizen,Client" data-i18n="submit_new">Submit Complaint</li>
+                <li id="tabTrack" onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client" data-i18n="my_complaints">My Complaints</li>
                 <li id="tabNotifications" onclick="switchCitizenTab('notifications')" data-role-visible="Citizen,Client">
-                    Notifications <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
+                    <span data-i18n="notifications">Notifications</span> <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
                 </li>
             </ul>
         </aside>
@@ -37,80 +38,150 @@
 
             <!-- 1. Overview View (Dashboard Home) -->
             <div id="overviewView" class="citizen-view">
-                <div class="card">
-                    <h1 style="margin-bottom:8px;">Citizen Dashboard</h1>
-                    <p style="color:var(--text-muted);">Welcome to the official CivicTrack portal. Monitor your civil reports and track real-time progress.</p>
+                <div style="margin-bottom: 24px;">
+                    <h1 style="font-size: 28px; color: var(--primary-blue-dark);" data-i18n="dash_title">Citizen Dashboard</h1>
+                    <p style="color:var(--text-muted); font-size: 15px;" data-i18n="dash_desc">Submit and track your complaints and monitor their progress.</p>
                 </div>
+
 
                 <div class="grid-4">
                     <div class="stat-card">
-                        <div class="stat-title">Pending Case</div>
-                        <div class="stat-value" style="color:#d97706;">Received</div>
+                        <div class="stat-title" data-i18n="stat_pending">Pending Complaints</div>
+                        <div class="stat-value" id="statPending" style="color:#d97706;">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">Active Investigation</div>
-                        <div class="stat-value" style="color:var(--primary-blue);">In Progress</div>
+                        <div class="stat-title" data-i18n="stat_active">My Active Cases</div>
+                        <div class="stat-value" id="statInProgress" style="color:var(--primary-blue);">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">Resolved Case</div>
-                        <div class="stat-value" style="color:#16a34a;">Completed</div>
+                        <div class="stat-title" data-i18n="stat_resolved">Resolved Cases</div>
+                        <div class="stat-value" id="statResolved" style="color:#16a34a;">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">System Status</div>
-                        <div class="stat-value" style="color:var(--text-muted);">Online</div>
+                        <div class="stat-title" data-i18n="stat_rate">Resolution Rate</div>
+                        <div class="stat-value" id="statResolutionRate" style="color:var(--text-dark);">0%</div>
                     </div>
                 </div>
+
+                <!-- Reverted Analytics grid to previous state -->
                 
-                <div class="card" style="margin-top: 2rem;">
-                    <h3 style="margin-bottom: 1rem;">System Guidelines</h3>
-                    <ul style="color: var(--text-muted); font-size: 0.9rem; padding-left: 1.5rem;">
-                        <li>Ensure all evidence files are clear and under 5MB.</li>
-                        <li>Track your case status using the unique tracking code.</li>
-                        <li>Notification alerts will appear when an officer updates your case.</li>
-                    </ul>
+                <div class="grid-2" style="margin-top: 1.5rem;">
+                    <div class="card">
+                        <div class="recent-header">
+                            <h3 style="font-size:16px;" data-i18n="recent_comp">Recent Complaints</h3>
+                            <button class="btn-secondary" onclick="switchCitizenTab('track')" style="height:32px; font-size:12px; padding: 0 12px;" data-i18n="view_history">View History</button>
+                        </div>
+                        <div class="table-container">
+                            <table style="font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="col_code">Code</th>
+                                        <th data-i18n="col_title">Title</th>
+                                        <th data-i18n="col_status">Status</th>
+                                        <th data-i18n="col_action">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentComplaintsTableBody">
+                                    <tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--text-muted);" data-i18n="loading_records">Retrieving records...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size:16px; margin-bottom: 1.25rem;" data-i18n="quick_actions">Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <button class="btn-primary" onclick="switchCitizenTab('lodge')" style="text-align:left; justify-content: flex-start; padding-left:16px; width: 100%;" data-i18n="lodge_new">
+                                📝 Submit New Complaint
+                            </button>
+                            <button class="btn-secondary" onclick="switchCitizenTab('track')" style="text-align:left; justify-content: flex-start; padding-left:16px; width: 100%;" data-i18n="track_my">
+                                🔍 Track My Cases
+                            </button>
+                            <button class="btn-secondary" onclick="switchCitizenTab('notifications')" style="text-align:left; justify-content: flex-start; padding-left:16px; width: 100%;" data-i18n="view_alerts">
+                                🔔 View Alerts &amp; Messages
+                            </button>
+                        </div>
+                        <div class="security-note" style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color); font-size: 12px; color: var(--text-muted);">
+                            <span data-i18n="security_enc">🛡️ Standard encryption active. Secure government session.</span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <!-- 2. Submit Complaint View -->
             <div class="card citizen-view" id="lodgeView" style="display: none;">
-                <h2 style="margin-bottom:8px;">Lodge New Complaint</h2>
-                <p style="margin-bottom:24px; color:var(--text-muted);">Please provide accurate details. All information is handled securely according to government regulations.</p>
+                <h2 style="margin-bottom:8px;" data-i18n="lodge_title">Lodge New Complaint</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);" data-i18n="lodge_desc">Please provide accurate details. All information is handled securely according to government regulations.</p>
                 
                 <form id="complaintForm">
                     <div class="form-group">
-                        <label class="form-label" for="complaintTitle">Complaint Title</label>
+                        <label class="form-label" for="complaintTitle" data-i18n="comp_title_label">Complaint Title</label>
                         <input type="text" id="complaintTitle" class="form-control" placeholder="e.g., Damaged Infrastructure in Gasabo">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="categoryDropdown">Legal Category</label>
+                        <label class="form-label" for="categoryDropdown" data-i18n="legal_category">Legal Category</label>
                         <select id="categoryDropdown" class="form-control">
                             <option value="">Loading categories...</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="incidentLocation">Exact Location</label>
-                        <input type="text" id="incidentLocation" class="form-control" placeholder="District / Sector / Cell">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="incidentDistrict" data-i18n="district_label">District</label>
+                            <select id="incidentDistrict" class="form-control">
+                                <option value="">-- Select District --</option>
+                                <option value="Gasabo">Gasabo</option>
+                                <option value="Kicukiro">Kicukiro</option>
+                                <option value="Nyarugenge">Nyarugenge</option>
+                                <option value="Bugesera">Bugesera</option>
+                                <option value="Musanze">Musanze</option>
+                                <option value="Huye">Huye</option>
+                                <option value="Rubavu">Rubavu</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="incidentSector" data-i18n="sector_label">Sector</label>
+                            <select id="incidentSector" class="form-control">
+                                <option value="">-- Select Sector --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="incidentCell" data-i18n="cell_label">Cell</label>
+                            <select id="incidentCell" class="form-control">
+                                <option value="">-- Select Cell --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="incidentVillage" data-i18n="village_label">Village</label>
+                            <input type="text" id="incidentVillage" class="form-control" placeholder="Village Name">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="complaintDescription">Detailed Incident Description</label>
+                        <label class="form-label" for="incidentLocation" data-i18n="address_label">Specific Address/Landmark</label>
+                        <input type="text" id="incidentLocation" class="form-control" placeholder="e.g., Near Kimironko Market">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="complaintDescription" data-i18n="description_label">Detailed Incident Description</label>
                         <textarea id="complaintDescription" rows="6" class="form-control" placeholder="Provide as much detail as possible about the incident..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="evidenceFile">Upload Evidence Document (Optional)</label>
+                        <label class="form-label" for="evidenceFile" data-i18n="evidence_label">Upload Evidence Document (Optional)</label>
                         <input type="file" id="evidenceFile" accept="image/*,.pdf" class="form-control" style="background-color: transparent; border: none; padding-left: 0;">
                     </div>
-                    <button type="button" id="submitBtn" class="btn-primary" style="width:100%; padding: 1rem; font-weight: 700;">Submit Investigation Request</button>
+                    <button type="button" id="submitBtn" class="btn-primary" style="width:100%; padding: 1rem; font-weight: 700;" data-i18n="submit_request">Submit Investigation Request</button>
                 </form>
             </div>
 
             <!-- 3. My Complaints (Tracking) View -->
             <div class="card citizen-view" id="trackView" style="display: none;">
-                <h2 style="margin-bottom:8px;">My Investigation History</h2>
-                <p style="margin-bottom:24px; color:var(--text-muted);">View all cases submitted by your identity or search via tracking code.</p>
+                <h2 style="margin-bottom:8px;" data-i18n="track_title">My Investigation History</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);" data-i18n="track_desc">View all cases submitted by your identity or search via tracking code.</p>
                 
                 <div class="toolbar" style="margin-bottom:24px; display: flex; gap: 0.5rem;">
                     <input type="text" id="trackInput" class="form-control" style="font-family: monospace; font-size: 1.1rem; text-transform: uppercase;" placeholder="CT-XXXXXXXX">
-                    <button class="btn-primary" onclick="trackCase()">Search Registry</button>
+                    <button class="btn-primary" onclick="trackCase()" data-i18n="search_registry">Search Registry</button>
                 </div>
 
                 <!-- Case List Table (Populated by app.js) -->
@@ -118,10 +189,10 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Date Logged</th>
+                                <th data-i18n="col_code">Code</th>
+                                <th data-i18n="col_title">Title</th>
+                                <th data-i18n="col_status">Status</th>
+                                <th data-i18n="col_date">Date Logged</th>
                             </tr>
                         </thead>
                         <tbody id="userCasesTableBody">
@@ -131,30 +202,31 @@
                 </div>
 
                 <!-- Detailed Tracking Result Box -->
-                <div id="trackResult" style="margin-top: 2rem; display: none; padding: 2rem; border: 1px solid var(--border-color); border-radius: 4px; background-color: #f8fafc;">
-                    <button class="btn-secondary" style="float: right; padding: 0.25rem 0.75rem;" onclick="document.getElementById('trackResult').style.display='none'">Close</button>
+                <div id="trackResult" style="margin-top: 2rem; display: none; padding: 2rem; border: 1px solid var(--border-color); border-radius: 4px; background-color: #ffffff; box-shadow: var(--shadow-soft);">
+                    <button class="btn-secondary" style="float: right; padding: 0.25rem 0.75rem;" onclick="document.getElementById('trackResult').style.display='none'" data-i18n="close_btn">Close</button>
                     <h3 id="trackTitle" style="margin-bottom:8px;">-</h3>
-                    <div style="margin-bottom:6px;"><strong>Status:</strong> <span class="badge" id="trackBadge">-</span></div>
-                    <div style="margin-bottom:6px;"><strong>Category:</strong> <span id="trackCategory">-</span></div>
-                    <div style="margin-bottom:12px;"><strong>Date Logged:</strong> <span id="trackDate">-</span></div>
+                    <div style="margin-bottom:12px;"><strong data-i18n="tracking_code_lbl">Tracking Code:</strong> <span id="trackCodeDisplay" style="font-family:monospace; font-weight:bold;">-</span></div>
+                    <div style="margin-bottom:6px;"><strong data-i18n="status_lbl">Status:</strong> <span class="badge" id="trackBadge">-</span></div>
+                    <div style="margin-bottom:6px;"><strong data-i18n="category_lbl">Category:</strong> <span id="trackCategory">-</span></div>
+                    <div style="margin-bottom:12px;"><strong data-i18n="date_logged_lbl">Date Logged:</strong> <span id="trackDate">-</span></div>
+                    <div style="margin-bottom:12px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <strong data-i18n="officer_lbl">Investigating Officer:</strong> <span id="trackOfficerName" style="color:var(--primary-blue); font-weight:600;">Awaiting Assignment</span>
+                    </div>
                     
-                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                        <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">System Timeline</h4>
-                        <div class="timeline" id="trackTimeline">
-                            <div class="timeline-item">Case Received: Your report is awaiting officer assignment.</div>
-                        </div>
+                    <!-- History item injected here -->
+                    <div id="trackTimeline" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
                     </div>
                 </div>
             </div>
 
             <!-- 4. Notifications View -->
             <div class="card citizen-view" id="notificationsView" style="display: none;">
-                <h2 style="margin-bottom:8px;">Official Notifications</h2>
-                <p style="margin-bottom:24px; color:var(--text-muted);">Critical alerts regarding your submitted cases and system updates.</p>
+                <h2 style="margin-bottom:8px;" data-i18n="notif_title">Official Notifications</h2>
+                <p style="margin-bottom:24px; color:var(--text-muted);" data-i18n="notif_desc">Critical alerts regarding your submitted cases and system updates.</p>
                 
                 <div id="notificationsList" style="display: flex; flex-direction: column; gap: 1rem;">
                     <!-- Notification items will be injected here -->
-                    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                    <div style="text-align: center; padding: 3rem; color: var(--text-muted);" data-i18n="no_notifs">
                         No unread official notifications at this time.
                     </div>
                 </div>

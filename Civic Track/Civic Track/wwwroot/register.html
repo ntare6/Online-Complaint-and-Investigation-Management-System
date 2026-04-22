@@ -3,95 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivicTrack | Citizen Registration</title>
+    <title>Citizen Registration | CivicTrack Rwanda</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="translations.js"></script>
+    <style>
+        :root {
+            --irembo-blue: #1E4FA1;
+            --irembo-gray: #F5F7FA;
+            --irembo-border: #E2E8F0;
+            --irembo-text: #2D3748;
+            --irembo-muted: #718096;
+        }
+
+        body {
+            background-color: var(--irembo-gray);
+            color: var(--irembo-text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .reg-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .reg-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 580px;
+            border: 1px solid var(--irembo-border);
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .reg-header {
+            text-align: center;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--irembo-blue);
+            padding-bottom: 16px;
+        }
+
+        .reg-header h1 {
+            font-size: 24px;
+            color: var(--irembo-blue);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0;
+        }
+
+        .reg-header p {
+            font-size: 14px;
+            color: var(--irembo-muted);
+            margin: 0;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--irembo-blue);
+            text-transform: uppercase;
+            margin: 24px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--irembo-border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--irembo-text);
+        }
+
+        .form-control {
+            width: 100%;
+            height: 42px;
+            border: 1px solid var(--irembo-border);
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            border-radius: 2px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--irembo-blue);
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--irembo-muted);
+            margin-top: 4px;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .btn-reg {
+            background-color: var(--irembo-blue);
+            color: white;
+            width: 100%;
+            height: 46px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reg:hover {
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--irembo-blue);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .trust-note {
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid var(--irembo-border);
+            text-align: center;
+            font-size: 11px;
+            color: var(--irembo-muted);
+            font-style: italic;
+        }
+
+        .gov-header {
+            background: white;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--irembo-border);
+        }
+
+        .gov-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .gov-logo-img {
+            height: 40px;
+        }
+
+        .gov-title-text {
+            line-height: 1.2;
+        }
+
+        .gov-country {
+            font-weight: 800;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .gov-portal-name {
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <div class="split-layout">
-        <section class="split-left">
-            <div class="sidebar-title">Republic of Rwanda</div>
-            <h1 style="color: var(--primary-blue); margin-bottom: 16px;">Citizen Registration</h1>
-            <p style="color: var(--text-muted);">
-                Register once to submit complaints, upload evidence, receive notifications, and track investigation progress.
-            </p>
-        </section>
-        <section class="split-right">
-            <div class="auth-card">
-                <div class="sidebar-title">New Account</div>
-                <h2 style="margin-bottom: 8px;">Create profile</h2>
-                <p style="color: var(--text-muted); margin-bottom: 16px;">All fields marked required must be completed.</p>
 
-                <form id="registerForm" style="margin-top: 2rem;">
-                    <!-- Step 1: Core Details -->
-                    <div id="registrationFields">
-                        <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; color: var(--text-dark);">Full Legal Name</label>
-                            <input type="text" id="regFullName" class="form-control" style="border-radius: var(--radius-sm);" placeholder="John Doe" required>
-                        </div>
+    <header class="gov-header">
+        <div class="gov-container">
+            <div class="gov-logo-box" style="width: 40px; height: 40px; border: 2px solid var(--irembo-blue); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--irembo-blue); font-size: 18px;">RW</div>
+            <div class="gov-title-text">
+                <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
+                <div class="gov-portal-name" data-i18n="gov_portal">Official Citizen Service Portal</div>
+            </div>
+        </div>
+    </header>
 
-                        <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; color: var(--text-dark);">Email Address</label>
-                            <input type="email" id="regEmail" class="form-control" style="border-radius: var(--radius-sm);" placeholder="citizen@example.gov" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" style="font-weight: 600; color: var(--text-dark);">Contact Number</label>
-                            <input type="tel" id="regPhone" class="form-control" style="border-radius: var(--radius-sm);" placeholder="+250..." required>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 2rem;">
-                            <label class="form-label" style="font-weight: 600; color: var(--text-dark);">Secure Password</label>
-                            <input type="password" id="regPassword" class="form-control" style="border-radius: var(--radius-sm);" placeholder="••••••••" required>
-                        </div>
-
-                        <button type="button" class="btn-primary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.85rem; font-weight: 600;" onclick="secureRegister()">Enroll Now</button>
-                    </div>
-
-                    <!-- Step 2: OTP Challenge (Initially Hidden) -->
-                    <div id="otpFields" style="display: none; text-align: center;">
-                        <div style="margin-bottom: 2rem; padding: 1rem; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 0.85rem; border-radius: 4px;">
-                            <strong>A 6-digit verification code was generated.</strong>
-                            <p style="margin-top: 0.5rem; opacity: 0.8;">Please enter the secure verification ID sent to your official contact.</p>
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 2rem;">
-                            <label class="form-label" style="font-weight: 600; color: var(--text-dark);">Enter 6-Digit Verification ID</label>
-                            <input type="text" id="regOtp" class="form-control" style="border-radius: var(--radius-sm); text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; font-family: monospace;" maxlength="6" placeholder="000000">
-                        </div>
-
-                        <button type="button" class="btn-primary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.85rem; font-weight: 600;" onclick="secureRegister(true)">Complete Verification</button>
-                        <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="location.reload()">Return to Registry</p>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <a href="index.html" style="color: var(--primary-blue); text-decoration: none; font-size: 0.9rem; font-weight: 600;">← Back to Secure Login</a>
-                    </div>
-                </form>
+    <div class="reg-container">
+        <div class="reg-card">
+            <div class="reg-header">
+                <h1 data-i18n="reg_title">CivicTrack Registry</h1>
+                <p data-i18n="reg_subtitle">National Complaint Management System Enrollment</p>
             </div>
 
-            <!-- Official Footer -->
-            <div style="position: absolute; bottom: 2rem; width: 100%; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-                © Government of Rwanda
-            </div>
-        </section>
+            <form id="registerForm">
+                <div class="section-title" data-i18n="personal_info">Personal Information</div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="regFullName" data-i18n="full_name">Full Legal Name (as per ID)</label>
+                    <input type="text" id="regFullName" class="form-control" placeholder="e.g. Jean Pierre Ntaganda" required>
+                    <div class="helper-text" data-i18n="full_name_helper">Enter your full names as they appear on your National ID card.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regNationalId" data-i18n="national_id">National ID Number</label>
+                    <input type="text" id="regNationalId" class="form-control" maxlength="16" placeholder="1 19XX X XXXXXXX X XX" required>
+                    <div class="helper-text" data-i18n="national_id_helper">Standard 16-digit Rwandan National Identification Number.</div>
+                    <div id="idError" class="error-message">Invalid National ID format. Must be 16 digits.</div>
+                </div>
+
+                <div class="section-title" data-i18n="contact_info">Contact Information</div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regEmail" data-i18n="email_label">Official Email Address</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="name@example.com" required>
+                    <div class="helper-text" data-i18n="login_desc">Used for official case updates and security alerts.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regPhone" data-i18n="phone_label">Mobile Phone Number</label>
+                    <input type="tel" id="regPhone" class="form-control" placeholder="+250 7XX XXX XXX" required>
+                    <div class="helper-text" data-i18n="phone_helper">Format: +250 788 000 000. Used for SMS notifications.</div>
+                </div>
+
+                <div class="section-title" data-i18n="security_info">Account Security</div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regPassword" data-i18n="password_label">Security Password</label>
+                    <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required>
+                    <div class="helper-text" data-i18n="password_helper">Minimum 8 characters. Must include a number and a special character.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword" data-i18n="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required>
+                    <div id="passwordError" class="error-message">Passwords do not match.</div>
+                </div>
+
+                <button type="button" class="btn-reg" onclick="handleRegistration()" data-i18n="create_btn">Create Account</button>
+                
+                <a href="index.html" class="back-link" data-i18n="back_login">← Back to Secure Login</a>
+
+                <div class="trust-note" data-i18n="trust_note">
+                    Your data is protected under government security standards and the Law relating to the protection of personal data and privacy in Rwanda.
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Backend Registration Integration Logic -->
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
 
-        async function secureRegister(isOtpStep = false) {
-            const fullName = document.getElementById('regFullName').value;
-            const email = document.getElementById('regEmail').value;
-            const phone = document.getElementById('regPhone').value;
-            const password = document.getElementById('regPassword').value;
-            const otpCode = isOtpStep ? document.getElementById('regOtp').value : null;
+        async function handleRegistration() {
+            // Reset errors
+            document.getElementById('idError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
 
-            if (!fullName || !email || !password) return alert("Please fill out all required fields.");
+            const fullName = document.getElementById('regFullName').value.trim();
+            const nationalId = document.getElementById('regNationalId').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Basic Validation
+            if (!fullName || !nationalId || !email || !phone || !password) {
+                alert("Please complete all required fields.");
+                return;
+            }
+
+            if (nationalId.length !== 16 || !/^\d+$/.test(nationalId)) {
+                document.getElementById('idError').style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
 
             try {
-                const payload = { fullName, email, phone, password };
-                if (isOtpStep) payload.otpCode = otpCode;
+                const payload = { 
+                    fullName, 
+                    nationalId, 
+                    email, 
+                    phone, 
+                    password 
+                };
 
                 const response = await fetch(`${API_BASE_URL}/Auth/register`, {
                     method: 'POST',
@@ -102,29 +324,19 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    if (data.verificationRequired) {
-                        // Switch to OTP View
-                        document.getElementById('registrationFields').style.display = 'none';
-                        document.getElementById('otpFields').style.display = 'block';
-                        alert(data.message);
-                    } else {
-                        alert("Verification highly successful! Account provisioned.");
-                        window.location.href = 'index.html';
-                    }
+                    alert("Account successfully created. Please log in with your credentials.");
+                    window.location.href = 'index.html';
                 } else {
                     if (data.errors) {
-                        let unifiedError = "Security Alert. Please correct the following:\n\n";
-                        for (const field in data.errors) {
-                            unifiedError += `❌ ${data.errors[field][0]}\n`;
-                        }
-                        alert(unifiedError);
+                        let msg = "Validation Error:\n";
+                        for (let k in data.errors) msg += `• ${data.errors[k][0]}\n`;
+                        alert(msg);
                     } else {
-                        alert("System Failure: " + (data.message || "Unknown error"));
+                        alert(data.message || "Registration failed. Please try again.");
                     }
                 }
             } catch (error) {
-                console.error("Registration failed:", error);
-                alert("Terminal Error: Cannot connect to secure server.");
+                alert("Connection Error: Unable to reach the registration server.");
             }
         }
     </script>

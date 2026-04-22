@@ -5,92 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Officer Dashboard | CivicTrack</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="translations.js"></script>
 </head>
 <body>
     <nav class="top-navbar">
         <div class="nav-brand">
             <span class="gov-mark">RW</span>
             <span>CivicTrack</span>
-            <span class="gov-label">Republic of Rwanda</span>
+            <span class="gov-label" data-i18n="official_gov">Republic of Rwanda</span>
         </div>
         <div class="nav-profile">
-            <span id="userRoleLabel">Role: Investigation Officer</span>
-            <button class="btn-small" onclick="logoutUser()">Sign out</button>
+            <span id="userRoleLabel" data-i18n="officer_role">Role: Investigation Officer</span>
+            <button class="btn-small" onclick="logoutUser()" data-i18n="sign_out">Sign out</button>
         </div>
     </nav>
 
     <div class="dashboard-layout">
         <aside class="sidebar">
-            <div class="sidebar-title">Officer Menu</div>
+            <div class="sidebar-title" data-i18n="officer_menu">Officer Menu</div>
             <ul>
-                <li class="active-tab">Dashboard</li>
-                <li>Investigations</li>
-                <li>Reports</li>
-                <li data-role-visible="Admin" onclick="window.location.href='superadmin.html'">Admin Panel</li>
-                <li id="tabNotifications">Notifications <span id="officerNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span></li>
+                <li id="offTabDashboard" class="active-tab" onclick="switchOfficerView('dashboard')" data-i18n="dash_overview">Dashboard Overview</li>
+                <li id="offTabCases" onclick="switchOfficerView('cases')" data-i18n="invest_queue">Investigation Queue</li>
+                <li id="offTabReports" onclick="switchOfficerView('reports')" data-i18n="stats_reports">Stats &amp; Reports</li>
+                <li data-role-visible="Admin" onclick="window.location.href='superadmin.html'" data-i18n="admin_panel">Admin Panel</li>
+                <li id="offTabNotifs" onclick="switchOfficerView('notifications')">
+                    <span data-i18n="notifications">Notifications</span> <span id="officerNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
+                </li>
             </ul>
         </aside>
 
         <main class="content-area">
-            <div class="card">
-                <h1 style="margin-bottom:8px;">Investigation Dashboard</h1>
-                <p style="color:var(--text-muted);">Manage complaint queue, update status, and maintain communication logs.</p>
-            </div>
+            <div id="officerDashboardView" class="officer-view">
+                <div class="card">
+                    <h1 style="margin-bottom:8px;">Investigation Dashboard</h1>
+                    <p style="color:var(--text-muted);">Manage complaint queue, update status, and maintain communication logs.</p>
+                </div>
 
-            <div class="grid-5">
-                <div class="stat-card">
-                    <div class="stat-title">Total Cases</div>
-                    <div class="stat-value" id="statTotal">--</div>
+                <div class="grid-5">
+                    <div class="stat-card">
+                        <div class="stat-title">Total Cases</div>
+                        <div class="stat-value" id="statTotal">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-value" id="statPending">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">In Progress</div>
+                        <div class="stat-value" id="statInvestigating">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Resolved</div>
+                        <div class="stat-value" id="statResolved">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Resolution Rate</div>
+                        <div class="stat-value" id="statResolutionRate">--%</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-title">Pending</div>
-                    <div class="stat-value" id="statPending">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">In Progress</div>
-                    <div class="stat-value" id="statInvestigating">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Resolved</div>
-                    <div class="stat-value" id="statResolved">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Resolution Rate</div>
-                    <div class="stat-value" id="statResolutionRate">--%</div>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="toolbar">
-                    <input type="text" id="searchCaseInput" class="form-control" style="max-width:300px;" placeholder="Search by code or title">
-                    <select id="statusCaseFilter" class="form-control" style="width:auto;">
-                        <option value="">All Statuses</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Investigating">Investigating</option>
-                        <option value="Resolved">Resolved</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                    <button class="btn-primary" onclick="loadAdminComplaints()">Refresh</button>
+                <div class="card">
+                    <h3>Officer Guidance</h3>
+                    <p style="color:var(--text-muted);">Welcome back. You have <span id="pendingCountBadge" style="font-weight:600; color:var(--priority-high);">--</span> cases awaiting initial review. Please prioritize High-priority reports marked with a red status indicator.</p>
                 </div>
             </div>
 
-            <div class="card" style="padding:0;">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tracking Code</th>
-                                <th>Case Title</th>
-                                <th>Category</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Date Logged</th>
-                            </tr>
-                        </thead>
-                        <tbody id="complaintsTableBody">
-                            <tr><td colspan="6" style="text-align:center; padding:24px; color: var(--text-muted);">Loading cases...</td></tr>
-                        </tbody>
-                    </table>
+            <div id="officerCasesView" class="officer-view" style="display:none;">
+                <div class="card">
+                    <h3>Investigation Queue</h3>
+                    <div class="toolbar" style="margin-top:10px;">
+                        <input type="text" id="searchCaseInput" class="form-control" style="max-width:300px;" placeholder="Search by code or title" onkeyup="loadAdminComplaints()">
+                        <select id="statusCaseFilter" class="form-control" style="width:auto;" onchange="loadAdminComplaints()">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Investigating">Investigating</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                        <button class="btn-primary" onclick="loadAdminComplaints()">Refresh Queue</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding:0;">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tracking Code</th>
+                                    <th>Case Title</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Date Logged</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintsTableBody">
+                                <tr><td colspan="6" style="text-align:center; padding:24px; color: var(--text-muted);">Loading internal registry...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="officerReportsView" class="officer-view" style="display:none;">
+                <div class="card">
+                    <h3>Performance & Metrics</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Review the overall system performance and case resolution metrics.</p>
+                    <div class="grid-2">
+                        <div class="card" style="margin:0; text-align:center;">
+                            <div class="stat-title">Resolved vs Target</div>
+                            <div style="font-size:3rem; font-weight:700; margin:1rem 0;" id="reportResRate">--%</div>
+                            <div style="color:var(--text-muted); font-size:0.8rem;">Official resolution target: 85%</div>
+                        </div>
+                        <div class="card" style="margin:0;">
+                            <div class="stat-title">Breakdown by status</div>
+                            <div style="margin-top:1rem;">
+                                <div style="margin-bottom:8px;">Pending <div id="offBarPending" style="height:10px; background:#fff9e6; border:1px solid #f2e3a8; width:0%; transition:width 0.5s;"></div></div>
+                                <div style="margin-bottom:8px;">Active <div id="offBarInProg" style="height:10px; background:#e6f0ff; border:1px solid #c8daf8; width:0%; transition:width 0.5s;"></div></div>
+                                <div>Resolved <div id="offBarDone" style="height:10px; background:#e9f5ea; border:1px solid #c7e5c9; width:0%; transition:width 0.5s;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="officerNotificationsView" class="officer-view" style="display:none;">
+                <div class="card">
+                    <h3>Internal Alerts</h3>
+                    <p style="color:var(--text-muted);">Recent system notifications and case update alerts.</p>
+                </div>
+                <div id="officerNotificationsContainer" style="display:flex; flex-direction:column; gap:12px;">
+                    <div class="card" style="text-align:center; padding:3rem; color:var(--text-muted);">Fetching dynamic alerts...</div>
                 </div>
             </div>
         </main>
@@ -144,16 +189,22 @@
                     <button class="btn-secondary" onclick="postComment()">Post</button>
                 </div>
             </div>
+            <!-- Formal Resolution Box -->
+            <div id="resolutionField" class="detail-group" style="display:none; background: #f0fdf4; padding: 12px; border: 1px solid #bbf7d0; border-radius: 4px;">
+                <div class="detail-label" style="color:#166534; font-weight:700;">OFFICIAL RESOLUTION SUMMARY</div>
+                <div id="resolutionDisplay" style="font-size: 14px; margin-bottom: 8px; display:none;"></div>
+                <textarea id="caseResolutionNote" class="form-control" rows="3" placeholder="Describe the final outcome..."></textarea>
+            </div>
         </div>
         <div class="slide-footer">
-            <select id="updateStatusSelect" class="form-control" style="flex:1;">
+            <select id="updateStatusSelect" class="form-control" style="flex:1;" onchange="toggleResolutionField()">
                 <option value="Pending">Pending</option>
                 <option value="Investigating">Investigating</option>
                 <option value="Escalated">Escalated</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Rejected">Rejected</option>
             </select>
-            <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Save</button>
+            <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Save Updates</button>
             <button class="btn-secondary" onclick="loadCaseEvidence()">Files</button>
         </div>
     </div>

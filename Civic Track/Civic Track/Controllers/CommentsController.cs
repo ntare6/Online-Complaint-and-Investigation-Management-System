@@ -67,7 +67,8 @@ public class CommentsController : ControllerBase
         {
             Content = dto.Content,
             ComplaintId = dto.ComplaintId,
-            AuthorId = dto.AuthorId
+            AuthorId = dto.AuthorId,
+            AuthorRole = author.Role.ToString()
         };
 
         _context.Comments.Add(comment);
@@ -100,7 +101,7 @@ public class CommentsController : ControllerBase
         Id = c.Id,
         Content = c.Content,
         AuthorName = c.Author?.FullName ?? "Unknown",
-        AuthorRole = c.Author?.Role.ToString() ?? string.Empty,
+        AuthorRole = c.AuthorRole ?? c.Author?.Role.ToString() ?? string.Empty,
         TrackingCode = c.Complaint?.TrackingCode ?? string.Empty,
         CreatedAt = c.CreatedAt
     };

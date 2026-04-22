@@ -11,6 +11,10 @@ public class RegisterDto
     [Required(ErrorMessage = "Email address is strictly required.")]
     [EmailAddress(ErrorMessage = "Invalid official Email format.")]
     public string Email { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "National ID is mandated.")]
+    [RegularExpression(@"^\d{16}$", ErrorMessage = "National ID must be exactly 16 digits.")]
+    public string NationalId { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Contact number is required.")]
     [RegularExpression(@"^07[2389]\d{7}$|^\+2507[2389]\d{7}$", ErrorMessage = "Phone must be a valid Rwandan number (e.g., 078xxxxxxx).")]

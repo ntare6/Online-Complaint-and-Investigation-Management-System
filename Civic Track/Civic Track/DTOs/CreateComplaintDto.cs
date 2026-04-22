@@ -14,6 +14,10 @@ public class CreateComplaintDto
 
     [MaxLength(200, ErrorMessage = "Location cannot exceed 200 characters.")]
     public string? Location { get; set; }
+    public string? District { get; set; }
+    public string? Sector { get; set; }
+    public string? Cell { get; set; }
+    public string? Village { get; set; }
     
     [Required]
     public Guid CategoryId { get; set; }

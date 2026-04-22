@@ -4,6 +4,7 @@ using Civic_Track.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Civic_Track.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260422115315_AddLocationHierarchyAndMoreCategories")]
+    partial class AddLocationHierarchyAndMoreCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,9 +52,6 @@ namespace Civic_Track.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AuthorRole")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ComplaintId")
                         .HasColumnType("uniqueidentifier");
 
@@ -83,9 +83,6 @@ namespace Civic_Track.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cell")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("CitizenId")
                         .HasColumnType("uniqueidentifier");
 
@@ -93,17 +90,11 @@ namespace Civic_Track.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("District")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("EscalatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EscalationReason")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EstimatedResolutionDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("FeedbackComment")
                         .HasColumnType("nvarchar(max)");
@@ -138,9 +129,6 @@ namespace Civic_Track.Migrations
                     b.Property<DateTime?>("ResolvedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Sector")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -153,9 +141,6 @@ namespace Civic_Track.Migrations
 
                     b.Property<string>("TrackingCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Village")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -250,18 +235,12 @@ namespace Civic_Track.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DeliveryStatus")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -334,9 +313,6 @@ namespace Civic_Track.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("NationalId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()

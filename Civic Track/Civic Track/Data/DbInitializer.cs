@@ -40,19 +40,20 @@ namespace Civic_Track.Data
                 await context.Users.AddAsync(admin);
             }
 
-            // 4. Seed Investigation Officer
-            if (!await context.Users.AnyAsync(u => u.Email == "officer@civictrack.gov.rw"))
+            // 4. Seed Specialized Investigation Officers
+            var specializedOfficers = new List<User>
             {
-                var officer = new User
+                new User { FullName = "Eco Protection Officer", Email = "eco.officer@civictrack.gov.rw", Phone = "0780000003", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Officer@123"), Role = UserRole.Officer, IsActive = true },
+                new User { FullName = "Infrastructure Engineer", Email = "infra.officer@civictrack.gov.rw", Phone = "0780000004", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Officer@123"), Role = UserRole.Officer, IsActive = true },
+                new User { FullName = "Security Analyst", Email = "safety.officer@civictrack.gov.rw", Phone = "0780000005", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Officer@123"), Role = UserRole.Officer, IsActive = true }
+            };
+
+            foreach (var off in specializedOfficers)
+            {
+                if (!await context.Users.AnyAsync(u => u.Email == off.Email))
                 {
-                    FullName = "Chief Investigation Officer",
-                    Email = "officer@civictrack.gov.rw",
-                    Phone = "0780000002",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Officer@123"),
-                    Role = UserRole.Officer,
-                    IsActive = true
-                };
-                await context.Users.AddAsync(officer);
+                    await context.Users.AddAsync(off);
+                }
             }
 
             await context.SaveChangesAsync();

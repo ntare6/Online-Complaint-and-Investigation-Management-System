@@ -11,4 +11,5 @@ public class UpdateComplaintDto
     public Guid? AssignedOfficerId { get; set; }
     public bool? IsEscalatedToLegal { get; set; }
     public string? LegalEscalationNote { get; set; }
+    public string? ResolutionNote { get; set; }
 }

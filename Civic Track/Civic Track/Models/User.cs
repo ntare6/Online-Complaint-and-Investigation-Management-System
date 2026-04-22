@@ -14,6 +14,7 @@ public class User
 
     public UserRole Role { get; set; } = UserRole.Citizen;
 
+    public string? NationalId { get; set; }
     public bool IsActive { get; set; } = true;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

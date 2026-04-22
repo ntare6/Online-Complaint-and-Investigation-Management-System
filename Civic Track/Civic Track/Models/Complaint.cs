@@ -11,8 +11,13 @@ public class Complaint
     public string Description { get; set; } = string.Empty;
 
     public string? Location { get; set; }
+    public string? District { get; set; }
+    public string? Sector { get; set; }
+    public string? Cell { get; set; }
+    public string? Village { get; set; }
 
     public Guid CategoryId { get; set; }
+
     public Category Category { get; set; } = null!;
 
     public ComplaintPriority Priority { get; set; } = ComplaintPriority.Medium;
@@ -28,6 +33,18 @@ public class Complaint
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? ResolvedAt { get; set; }
+    public string? ResolutionNote { get; set; }
+
+    // Escalation properties
+    public bool IsEscalated { get; set; } = false;
+    public string? EscalationReason { get; set; }
+    public DateTime? EscalatedAt { get; set; }
+    public DateTime? EstimatedResolutionDate { get; set; }
+
+    // Feedback properties
+    public int? Rating { get; set; } // 1-5
+    public string? FeedbackComment { get; set; }
+    public DateTime? FeedbackSubmittedAt { get; set; }
 
     public Guid? CitizenId { get; set; }
     public User? Citizen { get; set; }

@@ -49,6 +49,7 @@ public class AuthController : ControllerBase
             Id = Guid.NewGuid(),
             FullName = dto.FullName,
             Email = dto.Email,
+            NationalId = dto.NationalId,
             Phone = dto.Phone ?? string.Empty,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             Role = UserRole.Citizen,

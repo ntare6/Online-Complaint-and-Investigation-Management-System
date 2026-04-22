@@ -4,50 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CivicTrack | Government Portal</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1.3">
 </head>
 <body>
-    <div class="split-layout">
-        <section class="split-left">
-            <div class="sidebar-title">Republic of Rwanda</div>
-            <h1 style="color: var(--primary-blue); margin-bottom: 16px;">CivicTrack</h1>
-            <p style="margin-bottom: 16px; color: var(--text-muted);">
-                Online Complaint and Investigation Management System for citizens, investigation officers, and administrators.
-            </p>
-            <div class="card" style="margin-bottom: 0;">
-                <h3 style="margin-bottom: 12px;">Platform Services</h3>
-                <ul style="padding-left: 18px; color: var(--text-muted);">
-                    <li>Submit and track complaints</li>
-                    <li>View investigation progress and legal escalation</li>
-                    <li>Receive official updates and notifications</li>
-                    <li>Access reports and dashboards by role</li>
-                </ul>
-            </div>
-        </section>
-        <section class="split-right">
-            <div class="auth-card">
-                <div class="sidebar-title">Secure Access</div>
-                <h2 style="margin-bottom: 8px;">Sign in</h2>
-                <p style="color: var(--text-muted); margin-bottom: 16px;">Use your registered account credentials.</p>
-                <div class="form-group">
-                    <label class="form-label" for="loginEmail">Email Address</label>
-                    <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com">
+    <header class="official-header">
+        <div class="header-container">
+            <div class="gov-identity">
+                <img src="assets/coat%20of%20arms.jpg" alt="Republic of Rwanda" class="gov-logo" height="54">
+                <div class="gov-text">
+                    <div class="gov-name" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
+                    <div class="gov-portal" data-i18n="gov_portal">Official Government Portal</div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="form-control" placeholder="Password">
-                </div>
-                <button type="button" class="btn-primary" style="width:100%;" onclick="secureLogin()">Sign in</button>
-                <button type="button" class="btn-secondary" style="width:100%; margin-top:8px;" onclick="window.location.href='register.html'">
-                    Register as citizen
-                </button>
-                <p style="margin-top: 16px; color: var(--text-muted); font-size: 13px;">
-                    By signing in, you agree to use this platform for official complaint management only.
-                </p>
             </div>
-        </section>
-    </div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div class="header-tag" data-i18n="portal_title">CivicTrack Portal</div>
+                <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); padding:4px 10px; border-radius:4px;">
+                    <span style="color:white; font-size:14px;">🌐</span>
+                    <select id="langSelect" style="background:transparent; color:white; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none;" onchange="setLanguage(this.value)">
+                        <option value="en" style="color:black; font-weight:normal;">EN - English</option>
+                        <option value="rw" style="color:black; font-weight:normal;">RW - Kinyarwanda</option>
+                        <option value="fr" style="color:black; font-weight:normal;">FR - Français</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
 
+    <main class="institutional-layout">
+        <section class="info-workspace">
+            <div class="content-box">
+                <h1 class="institutional-title">CivicTrack</h1>
+                <p class="institutional-desc">
+                    National Complaint and Investigation Management System. A formal platform for citizen engagement, case oversight, and administrative accountability.
+                </p>
+                
+                <div class="services-registry">
+                    <h3 style="margin-bottom: 24px; font-weight: 600; color: var(--text-dark);" data-i18n="core_ops">Core Operations</h3>
+                    <div class="service-item">
+                        <div class="checkmark">✓</div>
+                        <div>
+                            <strong data-i18n="submit_comp">Submit Complaints</strong>
+                            <p data-i18n="submit_desc">Register official reports for review by relevant national authorities.</p>
+                        </div>
+                    </div>
+                    <div class="service-item">
+                        <div class="checkmark">✓</div>
+                        <div>
+                            <strong data-i18n="track_prog">Track Case Progress</strong>
+                            <p data-i18n="track_desc">Monitor the real-time status and development of pending investigations.</p>
+                        </div>
+                    </div>
+                    <div class="service-item">
+                        <div class="checkmark">✓</div>
+                        <div>
+                            <strong data-i18n="escalate_legal">Escalate Cases for Legal Review</strong>
+                            <p data-i18n="escalate_desc">Request formal legal assessment for specialized or complex caseloads.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="access-portal">
+            <div class="login-card">
+                <h2 style="margin-bottom: 8px; font-weight: 600; color: var(--text-dark);" data-i18n="portal_access">Portal Access</h2>
+                <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 13px;" data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
+                
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail" style="font-size: 13px;" data-i18n="email_label">Official Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="name@domain.gov.rw">
+                </div>
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                        <label class="form-label" for="loginPassword" style="margin-bottom:0; font-size: 13px;" data-i18n="password_label">Security Password</label>
+                        <a href="#" style="font-size: 11px; color: var(--primary-blue); font-weight: 600; text-transform: uppercase;" data-i18n="forgot_password">Forgot Password?</a>
+                    </div>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••">
+                </div>
+                
+                <button type="button" class="btn-primary" style="width:100%; height: 44px; margin-top: 10px; font-size: 14px;" onclick="secureLogin()" data-i18n="sign_in">Sign In to Portal</button>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+
+                <button type="button" class="btn-secondary" style="width:100%; height: 44px; font-size: 14px; margin-bottom: 24px;" onclick="window.location.href='register.html'" data-i18n="create_account">
+                    Create Citizen Account
+                </button>
+
+                <div class="quick-track-section" style="padding-top: 24px; border-top: 2px solid #F3F4F6;">
+                    <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary-blue);" data-i18n="quick_track">Quick Case Track</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="quickTrackingCode" class="form-control" placeholder="CT-XXXXXXXX" style="flex: 1; height: 38px; text-transform: uppercase;">
+                        <button class="btn-primary" style="height: 38px; padding: 0 12px; font-size: 12px;" onclick="publicTrackCase()" data-i18n="track_btn">Track</button>
+                    </div>
+                    <div id="quickTrackResult" style="display: none; margin-top: 16px; padding: 12px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 4px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-weight:700; font-size:12px;" id="ptCode"></span>
+                            <span class="badge" id="ptStatus" style="font-size:10px;"></span>
+                        </div>
+                        <div style="font-size:13px; font-weight:600; margin-bottom:4px;" id="ptTitle"></div>
+                        <div style="font-size:11px; color:var(--text-muted);">
+                            Last Update: <span id="ptLastUpdate"></span>
+                        </div>
+                        <button class="btn-small" style="width:100%; margin-top:12px; height:28px; font-size:11px;" onclick="window.location.href='index.html'">Detailed View (Login Required)</button>
+                    </div>
+                </div>
+                
+                <div class="legal-disclaimer" data-i18n="disclaimer">
+                    This is an official government system. All activities are monitored. Unauthorized access is strictly prohibited under the Laws of the Republic of Rwanda.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="official-footer">
+        <div class="footer-container">
+            <div>&copy; 2026 Government of the Republic of Rwanda</div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Contact Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="translations.js"></script>
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
 
@@ -75,10 +157,45 @@
                         window.location.href = 'dashboard.html';
                     }
                 } else {
-                    alert("Login failed. Check your email and password.");
+                    const errorMsg = await response.text();
+                    alert(errorMsg || "Login failed. Check your email and password.");
                 }
             } catch (error) {
                 alert("Unable to connect to server.");
+            }
+        }
+
+        async function publicTrackCase() {
+            const code = document.getElementById('quickTrackingCode').value.trim().toUpperCase();
+            const resultBox = document.getElementById('quickTrackResult');
+            if (!code) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/Complaints/public-track/${code}`);
+                if (!response.ok) {
+                    alert("Tracking code not found.");
+                    resultBox.style.display = 'none';
+                    return;
+                }
+
+                const data = await response.json();
+                resultBox.style.display = 'block';
+                document.getElementById('ptCode').innerText = data.trackingCode;
+                document.getElementById('ptTitle').innerText = data.title;
+                document.getElementById('ptLastUpdate').innerText = new Date(data.lastUpdatedAt).toLocaleString();
+                
+                const statusBadge = document.getElementById('ptStatus');
+                statusBadge.innerText = data.status;
+                
+                // Set badge class
+                statusBadge.className = 'badge';
+                if (data.status === 'Resolved') statusBadge.classList.add('badge-resolved');
+                else if (['Investigating', 'UnderReview'].includes(data.status)) statusBadge.classList.add('badge-investigating');
+                else if (data.status === 'Rejected') statusBadge.classList.add('badge-rejected');
+                else statusBadge.classList.add('badge-pending');
+
+            } catch (e) {
+                alert("Unable to reach the tracking server.");
             }
         }
     </script>

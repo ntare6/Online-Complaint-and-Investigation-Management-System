@@ -70,17 +70,23 @@ namespace Civic_Track.Controllers
         }
 
         [HttpGet("dashboard-summary")]
-        public async Task<IActionResult> GetDashboardSummary()
+        public async Task<IActionResult> GetDashboardSummary([FromQuery] Guid? citizenId)
         {
-            var total = await _context.Complaints.CountAsync();
+            var query = _context.Complaints.AsQueryable();
+            if (citizenId.HasValue)
+            {
+                query = query.Where(c => c.CitizenId == citizenId.Value);
+            }
 
-            var pending = await _context.Complaints
+            var total = await query.CountAsync();
+
+            var pending = await query
                 .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Pending);
 
-            var inProgress = await _context.Complaints
-                .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Investigating);
+            var inProgress = await query
+                .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.UnderReview || c.Status == Civic_Track.Models.ComplaintStatus.Investigating);
 
-            var resolved = await _context.Complaints
+            var resolved = await query
                 .CountAsync(c => c.Status == Civic_Track.Models.ComplaintStatus.Resolved);
 
             var resolutionRate = total == 0
