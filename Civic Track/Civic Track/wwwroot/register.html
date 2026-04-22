@@ -3,352 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Citizen Registration | CivicTrack Rwanda</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="translations.js"></script>
+    <title>Create Account | CivicTrack Rwanda</title>
     <style>
-        :root {
-            --irembo-blue: #1E4FA1;
-            --irembo-gray: #F5F7FA;
-            --irembo-border: #E2E8F0;
-            --irembo-text: #2D3748;
-            --irembo-muted: #718096;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--irembo-gray);
-            color: var(--irembo-text);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #F5F7FA;
+            color: #111827;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
         }
 
-        .reg-container {
-            flex: 1;
+        /* ── HEADER ── */
+        .gov-header {
+            background: #ffffff;
+            border-bottom: 3px solid #1E4FA1;
+            padding: 0 40px;
+            height: 72px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .gov-brand { display: flex; align-items: center; gap: 14px; }
+        .gov-brand img { height: 48px; width: auto; }
+        .gov-brand-text .gov-country {
+            font-size: 13px; font-weight: 700; color: #111827;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .gov-brand-text .gov-subtitle { font-size: 11px; color: #6B7280; margin-top: 1px; }
+        .secure-badge {
+            display: flex; align-items: center; gap: 5px;
+            background: #F0F4FF; border: 1px solid #C7D7F8;
+            color: #1E4FA1; padding: 4px 10px; font-size: 11px; font-weight: 600;
         }
 
+        /* ── PAGE BODY ── */
+        .page-body {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 48px 40px;
+        }
+
+        /* ── REGISTRATION CARD ── */
         .reg-card {
             background: #ffffff;
+            border: 1px solid #E5E7EB;
+            padding: 32px;
             width: 100%;
-            max-width: 580px;
-            border: 1px solid var(--irembo-border);
-            padding: 40px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            max-width: 560px;
         }
 
-        .reg-header {
-            text-align: center;
-            margin-bottom: 32px;
-            border-bottom: 2px solid var(--irembo-blue);
-            padding-bottom: 16px;
+        /* Language toggle — identical to login */
+        .lang-toggle {
+            display: flex;
+            border: 1px solid #E5E7EB;
+            margin-bottom: 24px;
+            overflow: hidden;
         }
-
-        .reg-header h1 {
-            font-size: 24px;
-            color: var(--irembo-blue);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0;
+        .lang-toggle button {
+            flex: 1; height: 34px; border: none;
+            background: #F9FAFB; font-size: 12px; font-weight: 600;
+            color: #6B7280; cursor: pointer;
+            border-right: 1px solid #E5E7EB; transition: all 0.15s;
         }
+        .lang-toggle button:last-child { border-right: none; }
+        .lang-toggle button:hover { background: #EEF2FF; color: #1E4FA1; }
+        .lang-toggle button.active { background: #1E4FA1; color: #ffffff; }
 
-        .reg-header p {
-            font-size: 14px;
-            color: var(--irembo-muted);
-            margin: 0;
+        /* Card header */
+        .card-header {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #F3F4F6;
         }
+        .card-header h2 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+        .card-header p  { font-size: 13px; color: #6B7280; }
 
-        .section-title {
-            font-size: 13px;
+        /* Section dividers */
+        .section-heading {
+            font-size: 11px;
             font-weight: 700;
-            color: var(--irembo-blue);
             text-transform: uppercase;
-            margin: 24px 0 16px 0;
+            letter-spacing: 0.06em;
+            color: #1E4FA1;
+            margin: 20px 0 14px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
-        .section-title::after {
-            content: "";
+        .section-heading::after {
+            content: '';
             flex: 1;
             height: 1px;
-            background: var(--irembo-border);
+            background: #E5E7EB;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        /* Fields */
+        .field-group { margin-bottom: 14px; }
+        .field-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: #374151; margin-bottom: 5px;
+            text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .field-input {
+            width: 100%; height: 42px;
+            border: 1px solid #D1D5DB; padding: 0 12px;
+            font-size: 14px; background: #fff; outline: none;
+            transition: border-color 0.15s;
+        }
+        .field-input:focus {
+            border-color: #1E4FA1;
+            box-shadow: 0 0 0 3px rgba(30, 79, 161, 0.08);
+        }
+        .field-input.error { border-color: #EF4444; }
+
+        .helper-text { font-size: 11px; color: #9CA3AF; margin-top: 4px; }
+        .field-error  { font-size: 12px; color: #DC2626; margin-top: 4px; display: none; }
+
+        /* Two-column grid */
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--irembo-text);
+        /* Password wrap */
+        .password-wrap { position: relative; }
+        .password-wrap .field-input { padding-right: 44px; }
+        .toggle-pw {
+            position: absolute; right: 0; top: 0;
+            height: 42px; width: 42px; border: none;
+            background: transparent; cursor: pointer;
+            color: #9CA3AF; font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
         }
+        .toggle-pw:hover { color: #1E4FA1; }
 
-        .form-control {
-            width: 100%;
-            height: 42px;
-            border: 1px solid var(--irembo-border);
-            padding: 8px 12px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-            border-radius: 2px;
-            box-sizing: border-box;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--irembo-blue);
-        }
-
-        .helper-text {
-            font-size: 11px;
-            color: var(--irembo-muted);
-            margin-top: 4px;
-        }
-
-        .error-message {
-            color: #e53e3e;
-            font-size: 12px;
-            margin-top: 4px;
+        /* Error banner */
+        .form-error {
             display: none;
+            background: #FEF2F2; border: 1px solid #FECACA;
+            color: #991B1B; padding: 10px 12px;
+            font-size: 13px; margin-bottom: 14px;
         }
 
-        .btn-reg {
-            background-color: var(--irembo-blue);
-            color: white;
-            width: 100%;
-            height: 46px;
-            border: none;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 24px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: opacity 0.2s;
+        /* Success banner */
+        .form-success {
+            display: none;
+            background: #F0FDF4; border: 1px solid #BBF7D0;
+            color: #166534; padding: 10px 12px;
+            font-size: 13px; margin-bottom: 14px;
         }
 
-        .btn-reg:hover {
-            opacity: 0.9;
+        /* Submit button */
+        .btn-submit {
+            width: 100%; height: 44px;
+            background: #1E4FA1; color: #fff;
+            border: none; font-size: 14px; font-weight: 700;
+            cursor: pointer; letter-spacing: 0.02em;
+            transition: background 0.15s; margin-top: 8px;
         }
+        .btn-submit:hover { background: #172F6B; }
+        .btn-submit:disabled { background: #93A8D4; cursor: not-allowed; }
 
+        /* Back link */
         .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--irembo-blue);
-            font-weight: 600;
-            text-decoration: none;
+            display: block; text-align: center;
+            margin-top: 16px; font-size: 13px;
+            color: #1E4FA1; font-weight: 600; text-decoration: none;
         }
+        .back-link:hover { text-decoration: underline; }
 
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
+        /* Trust note */
         .trust-note {
-            margin-top: 32px;
-            padding-top: 16px;
-            border-top: 1px solid var(--irembo-border);
-            text-align: center;
-            font-size: 11px;
-            color: var(--irembo-muted);
-            font-style: italic;
+            margin-top: 20px; padding-top: 16px;
+            border-top: 1px solid #F3F4F6;
+            display: flex; align-items: flex-start; gap: 8px;
+            font-size: 11px; color: #9CA3AF; line-height: 1.5;
         }
 
-        .gov-header {
-            background: white;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--irembo-border);
+        /* ── FOOTER ── */
+        .gov-footer {
+            background: #fff; border-top: 1px solid #E5E7EB;
+            padding: 16px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; color: #9CA3AF; flex-shrink: 0;
         }
+        .gov-footer a { color: #9CA3AF; text-decoration: none; margin-left: 20px; }
+        .gov-footer a:hover { color: #1E4FA1; text-decoration: underline; }
 
-        .gov-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .gov-logo-img {
-            height: 40px;
-        }
-
-        .gov-title-text {
-            line-height: 1.2;
-        }
-
-        .gov-country {
-            font-weight: 800;
-            font-size: 12px;
-            color: #333;
-        }
-
-        .gov-portal-name {
-            font-size: 11px;
-            color: #666;
+        @media (max-width: 640px) {
+            .page-body { padding: 24px 16px; }
+            .gov-header { padding: 0 16px; }
+            .gov-footer { padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
+            .field-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER — identical to login page -->
     <header class="gov-header">
-        <div class="gov-container" style="justify-content:space-between;">
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div class="gov-logo-box" style="width: 40px; height: 40px; border: 2px solid var(--irembo-blue); display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--irembo-blue); font-size: 18px;">RW</div>
-                <div class="gov-title-text">
-                    <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
-                    <div class="gov-portal-name" data-i18n="gov_portal">Official Citizen Service Portal</div>
-                </div>
+        <div class="gov-brand">
+            <img src="assets/coat%20of%20arms.jpg" alt="Rwanda Coat of Arms">
+            <div class="gov-brand-text">
+                <div class="gov-country" data-i18n="official_gov">REPUBLIC OF RWANDA</div>
+                <div class="gov-subtitle" data-i18n="gov_portal">Official Government Portal</div>
             </div>
-            <div style="display:flex; align-items:center; gap:6px; border:1px solid #e2e8f0; padding:4px 10px; border-radius:4px;">
-                <span style="font-size:13px;">🌐</span>
-                <select class="lang-select" style="background:transparent; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none; color:#1E4FA1;" onchange="setLanguage(this.value)">
-                    <option value="en">EN - English</option>
-                    <option value="rw">RW - Kinyarwanda</option>
-                    <option value="fr">FR - Français</option>
-                </select>
-            </div>
+        </div>
+        <div class="secure-badge">
+            🔒 <span data-i18n="portal_title">CivicTrack Portal</span>
         </div>
     </header>
 
-    <div class="reg-container">
+    <!-- BODY -->
+    <div class="page-body">
         <div class="reg-card">
-            <div class="reg-header">
-                <h1 data-i18n="reg_title">CivicTrack Registry</h1>
+
+            <!-- Language Toggle — identical to login -->
+            <div class="lang-toggle">
+                <button id="langBtnEn" onclick="chooseLang('en')" class="active">🇬🇧 EN</button>
+                <button id="langBtnRw" onclick="chooseLang('rw')">🇷🇼 RW</button>
+                <button id="langBtnFr" onclick="chooseLang('fr')">🇫🇷 FR</button>
+            </div>
+
+            <!-- Card Header -->
+            <div class="card-header">
+                <h2 data-i18n="reg_title">Citizen Account Registration</h2>
                 <p data-i18n="reg_subtitle">National Complaint Management System Enrollment</p>
             </div>
 
-            <form id="registerForm">
-                <div class="section-title" data-i18n="personal_info">Personal Information</div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="regFullName" data-i18n="full_name">Full Legal Name (as per ID)</label>
-                    <input type="text" id="regFullName" class="form-control" placeholder="e.g. Jean Pierre Ntaganda" required>
-                    <div class="helper-text" data-i18n="full_name_helper">Enter your full names as they appear on your National ID card.</div>
+            <div class="form-error"   id="formError"></div>
+            <div class="form-success" id="formSuccess"></div>
+
+            <!-- Personal Information -->
+            <div class="section-heading" data-i18n="personal_info">Personal Information</div>
+
+            <div class="field-group">
+                <label class="field-label" data-i18n="full_name">Full Legal Name</label>
+                <input type="text" id="regFullName" class="field-input" placeholder="e.g. Jean Pierre Ntaganda">
+                <div class="helper-text" data-i18n="full_name_helper">As it appears on your National ID card.</div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" data-i18n="national_id">National ID Number</label>
+                <input type="text" id="regNationalId" class="field-input" maxlength="16" placeholder="1 19XX X XXXXXXX X XX">
+                <div class="helper-text" data-i18n="national_id_helper">Standard 16-digit Rwandan National Identification Number.</div>
+                <div class="field-error" id="idError">Invalid National ID. Must be exactly 16 digits.</div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="section-heading" data-i18n="contact_info">Contact Information</div>
+
+            <div class="field-grid">
+                <div class="field-group">
+                    <label class="field-label" data-i18n="email_label">Email Address</label>
+                    <input type="email" id="regEmail" class="field-input" placeholder="name@example.com">
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="regNationalId" data-i18n="national_id">National ID Number</label>
-                    <input type="text" id="regNationalId" class="form-control" maxlength="16" placeholder="1 19XX X XXXXXXX X XX" required>
-                    <div class="helper-text" data-i18n="national_id_helper">Standard 16-digit Rwandan National Identification Number.</div>
-                    <div id="idError" class="error-message">Invalid National ID format. Must be 16 digits.</div>
+                <div class="field-group">
+                    <label class="field-label" data-i18n="phone_label">Phone Number</label>
+                    <input type="tel" id="regPhone" class="field-input" placeholder="+250 7XX XXX XXX">
+                    <div class="helper-text" data-i18n="phone_helper">Used for SMS notifications.</div>
                 </div>
+            </div>
 
-                <div class="section-title" data-i18n="contact_info">Contact Information</div>
+            <!-- Account Security -->
+            <div class="section-heading" data-i18n="security_info">Account Security</div>
 
-                <div class="form-group">
-                    <label class="form-label" for="regEmail" data-i18n="email_label">Official Email Address</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="name@example.com" required>
-                    <div class="helper-text" data-i18n="login_desc">Used for official case updates and security alerts.</div>
+            <div class="field-grid">
+                <div class="field-group">
+                    <label class="field-label" data-i18n="password_label">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="regPassword" class="field-input" placeholder="••••••••">
+                        <button class="toggle-pw" onclick="togglePw('regPassword', 'togglePw1')" id="togglePw1">👁</button>
+                    </div>
+                    <div class="helper-text" data-i18n="password_helper">Min. 8 characters with a number.</div>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="regPhone" data-i18n="phone_label">Mobile Phone Number</label>
-                    <input type="tel" id="regPhone" class="form-control" placeholder="+250 7XX XXX XXX" required>
-                    <div class="helper-text" data-i18n="phone_helper">Format: +250 788 000 000. Used for SMS notifications.</div>
+                <div class="field-group">
+                    <label class="field-label" data-i18n="confirm_password">Confirm Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="confirmPassword" class="field-input" placeholder="••••••••">
+                        <button class="toggle-pw" onclick="togglePw('confirmPassword', 'togglePw2')" id="togglePw2">👁</button>
+                    </div>
+                    <div class="field-error" id="passwordError">Passwords do not match.</div>
                 </div>
+            </div>
 
-                <div class="section-title" data-i18n="security_info">Account Security</div>
+            <button class="btn-submit" id="submitBtn" onclick="handleRegistration()" data-i18n="create_btn">
+                Create Account
+            </button>
 
-                <div class="form-group">
-                    <label class="form-label" for="regPassword" data-i18n="password_label">Security Password</label>
-                    <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required>
-                    <div class="helper-text" data-i18n="password_helper">Minimum 8 characters. Must include a number and a special character.</div>
-                </div>
+            <a href="index.html" class="back-link" data-i18n="back_login">← Back to Secure Login</a>
 
-                <div class="form-group">
-                    <label class="form-label" for="confirmPassword" data-i18n="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required>
-                    <div id="passwordError" class="error-message">Passwords do not match.</div>
-                </div>
+            <div class="trust-note">
+                <span>🔒</span>
+                <span data-i18n="trust_note">Your data is protected under government security standards and the Law relating to the protection of personal data and privacy in Rwanda.</span>
+            </div>
 
-                <button type="button" class="btn-reg" onclick="handleRegistration()" data-i18n="create_btn">Create Account</button>
-                
-                <a href="index.html" class="back-link" data-i18n="back_login">← Back to Secure Login</a>
-
-                <div class="trust-note" data-i18n="trust_note">
-                    Your data is protected under government security standards and the Law relating to the protection of personal data and privacy in Rwanda.
-                </div>
-            </form>
         </div>
     </div>
 
+    <!-- FOOTER — identical to login page -->
+    <footer class="gov-footer">
+        <div>&copy; 2026 Government of the Republic of Rwanda</div>
+        <div>
+            <a href="#" data-i18n="privacy_policy">Privacy Policy</a>
+            <a href="#" data-i18n="terms_use">Terms of Use</a>
+            <a href="#" data-i18n="contact_support">Contact Support</a>
+        </div>
+    </footer>
+
+    <script src="translations.js"></script>
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
+        const pwState = {};
+
+        function chooseLang(lang) {
+            setLanguage(lang);
+            document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+            const map = { en: 'langBtnEn', rw: 'langBtnRw', fr: 'langBtnFr' };
+            const btn = document.getElementById(map[lang]);
+            if (btn) btn.classList.add('active');
+        }
+
+        function togglePw(inputId, btnId) {
+            pwState[inputId] = !pwState[inputId];
+            document.getElementById(inputId).type = pwState[inputId] ? 'text' : 'password';
+            document.getElementById(btnId).textContent = pwState[inputId] ? '🙈' : '👁';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('formError');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('formSuccess').style.display = 'none';
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('formSuccess');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('formError').style.display = 'none';
+        }
 
         async function handleRegistration() {
-            // Reset errors
-            document.getElementById('idError').style.display = 'none';
+            // Reset inline errors
+            document.getElementById('idError').style.display       = 'none';
             document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('formError').style.display     = 'none';
+            document.getElementById('formSuccess').style.display   = 'none';
 
-            const fullName = document.getElementById('regFullName').value.trim();
-            const nationalId = document.getElementById('regNationalId').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-            const password = document.getElementById('regPassword').value;
+            const fullName        = document.getElementById('regFullName').value.trim();
+            const nationalId      = document.getElementById('regNationalId').value.trim();
+            const email           = document.getElementById('regEmail').value.trim();
+            const phone           = document.getElementById('regPhone').value.trim();
+            const password        = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Basic Validation
             if (!fullName || !nationalId || !email || !phone || !password) {
-                alert("Please complete all required fields.");
+                showError('Please complete all required fields.');
                 return;
             }
 
             if (nationalId.length !== 16 || !/^\d+$/.test(nationalId)) {
                 document.getElementById('idError').style.display = 'block';
+                document.getElementById('regNationalId').classList.add('error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters.');
                 return;
             }
 
             if (password !== confirmPassword) {
                 document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('confirmPassword').classList.add('error');
                 return;
             }
 
-            try {
-                const payload = { 
-                    fullName, 
-                    nationalId, 
-                    email, 
-                    phone, 
-                    password 
-                };
+            const btn = document.getElementById('submitBtn');
+            btn.disabled    = true;
+            btn.textContent = '...';
 
-                const response = await fetch(`${API_BASE_URL}/Auth/register`, {
+            try {
+                const res = await fetch(`${API_BASE_URL}/Auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ fullName, nationalId, email, phone, password })
                 });
 
-                const data = await response.json();
+                const data = await res.json();
 
-                if (response.ok) {
-                    alert("Account successfully created. Please log in with your credentials.");
-                    window.location.href = 'index.html';
+                if (res.ok) {
+                    showSuccess('Account created successfully. Redirecting to login...');
+                    setTimeout(() => window.location.href = 'index.html', 1800);
+                } else if (data.errors) {
+                    const msgs = Object.values(data.errors).flat();
+                    showError(msgs[0] || 'Validation error. Please check your inputs.');
                 } else {
-                    if (data.errors) {
-                        let msg = "Validation Error:\n";
-                        for (let k in data.errors) msg += `• ${data.errors[k][0]}\n`;
-                        alert(msg);
-                    } else {
-                        alert(data.message || "Registration failed. Please try again.");
-                    }
+                    showError(data.message || 'Registration failed. Please try again.');
                 }
-            } catch (error) {
-                alert("Connection Error: Unable to reach the registration server.");
+            } catch {
+                showError('Connection error. Unable to reach the registration server.');
+            } finally {
+                const lang = localStorage.getItem('civicLang') || 'en';
+                btn.textContent = translations[lang]?.create_btn || 'Create Account';
+                btn.disabled = false;
             }
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('civicLang') || 'en';
+            chooseLang(lang);
+        });
     </script>
 </body>
 </html>
