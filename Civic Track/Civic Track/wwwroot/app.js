@@ -511,7 +511,15 @@ async function trackCase() {
 
         const officerDisplay = document.getElementById('trackOfficerName');
         if (officerDisplay) {
-            officerDisplay.innerText = data.assignedOfficerName || "Awaiting Assignment";
+            officerDisplay.innerText = data.assignedOfficerName || 'Awaiting Assignment';
+            officerDisplay.style.color = data.assignedOfficerName ? 'var(--primary-blue)' : 'var(--text-muted)';
+        }
+
+        const priorityDisplay = document.getElementById('trackPriority');
+        if (priorityDisplay) {
+            priorityDisplay.innerText = data.priority || '-';
+            const pColors = { Low: '#16a34a', Medium: '#d97706', High: '#dc2626', Critical: '#7c3aed' };
+            priorityDisplay.style.color = pColors[data.priority] || 'var(--text-dark)';
         }
 
         // Render History
@@ -733,6 +741,9 @@ function openAdvancedPanel(caseData) {
     if (document.getElementById('updateStatusSelect')) {
         document.getElementById('updateStatusSelect').value = caseData.status;
     }
+    if (document.getElementById('updatePrioritySelect')) {
+        document.getElementById('updatePrioritySelect').value = caseData.priority || 'Medium';
+    }
 
     // Handle existing resolution
     const resField = document.getElementById('resolutionField');
@@ -773,10 +784,11 @@ function toggleResolutionField() {
 }
 
 async function updateCaseStatus() {
-    const newStatus = document.getElementById('updateStatusSelect').value;
-    const note = document.getElementById('caseResolutionNote')?.value;
+    const newStatus   = document.getElementById('updateStatusSelect').value;
+    const newPriority = document.getElementById('updatePrioritySelect')?.value;
+    const note        = document.getElementById('caseResolutionNote')?.value;
     
-    if (newStatus === 'Resolved' && !note && !document.getElementById('resolutionDisplay').innerText) {
+    if (newStatus === 'Resolved' && !note && !document.getElementById('resolutionDisplay')?.innerText) {
         return alert("Please provide an official resolution summary before closing the case.");
     }
 
@@ -785,6 +797,7 @@ async function updateCaseStatus() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
             status: newStatus,
+            priority: newPriority || undefined,
             resolutionNote: note 
         })
     });

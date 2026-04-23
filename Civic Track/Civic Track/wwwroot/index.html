@@ -844,7 +844,7 @@
         }
 
         /* ── Login ── */
-        async function secureLogin() {
+        window.secureLogin = secureLogin;
             const email    = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const errorEl  = document.getElementById('loginError');

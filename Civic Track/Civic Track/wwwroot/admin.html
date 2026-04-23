@@ -212,6 +212,12 @@
                 <option value="Resolved">Resolved</option>
                 <option value="Rejected">Rejected</option>
             </select>
+            <select id="updatePrioritySelect" class="form-control" style="flex:1;">
+                <option value="Low">&#9679; Low</option>
+                <option value="Medium">&#9679; Medium</option>
+                <option value="High">&#9679; High</option>
+                <option value="Critical">&#9679; Critical</option>
+            </select>
             <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Save Updates</button>
             <button class="btn-secondary" onclick="loadCaseEvidence()">Files</button>
         </div>
