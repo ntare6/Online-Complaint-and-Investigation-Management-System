@@ -2,6 +2,14 @@ const API_BASE_URL = 'http://localhost:5079/api';
 let currentAdminCaseId = null; 
 let _geoWatchId = null;
 
+// simple translation helper (translations defined in translations.js)
+function t(key) {
+    try {
+        const lang = localStorage.getItem('civicLang') || 'en';
+        return (translations && translations[lang] && translations[lang][key]) || translations?.en?.[key] || key;
+    } catch { return key; }
+}
+
 function getCurrentUser() {
     const session = localStorage.getItem('civicUser');
     if (!session) return null;
@@ -21,6 +29,45 @@ function toggleShareLocation() {
         if (status) status.textContent = 'Location not shared';
     }
 }
+        // Citizen - allow closing own case
+        try {
+            const closeHolderId = 'citizenCloseHolder';
+            let closeHolder = document.getElementById(closeHolderId);
+            if (!closeHolder) {
+                closeHolder = document.createElement('div');
+                closeHolder.id = closeHolderId;
+                closeHolder.style.marginTop = '12px';
+                resultBox.appendChild(closeHolder);
+            }
+
+            // Determine ownership: either the complaint has a citizenId matching current user,
+            // or it is an anonymous report (citizenId null) and user reached here via tracking code.
+            const currentUserId = getCurrentUserId();
+            const isOwner = (!data.citizenId) || (data.citizenId === currentUserId);
+
+            closeHolder.innerHTML = '';
+            if (isOwner && data.status !== 'Closed' && data.status !== 'Resolved' && data.status !== 'Rejected') {
+                closeHolder.innerHTML = `<button id="closeCaseBtn" class="btn-danger" style="width:100%;">${t('close_btn')}</button>`;
+                document.getElementById('closeCaseBtn')?.addEventListener('click', async () => {
+                    if (!confirm(t('close_case_confirm'))) return;
+                    const btn = document.getElementById('closeCaseBtn');
+                    btn.disabled = true; btn.textContent = 'Closing...';
+                    try {
+                        // include X-User-Id header so server can authorize ownership
+                        const res = await fetch(`${API_BASE_URL}/Complaints/${data.id}/close`, { method: 'PUT', headers: { 'X-User-Id': getCurrentUserId() } });
+                        if (res.ok || res.status === 204) {
+                            alert('Case closed successfully.');
+                            // Refresh view
+                            document.getElementById('trackInput').value = data.trackingCode;
+                            trackCase();
+                        } else {
+                            alert('Failed to close case.');
+                        }
+                    } catch (e) { alert('Unable to reach server.'); }
+                    finally { btn.disabled = false; btn.textContent = 'Close Case'; }
+                });
+            }
+        } catch (e) { console.error('Error rendering close button:', e); }
 
 function startGeoWatch() {
     if (!navigator.geolocation) {
@@ -1076,6 +1123,7 @@ function openAdvancedPanel(caseData) {
     document.getElementById('slideOverOverlay').classList.add('active');
     document.getElementById('caseDetailPanel').classList.add('open');
     loadComments(caseData.id);
+    loadCaseFiles(caseData.id);
 }
 
 function closeAdvancedPanel() {
@@ -1130,6 +1178,41 @@ async function loadComments(complaintId) {
     const response = await fetch(`${API_BASE_URL}/Comments/complaint/${complaintId}`);
     const comments = await response.json();
     box.innerHTML = comments.map(c => `<div><strong>${c.authorName}:</strong> ${c.content}</div>`).join('');
+}
+
+async function loadCaseFiles(complaintId) {
+    const box = document.getElementById('panelFiles');
+    if (!box) return;
+    box.innerHTML = 'Loading files...';
+    try {
+        const response = await fetch(`${API_BASE_URL}/Evidence/complaint/${complaintId}`);
+        if (!response.ok) { box.innerHTML = 'Failed to load files.'; return; }
+        const files = await response.json();
+        if (!files || files.length === 0) {
+            box.innerHTML = '<div style="color:var(--text-muted);">No files uploaded.</div>';
+            return;
+        }
+        box.innerHTML = files.map(f => `
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
+                <div style="font-size:13px;">${f.fileName} <span style="font-size:11px; color:var(--text-muted);">(${Math.round(f.fileSizeInBytes/1024)} KB)</span></div>
+                <div>
+                    <a class="btn-small" href="${f.filePath}" target="_blank">Open</a>
+                    <button class="btn-secondary" onclick="downloadEvidence('${f.filePath}')">Download</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) { console.error(e); box.innerHTML = 'Error loading files.'; }
+}
+
+function downloadEvidence(path) {
+    // create an anchor to trigger download
+    const a = document.createElement('a');
+    a.href = path;
+    a.download = '';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 }
 
 async function postComment() {

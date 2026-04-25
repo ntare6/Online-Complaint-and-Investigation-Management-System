@@ -32,5 +32,6 @@ public class ComplaintDto
     public string? FeedbackComment { get; set; }
     public DateTime? FeedbackSubmittedAt { get; set; }
     public DateTime? EstimatedResolutionDate { get; set; }
+    public Guid? CitizenId { get; set; }
     public ICollection<ComplaintStatusHistoryDto> StatusHistory { get; set; } = [];
 }

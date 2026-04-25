@@ -252,12 +252,60 @@ public class ComplaintsController : ControllerBase
     {
         var complaint = await _context.Complaints.FindAsync(id);
         if (complaint == null) return NotFound();
-
+        // Allow citizen feedback even if case is closed or resolved
         complaint.Rating = dto.Rating;
         complaint.FeedbackComment = dto.Comment;
         complaint.FeedbackSubmittedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // PUT: api/Complaints/{id}/close
+    [HttpPut("{id}/close")]
+    public async Task<IActionResult> CloseByCitizen(Guid id)
+    {
+        var complaint = await _context.Complaints.FindAsync(id);
+        if (complaint == null) return NotFound();
+        // Server-side authorization: require caller to provide X-User-Id header matching the owning citizen
+        // If the complaint has no CitizenId (anonymous report) we allow closure via public tracking.
+        if (complaint.CitizenId.HasValue)
+        {
+            if (!Request.Headers.TryGetValue("X-User-Id", out var headerValues))
+                return Unauthorized("Missing user identity.");
+
+            if (!Guid.TryParse(headerValues.FirstOrDefault(), out var callerId))
+                return Unauthorized("Invalid user identity.");
+
+            if (callerId != complaint.CitizenId.Value)
+                return Forbid();
+        }
+
+        // Authorized: mark as Closed and add history
+        complaint.Status = ComplaintStatus.Closed;
+        complaint.ResolvedAt = DateTime.UtcNow;
+
+        _context.StatusHistories.Add(new ComplaintStatusHistory
+        {
+            ComplaintId = complaint.Id,
+            Status = ComplaintStatus.Closed,
+            AuthorityNote = "Closed by citizen request.",
+            ChangedAt = DateTime.UtcNow
+        });
+
+        await _context.SaveChangesAsync();
+
+        // Notify assigned officer if any
+        if (complaint.AssignedOfficerId.HasValue)
+        {
+            await _notificationService.CreateNotification(
+                complaint.AssignedOfficerId.Value,
+                $"Citizen closed case {complaint.TrackingCode}.",
+                complaint.Id,
+                NotificationType.Internal
+            );
+        }
+
         return NoContent();
     }
 

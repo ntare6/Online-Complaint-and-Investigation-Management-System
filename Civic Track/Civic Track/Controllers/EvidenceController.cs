@@ -87,6 +87,7 @@ public class EvidenceController : ControllerBase
     {
         Id = e.Id,
         FileName = e.FileName,
+        FilePath = e.FilePath,
         FileType = e.FileType,
         FileSizeInBytes = e.FileSizeInBytes,
         UploadedByName = e.UploadedByUser?.FullName ?? "Unknown",

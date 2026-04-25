@@ -113,6 +113,7 @@ const translations = {
         forgot_title: 'Reset Your Password',
         forgot_desc: 'Enter your registered email address. We will send you a reset code.',
         send_code: 'Send Reset Code',
+        close_case_confirm: 'Are you sure you want to close this case? This action can be reversed by administrators.',
         otp_label: 'Verification Code',
         new_password: 'New Password',
         reset_password: 'Reset Password',

@@ -7,5 +7,6 @@ public enum ComplaintStatus
     Investigating,
     Escalated,
     Resolved,
-    Rejected
+    Rejected,
+    Closed
 }
