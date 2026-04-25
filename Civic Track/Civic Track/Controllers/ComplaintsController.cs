@@ -175,7 +175,7 @@ public class ComplaintsController : ControllerBase
         if (dto.CategoryId != null) complaint.CategoryId = dto.CategoryId.Value;
         if (dto.IsEscalatedToLegal != null) complaint.IsEscalatedToLegal = dto.IsEscalatedToLegal.Value;
         if (dto.LegalEscalationNote != null) complaint.LegalEscalationNote = dto.LegalEscalationNote;
-        if (dto.AssignedOfficerId != null) complaint.AssignedOfficerId = dto.AssignedOfficerId;
+        if (dto.AssignedOfficerIdProvided) complaint.AssignedOfficerId = dto.AssignedOfficerId;
         if (dto.ResolutionNote != null) complaint.ResolutionNote = dto.ResolutionNote;
 
         if (dto.Priority != null && Enum.TryParse<ComplaintPriority>(dto.Priority, out var priority))

@@ -96,75 +96,75 @@
             display: inline-block;
             background: #EEF2FF;
             color: #1E4FA1;
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            padding: 4px 10px;
-            margin-bottom: 20px;
-        }
-
-        .system-title {
-            font-size: 36px;
-            font-weight: 700;
-            color: #1E4FA1;
-            line-height: 1.15;
+            padding: 3px 8px;
             margin-bottom: 14px;
         }
 
+        .system-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1E4FA1;
+            line-height: 1.15;
+            margin-bottom: 10px;
+        }
+
         .system-desc {
-            font-size: 15px;
+            font-size: 14px;
             color: #4B5563;
-            line-height: 1.65;
-            margin-bottom: 36px;
+            line-height: 1.6;
+            margin-bottom: 28px;
             max-width: 420px;
         }
 
         .services-block {
-            border-top: 2px solid #E5E7EB;
-            padding-top: 24px;
+            border-top: 1px solid #E5E7EB;
+            padding-top: 18px;
         }
 
         .services-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: #9CA3AF;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .service-row {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .service-check {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             background: #1E4FA1;
             color: #fff;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .service-text strong {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #111827;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .service-text span {
-            font-size: 13px;
+            font-size: 12px;
             color: #6B7280;
         }
 
@@ -247,37 +247,68 @@
             padding: 32px;
         }
 
-        /* Language toggle */
-        .lang-toggle {
+        /* Language toggle — minimal text links */
+        .lang-bar {
             display: flex;
-            border: 1px solid #E5E7EB;
-            margin-bottom: 24px;
-            overflow: hidden;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #E5E7EB;
+            padding-bottom: 12px;
         }
-
-        .lang-toggle button {
-            flex: 1;
-            height: 34px;
+        .lang-bar button {
+            background: none;
             border: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9CA3AF;
+            cursor: pointer;
+            padding: 2px 8px;
+            letter-spacing: 0.04em;
+            transition: color 0.15s;
+        }
+        .lang-bar button:not(:last-child)::after {
+            content: '|';
+            margin-left: 8px;
+            color: #D1D5DB;
+            font-weight: 400;
+        }
+        .lang-bar button.active { color: #1E4FA1; }
+        .lang-bar button:hover  { color: #1E4FA1; }
+
+        /* Role selector — compact */
+        .role-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .role-selector button {
+            flex: 1;
+            height: 32px;
+            border: 1px solid #D1D5DB;
             background: #F9FAFB;
             font-size: 12px;
             font-weight: 600;
             color: #6B7280;
             cursor: pointer;
-            border-right: 1px solid #E5E7EB;
             transition: all 0.15s;
         }
-
-        .lang-toggle button:last-child { border-right: none; }
-
-        .lang-toggle button:hover {
-            background: #EEF2FF;
+        .role-selector button:hover {
+            border-color: #1E4FA1;
             color: #1E4FA1;
         }
-
-        .lang-toggle button.active {
+        .role-selector button.active {
             background: #1E4FA1;
-            color: #ffffff;
+            border-color: #1E4FA1;
+            color: #fff;
+        }
+        .role-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #9CA3AF;
+            margin-bottom: 6px;
         }
 
         /* Card header */
@@ -581,11 +612,11 @@
         <section class="login-panel">
             <div class="login-card">
 
-                <!-- Language Toggle -->
-                <div class="lang-toggle">
-                    <button id="langBtnEn" onclick="chooseLang('en')" class="active">🇬🇧 EN</button>
-                    <button id="langBtnRw" onclick="chooseLang('rw')">🇷🇼 RW</button>
-                    <button id="langBtnFr" onclick="chooseLang('fr')">🇫🇷 FR</button>
+                <!-- Language Bar — minimal -->
+                <div class="lang-bar">
+                    <button id="langBtnEn" onclick="chooseLang('en')" class="active">EN</button>
+                    <button id="langBtnRw" onclick="chooseLang('rw')">RW</button>
+                    <button id="langBtnFr" onclick="chooseLang('fr')">FR</button>
                 </div>
 
                 <!-- Card Header -->
@@ -594,13 +625,23 @@
                     <p data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
                 </div>
 
+                <!-- Role Selector — compact -->
+                <div style="margin-bottom:16px;">
+                    <div class="role-label">Select Role</div>
+                    <div class="role-selector">
+                        <button class="role-btn active" id="roleBtnCitizen" onclick="selectLoginRole('Citizen')">Citizen</button>
+                        <button class="role-btn" id="roleBtnOfficer" onclick="selectLoginRole('Officer')">Officer</button>
+                        <button class="role-btn" id="roleBtnAdmin"   onclick="selectLoginRole('Admin')">Admin</button>
+                    </div>
+                </div>
+
                 <!-- Error -->
                 <div class="login-error" id="loginError"></div>
 
                 <!-- Email -->
                 <div class="field-group">
                     <label class="field-label" data-i18n="email_label">Email Address</label>
-                    <input type="email" id="loginEmail" class="field-input" placeholder="name@domain.gov.rw">
+                    <input type="email" id="loginEmail" class="field-input" placeholder="Enter your email address">
                 </div>
 
                 <!-- Password -->
@@ -617,9 +658,8 @@
                     </div>
                 </div>
 
-                <!-- Sign In -->
-                <button class="btn-signin" id="loginBtn" onclick="secureLogin()" data-i18n="sign_in">
-                    Sign In
+                <button class="btn-signin" id="loginBtn" onclick="secureLogin()">
+                    Login
                 </button>
 
                 <div class="divider-or">or</div>
@@ -683,6 +723,16 @@
     <script>
         const API_BASE_URL = 'http://localhost:5079/api';
         let pwVisible = false;
+        let selectedLoginRole = 'Citizen';
+
+        /* ── Role selector ── */
+        function selectLoginRole(role) {
+            selectedLoginRole = role;
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            const map = { Citizen: 'roleBtnCitizen', Officer: 'roleBtnOfficer', Admin: 'roleBtnAdmin' };
+            const active = document.getElementById(map[role]);
+            if (active) active.classList.add('active');
+        }
 
         /* ── Forgot Password ── */
         function openForgotModal() {
@@ -828,7 +878,7 @@
         /* ── Language ── */
         function chooseLang(lang) {
             setLanguage(lang);
-            document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.lang-bar button').forEach(b => b.classList.remove('active'));
             const map = { en: 'langBtnEn', rw: 'langBtnRw', fr: 'langBtnFr' };
             const btn = document.getElementById(map[lang]);
             if (btn) btn.classList.add('active');
@@ -876,6 +926,14 @@
                 const user = await res.json();
                 localStorage.setItem('civicUser', JSON.stringify(user));
 
+                // RBAC check — role must match what was selected
+                if (user.role !== selectedLoginRole) {
+                    errorEl.textContent = `This account is registered as "${user.role}". Please select the correct role above.`;
+                    errorEl.style.display = 'block';
+                    selectLoginRole(user.role); // auto-correct the selector
+                    return;
+                }
+
                 if      (user.role === 'Admin')   window.location.href = 'superadmin.html';
                 else if (user.role === 'Officer') window.location.href = 'admin.html';
                 else                              window.location.href = 'dashboard.html';
@@ -920,6 +978,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const lang = localStorage.getItem('civicLang') || 'en';
             chooseLang(lang);
+            selectLoginRole('Citizen'); // highlight default
         });
     </script>
 </body>

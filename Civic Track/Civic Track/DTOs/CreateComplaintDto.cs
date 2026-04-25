@@ -23,7 +23,7 @@ public class CreateComplaintDto
     public Guid CategoryId { get; set; }
     
     [Required]
-    [RegularExpression("^(Low|Medium|High)$", ErrorMessage = "Priority must be Low, Medium, or High.")]
+    [RegularExpression("^(Low|Medium|High|Critical)$", ErrorMessage = "Priority must be Low, Medium, High, or Critical.")]
     public string Priority { get; set; } = "Medium";
     
     public bool IsAnonymous { get; set; } = false;

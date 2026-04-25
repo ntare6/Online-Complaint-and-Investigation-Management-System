@@ -41,9 +41,9 @@ function enforceRoleAccess() {
     const path = window.location.pathname.split('/').pop() || 'index.html';
     
     const roleRequirements = {
-        'dashboard.html': ['Citizen', 'Client'],
-        'admin.html': ['Officer'],
+        'admin.html':      ['Officer'],
         'superadmin.html': ['Admin']
+        // dashboard.html intentionally omitted — citizens can access without login for anonymous submissions
     };
 
     const allowedRoles = roleRequirements[path];
@@ -277,24 +277,150 @@ function setupFeedbackRating() {
 // ==========================================
 // 1. Core Data Loading (Shared)
 // ==========================================
+
+// AI-based category detection — keyword matching against loaded categories
+let _allCategories = [];
+
 async function loadCategories() {
-    const dropdown = document.getElementById('categoryDropdown');
     try {
         const response = await fetch(`${API_BASE_URL}/Category`);
-        if (!response.ok) throw new Error('Failed to fetch categories');
-        const categories = await response.json();
-        const lang = localStorage.getItem('civicLang') || 'en';
-        const placeholder = (typeof translations !== 'undefined' && translations[lang]?.select_category) || '-- Select a Category --';
-        dropdown.innerHTML = `<option value="">${placeholder}</option>`;
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            dropdown.appendChild(option);
-        });
+        if (!response.ok) return;
+        _allCategories = await response.json();
     } catch (error) {
-        console.error("Error loading categories:", error);
+        console.error('Error loading categories:', error);
     }
+}
+
+function autoDetectCategory(text) {
+    const suggestion  = document.getElementById('categorysuggestion');
+    const nameEl      = document.getElementById('suggestedCategoryName');
+    const hiddenInput = document.getElementById('categoryDropdown');
+    if (!suggestion || !_allCategories.length) return;
+
+    // Also pull in the title for better context
+    const titleText = document.getElementById('complaintTitle')?.value || '';
+    const combined  = (titleText + ' ' + text).toLowerCase();
+
+    if (combined.trim().length < 10) { suggestion.style.display = 'none'; return; }
+
+    // ── Weighted keyword map ──────────────────────────────────────────────────
+    // Each entry: { word, weight }  weight 2 = strong signal, 1 = normal
+    const buckets = [
+        {
+            hint: 'Infrastructure',
+            terms: [
+                // Roads & transport
+                {w:'road',v:2},{w:'street',v:2},{w:'pothole',v:2},{w:'tarmac',v:2},{w:'pavement',v:1},
+                {w:'bridge',v:2},{w:'highway',v:1},{w:'traffic',v:1},{w:'sidewalk',v:1},{w:'footpath',v:1},
+                // Water
+                {w:'water',v:1},{w:'pipe',v:2},{w:'pipeline',v:2},{w:'tap',v:1},{w:'borehole',v:2},
+                {w:'sewage',v:2},{w:'sewer',v:2},{w:'drainage',v:2},{w:'flood',v:1},{w:'leak',v:1},
+                {w:'burst pipe',v:2},{w:'no water',v:2},{w:'water supply',v:2},
+                // Electricity
+                {w:'electricity',v:2},{w:'power',v:1},{w:'blackout',v:2},{w:'outage',v:2},
+                {w:'transformer',v:2},{w:'electric',v:1},{w:'light',v:1},{w:'streetlight',v:2},
+                // Construction & buildings
+                {w:'construction',v:1},{w:'building',v:1},{w:'infrastructure',v:2},{w:'collapsed',v:2},
+                {w:'broken',v:1},{w:'damaged',v:1},{w:'repair',v:1},{w:'maintenance',v:1},
+                {w:'garbage collection',v:1},{w:'public toilet',v:2},{w:'latrine',v:2}
+            ]
+        },
+        {
+            hint: 'Safety',
+            terms: [
+                // Crime
+                {w:'theft',v:2},{w:'robbery',v:2},{w:'stolen',v:2},{w:'burglar',v:2},{w:'break in',v:2},
+                {w:'assault',v:2},{w:'attack',v:2},{w:'beat',v:1},{w:'hit',v:1},{w:'stab',v:2},
+                {w:'murder',v:2},{w:'kill',v:2},{w:'dead',v:1},{w:'body',v:1},{w:'shooting',v:2},
+                {w:'gun',v:2},{w:'weapon',v:2},{w:'knife',v:2},{w:'armed',v:2},
+                // Sexual violence
+                {w:'rape',v:2},{w:'sexual',v:2},{w:'harass',v:2},{w:'molest',v:2},{w:'abuse',v:1},
+                // Drugs & gangs
+                {w:'drug',v:2},{w:'narcotics',v:2},{w:'gang',v:2},{w:'criminal',v:2},{w:'suspect',v:1},
+                // Police & security
+                {w:'police',v:1},{w:'security',v:1},{w:'patrol',v:1},{w:'unsafe',v:2},{w:'danger',v:2},
+                {w:'threat',v:2},{w:'intimidate',v:2},{w:'fight',v:1},{w:'violence',v:2},{w:'crime',v:2},
+                {w:'accident',v:1},{w:'crash',v:1},{w:'fire',v:1},{w:'explosion',v:2}
+            ]
+        },
+        {
+            hint: 'Environmental',
+            terms: [
+                // Waste
+                {w:'garbage',v:2},{w:'waste',v:2},{w:'trash',v:2},{w:'rubbish',v:2},{w:'litter',v:2},
+                {w:'dump',v:2},{w:'dumping',v:2},{w:'landfill',v:2},{w:'refuse',v:1},
+                // Pollution
+                {w:'pollution',v:2},{w:'pollute',v:2},{w:'contaminate',v:2},{w:'toxic',v:2},
+                {w:'chemical',v:1},{w:'smoke',v:1},{w:'smell',v:1},{w:'odor',v:1},{w:'stench',v:2},
+                {w:'noise',v:1},{w:'dust',v:1},
+                // Water & nature
+                {w:'river',v:1},{w:'lake',v:1},{w:'swamp',v:1},{w:'wetland',v:2},{w:'erosion',v:2},
+                {w:'deforestation',v:2},{w:'tree',v:1},{w:'forest',v:1},{w:'soil',v:1},{w:'land',v:1},
+                {w:'environment',v:2},{w:'sanitation',v:2},{w:'hygiene',v:1},{w:'clean',v:1},
+                {w:'flooding',v:1},{w:'drainage',v:1},{w:'mosquito',v:1},{w:'pest',v:1}
+            ]
+        },
+        {
+            hint: 'Governance',
+            terms: [
+                // Corruption
+                {w:'corruption',v:2},{w:'corrupt',v:2},{w:'bribe',v:2},{w:'bribery',v:2},{w:'extort',v:2},
+                {w:'fraud',v:2},{w:'embezzle',v:2},{w:'steal public',v:2},{w:'misuse',v:2},
+                // Officials & misconduct
+                {w:'official',v:1},{w:'officer',v:1},{w:'government',v:1},{w:'authority',v:1},
+                {w:'misconduct',v:2},{w:'abuse of power',v:2},{w:'nepotism',v:2},{w:'favoritism',v:2},
+                {w:'discrimination',v:2},{w:'unfair',v:1},{w:'injustice',v:2},
+                // Services
+                {w:'service',v:1},{w:'delay',v:1},{w:'refused',v:1},{w:'denied',v:1},{w:'ignored',v:1},
+                {w:'document',v:1},{w:'permit',v:1},{w:'license',v:1},{w:'certificate',v:1},
+                {w:'land title',v:2},{w:'property',v:1},{w:'tax',v:1},{w:'fee',v:1},
+                {w:'election',v:2},{w:'vote',v:2},{w:'political',v:1},{w:'accountability',v:2},
+                {w:'transparency',v:2},{w:'report',v:1},{w:'complaint ignored',v:2}
+            ]
+        },
+        {
+            hint: 'Social',
+            terms: [
+                // Health
+                {w:'hospital',v:2},{w:'clinic',v:2},{w:'health',v:2},{w:'medical',v:2},{w:'doctor',v:2},
+                {w:'nurse',v:2},{w:'medicine',v:2},{w:'treatment',v:1},{w:'sick',v:1},{w:'disease',v:2},
+                {w:'malaria',v:2},{w:'hiv',v:2},{w:'covid',v:2},{w:'epidemic',v:2},{w:'vaccination',v:2},
+                // Education
+                {w:'school',v:2},{w:'education',v:2},{w:'student',v:2},{w:'teacher',v:2},{w:'class',v:1},
+                {w:'university',v:2},{w:'college',v:2},{w:'dropout',v:2},{w:'fees',v:1},
+                // Poverty & welfare
+                {w:'poverty',v:2},{w:'poor',v:1},{w:'hungry',v:2},{w:'food',v:1},{w:'starving',v:2},
+                {w:'homeless',v:2},{w:'shelter',v:1},{w:'orphan',v:2},{w:'widow',v:2},{w:'elderly',v:2},
+                {w:'child',v:1},{w:'children',v:1},{w:'family',v:1},{w:'welfare',v:2},{w:'social',v:1},
+                {w:'disability',v:2},{w:'disabled',v:2},{w:'refugee',v:2},{w:'domestic violence',v:2}
+            ]
+        }
+    ];
+
+    // ── Scoring ───────────────────────────────────────────────────────────────
+    let bestHint  = null;
+    let bestScore = 0;
+
+    for (const bucket of buckets) {
+        let score = 0;
+        for (const { w, v } of bucket.terms) {
+            if (combined.includes(w)) score += v;
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            bestHint  = bucket.hint;
+        }
+    }
+
+    if (!bestHint || bestScore === 0) { suggestion.style.display = 'none'; return; }
+
+    // ── Match against DB category by partial name ─────────────────────────────
+    const matched = _allCategories.find(c => c.name.toLowerCase().includes(bestHint.toLowerCase()));
+    if (!matched) { suggestion.style.display = 'none'; return; }
+
+    hiddenInput.value  = matched.id;
+    nameEl.textContent = matched.name;
+    suggestion.style.display = 'block';
 }
 
 async function loadNotifications() {
@@ -336,31 +462,137 @@ async function loadCitizenDashboardStats() {
 // ==========================================
 // 2. Citizen - Complaint Submission
 // ==========================================
-async function submitComplaint() {
-    const title = document.getElementById('complaintTitle')?.value;
-    const categoryId = document.getElementById('categoryDropdown')?.value;
-    const district = document.getElementById('incidentDistrict')?.value;
-    const sector = document.getElementById('incidentSector')?.value;
-    const cell = document.getElementById('incidentCell')?.value;
-    const village = document.getElementById('incidentVillage')?.value;
-    const location = document.getElementById('incidentLocation')?.value;
-    const description = document.getElementById('complaintDescription')?.value;
 
-    if (!title || !categoryId || !district) { alert("Title, Category, and District are required."); return; }
+function setSubmissionMode(mode) {
+    const isEmergency = mode === 'emergency';
+
+    // Toggle button styles
+    const btnStd = document.getElementById('modeStandard');
+    const btnEmg = document.getElementById('modeEmergency');
+    if (btnStd) {
+        btnStd.style.background = isEmergency ? '#f9fafb' : '#1E4FA1';
+        btnStd.style.color      = isEmergency ? '#6b7280' : '#fff';
+    }
+    if (btnEmg) {
+        btnEmg.style.background = isEmergency ? '#dc2626' : '#f9fafb';
+        btnEmg.style.color      = isEmergency ? '#fff'    : '#6b7280';
+    }
+
+    // Show/hide forms
+    const stdForm = document.getElementById('standardForm');
+    const emgForm = document.getElementById('emergencyForm');
+    if (stdForm) stdForm.style.display = isEmergency ? 'none'  : 'block';
+    if (emgForm) emgForm.style.display = isEmergency ? 'block' : 'none';
+
+    // Reset AI suggestion when switching
+    const sug = document.getElementById('categorysuggestion');
+    if (sug) sug.style.display = 'none';
+    const hidden = document.getElementById('categoryDropdown');
+    if (hidden) hidden.value = '';
+}
+
+async function submitEmergency() {
+    const description = document.getElementById('emergencyDescription')?.value?.trim();
+    const location    = document.getElementById('emergencyLocation')?.value?.trim();
+    const phone       = document.getElementById('emergencyPhone')?.value?.trim();
+    const categoryId  = document.getElementById('categoryDropdown')?.value;
+
+    if (!description || description.length < 10) {
+        alert('Please describe the emergency (at least 10 characters).');
+        return;
+    }
+    if (!location) {
+        alert('Please provide your location so officers can respond.');
+        return;
+    }
+
+    // Use first available category if AI didn't detect one
+    const finalCategoryId = categoryId || (_allCategories[0]?.id ?? null);
+    if (!finalCategoryId) {
+        alert('Categories not loaded. Please try again in a moment.');
+        return;
+    }
+
+    const user = getCurrentUser();
+    const payload = {
+        title:       'EMERGENCY: ' + description.substring(0, 60),
+        description: description + (phone ? `\n\nContact: ${phone}` : ''),
+        location,
+        district:    '',
+        sector:      '',
+        cell:        '',
+        village:     '',
+        categoryId:  finalCategoryId,
+        priority:    'Critical',
+        isAnonymous: !phone,          // anonymous if no phone given
+        citizenId:   user?.id ?? null
+    };
+
+    const btn = document.getElementById('emergencySubmitBtn');
+    btn.disabled    = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/Complaints`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            alert(
+                `\u2705 Emergency submitted successfully!\n\n` +
+                `Tracking Code: ${result.trackingCode}\n\n` +
+                `Your case has been flagged as CRITICAL and will be escalated immediately.\n` +
+                `Save your tracking code to follow up.`
+            );
+            document.getElementById('emergencyDescription').value = '';
+            document.getElementById('emergencyLocation').value    = '';
+            document.getElementById('emergencyPhone').value       = '';
+            document.getElementById('categorysuggestion').style.display = 'none';
+            document.getElementById('categoryDropdown').value = '';
+            switchCitizenTab('track');
+            document.getElementById('trackInput').value = result.trackingCode;
+            trackCase();
+        } else {
+            const err = await response.json().catch(() => null);
+            const msg = err?.errors ? Object.values(err.errors).flat()[0] : 'Submission failed. Please try again.';
+            alert(msg);
+        }
+    } catch {
+        alert('Unable to connect to server. Please try again.');
+    } finally {
+        btn.disabled    = false;
+        btn.textContent = '\u{1F6A8} SUBMIT EMERGENCY NOW';
+    }
+}
+async function submitComplaint() {
+    const title       = document.getElementById('complaintTitle')?.value?.trim();
+    const categoryId  = document.getElementById('categoryDropdown')?.value;
+    const district    = document.getElementById('incidentDistrict')?.value;
+    const sector      = document.getElementById('incidentSector')?.value;
+    const cell        = document.getElementById('incidentCell')?.value;
+    const village     = document.getElementById('incidentVillage')?.value;
+    const location    = document.getElementById('incidentLocation')?.value;
+    const description = document.getElementById('complaintDescription')?.value?.trim();
+    const isAnonymous = document.getElementById('isAnonymous')?.checked || false;
+    const priorityEl  = document.querySelector('input[name="complaintPriority"]:checked');
+    const priority    = priorityEl ? priorityEl.value : 'Medium';
+
+    if (!title)                                  { alert('Please enter a complaint title.'); return; }
+    if (!description || description.length < 20) { alert('Please provide a detailed description (at least 20 characters). The system needs this to auto-detect the category.'); return; }
+    if (!categoryId)                             { alert('The system could not detect a category from your description. Please add more detail about the type of issue.'); return; }
+    if (!district)                               { alert('Please select a district.'); return; }
 
     const payload = {
-        title: title,
-        description: description,
-        location: location,
-        district: district,
-        sector: sector,
-        cell: cell,
-        village: village,
-        categoryId: categoryId,
-        priority: "Medium",
-        isAnonymous: false,
-        citizenId: getCurrentUserId() 
+        title, description, location, district, sector, cell, village,
+        categoryId, priority, isAnonymous,
+        citizenId: isAnonymous ? null : (getCurrentUser()?.id ?? null)
     };
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Submitting...';
 
     try {
         const response = await fetch(`${API_BASE_URL}/Complaints`, {
@@ -373,15 +605,22 @@ async function submitComplaint() {
             const result = await response.json();
             const fileInput = document.getElementById('evidenceFile');
             if (fileInput && fileInput.files.length > 0) { await uploadEvidence(result.id, fileInput.files[0]); }
-            alert(`Complaint submitted. Tracking code: ${result.trackingCode}`);
+            alert(`Complaint submitted successfully.\n\nYour tracking code is:\n${result.trackingCode}\n\nSave this code to track your case.`);
             document.getElementById('complaintForm').reset();
+            document.getElementById('categorysuggestion').style.display = 'none';
             switchCitizenTab('track');
             document.getElementById('trackInput').value = result.trackingCode;
             trackCase();
         } else {
-            alert("Unable to submit complaint.");
+            const err = await response.json().catch(() => null);
+            const msg = err?.errors ? Object.values(err.errors).flat()[0] : 'Unable to submit complaint.';
+            alert(msg);
         }
-    } catch (error) { alert("Unable to connect to server."); }
+    } catch { alert('Unable to connect to server.'); }
+    finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Investigation Request';
+    }
 }
 
 // ==========================================
@@ -460,6 +699,17 @@ function getStatusBadgeClass(status) {
     if (status === 'Escalated') return 'badge-escalated';
     if (status === 'Rejected') return 'badge-rejected';
     return 'badge-pending';
+}
+
+function getPriorityBadge(priority) {
+    const styles = {
+        Low:      'background:#f0fdf4; color:#166534; border:1px solid #bbf7d0;',
+        Medium:   'background:#fffbeb; color:#92400e; border:1px solid #fde68a;',
+        High:     'background:#fef2f2; color:#991b1b; border:1px solid #fecaca;',
+        Critical: 'background:#f5f3ff; color:#5b21b6; border:1px solid #ddd6fe;'
+    };
+    const s = styles[priority] || styles.Medium;
+    return `<span style="display:inline-block; padding:2px 8px; font-size:11px; font-weight:700; ${s}">${priority}</span>`;
 }
 
 async function loadUserComplaints() {
@@ -632,8 +882,8 @@ async function loadAdminComplaints() {
                 <td><strong>${c.trackingCode}</strong></td>
                 <td>${c.title}</td>
                 <td>${c.categoryName ?? 'Other'}</td>
-                <td><span class="badge ${c.priority === 'High' ? 'badge-pending' : ''}" style="border-radius:4px;">${c.priority}</span></td>
-                <td><span class="badge ${c.status === 'Investigating' ? 'badge-investigating' : c.status === 'Resolved' ? 'badge-resolved' : 'badge-pending'}">${c.status}</span></td>
+                <td>${getPriorityBadge(c.priority)}</td>
+                <td><span class="badge ${getStatusBadgeClass(c.status)}">${c.status}</span></td>
                 <td style="font-size:0.85rem; font-weight:600;">${c.assignedOfficerName || '<span style="color:#94a3b8; font-weight:400;">Unassigned</span>'}</td>
             `;
             row.onclick = () => openAdvancedPanel(c);
@@ -645,36 +895,42 @@ async function loadAdminComplaints() {
 async function calculateAndRenderStats() {
     try {
         const user = getCurrentUser();
-        let url = `${API_BASE_URL}/Analytics/dashboard-summary`;
-        
-        // If Officer, filter by their assigned cases
+
+        // Fetch all complaints then filter by officer assignment client-side
+        // (the analytics endpoint filters by citizenId, not assignedOfficerId)
+        const response = await fetch(`${API_BASE_URL}/Complaints`);
+        if (!response.ok) return;
+        let complaints = await response.json();
+
+        // Officers only see their own assigned cases
         if (user?.role === 'Officer') {
-            url += `?citizenId=${user.id}`; // Reusing the parameter name for assigned officer logic on backend if needed, 
-                                            // but for now let's ensure we distinguish correctly.
-                                            // Actually, the backend GetDashboardSummary currently filters by CitizenId.
+            const officerId = (user.id || '').toLowerCase();
+            complaints = complaints.filter(c =>
+                (c.assignedOfficerId || '').toLowerCase() === officerId
+            );
         }
 
-        const response = await fetch(url);
-        const stats = await response.json();
-        const total = stats.totalComplaints;
-        const resRate = stats.resolutionRate + '%';
+        const total      = complaints.length;
+        const pending    = complaints.filter(c => c.status === 'Pending').length;
+        const inProgress = complaints.filter(c => c.status === 'Investigating' || c.status === 'UnderReview').length;
+        const resolved   = complaints.filter(c => c.status === 'Resolved').length;
+        const resRate    = total === 0 ? '0%' : Math.round((resolved / total) * 100) + '%';
 
-        if (document.getElementById('statTotal')) document.getElementById('statTotal').innerText = total;
-        if (document.getElementById('statPending')) document.getElementById('statPending').innerText = stats.pending;
-        if (document.getElementById('statInvestigating')) document.getElementById('statInvestigating').innerText = stats.inProgress;
-        if (document.getElementById('statInProgress')) document.getElementById('statInProgress').innerText = stats.inProgress; // Support both naming conventions
-        if (document.getElementById('statResolved')) document.getElementById('statResolved').innerText = stats.resolved;
-        if (document.getElementById('statResolutionRate')) document.getElementById('statResolutionRate').innerText = resRate;
-        
-        if (document.getElementById('pendingCountBadge')) document.getElementById('pendingCountBadge').innerText = stats.pending;
-        if (document.getElementById('reportResRate')) document.getElementById('reportResRate').innerText = resRate;
-        
+        if (document.getElementById('statTotal'))         document.getElementById('statTotal').innerText         = total;
+        if (document.getElementById('statPending'))       document.getElementById('statPending').innerText       = pending;
+        if (document.getElementById('statInvestigating')) document.getElementById('statInvestigating').innerText = inProgress;
+        if (document.getElementById('statInProgress'))    document.getElementById('statInProgress').innerText    = inProgress;
+        if (document.getElementById('statResolved'))      document.getElementById('statResolved').innerText      = resolved;
+        if (document.getElementById('statResolutionRate'))document.getElementById('statResolutionRate').innerText = resRate;
+        if (document.getElementById('pendingCountBadge')) document.getElementById('pendingCountBadge').innerText  = pending;
+        if (document.getElementById('reportResRate'))     document.getElementById('reportResRate').innerText      = resRate;
+
         const max = total || 1;
-        if (document.getElementById('offBarPending')) document.getElementById('offBarPending').style.width = (stats.pending / max * 100) + '%';
-        if (document.getElementById('offBarInProg')) document.getElementById('offBarInProg').style.width = (stats.inProgress / max * 100) + '%';
-        if (document.getElementById('offBarDone')) document.getElementById('offBarDone').style.width = (stats.resolved / max * 100) + '%';
+        if (document.getElementById('offBarPending')) document.getElementById('offBarPending').style.width = (pending    / max * 100) + '%';
+        if (document.getElementById('offBarInProg'))  document.getElementById('offBarInProg').style.width  = (inProgress / max * 100) + '%';
+        if (document.getElementById('offBarDone'))    document.getElementById('offBarDone').style.width    = (resolved   / max * 100) + '%';
 
-    } catch (e) { console.error("Error rendering stats:", e); }
+    } catch (e) { console.error('Error rendering stats:', e); }
 }
 
 function switchOfficerView(view) {
@@ -745,23 +1001,17 @@ function openAdvancedPanel(caseData) {
         document.getElementById('updatePrioritySelect').value = caseData.priority || 'Medium';
     }
 
-    // Handle existing resolution
-    const resField = document.getElementById('resolutionField');
+    // Handle existing resolution note
     const resDisplay = document.getElementById('resolutionDisplay');
-    const resInput = document.getElementById('caseResolutionNote');
-    if (resField) {
-        if (caseData.status === 'Resolved') {
-            resField.style.display = 'block';
+    const resInput   = document.getElementById('caseResolutionNote');
+    if (resDisplay) {
+        if (caseData.resolutionNote) {
             resDisplay.style.display = 'block';
-            resDisplay.innerText = caseData.resolutionNote || "No summary provided.";
-            if (resInput) resInput.style.display = 'none';
+            resDisplay.innerText = caseData.resolutionNote;
+            if (resInput) resInput.value = caseData.resolutionNote;
         } else {
-            resField.style.display = 'none';
             resDisplay.style.display = 'none';
-            if (resInput) {
-                resInput.style.display = 'block';
-                resInput.value = '';
-            }
+            if (resInput) resInput.value = '';
         }
     }
 
@@ -775,34 +1025,29 @@ function closeAdvancedPanel() {
     document.getElementById('caseDetailPanel').classList.remove('open');
 }
 
-function toggleResolutionField() {
-    const status = document.getElementById('updateStatusSelect').value;
-    const field = document.getElementById('resolutionField');
-    if (field) {
-        field.style.display = (status === 'Resolved') ? 'block' : 'none';
-    }
-}
+function toggleResolutionField() { /* no-op: resolution field is always visible */ }
 
 async function updateCaseStatus() {
     const newStatus   = document.getElementById('updateStatusSelect').value;
     const newPriority = document.getElementById('updatePrioritySelect')?.value;
-    const note        = document.getElementById('caseResolutionNote')?.value;
-    
-    if (newStatus === 'Resolved' && !note && !document.getElementById('resolutionDisplay')?.innerText) {
-        return alert("Please provide an official resolution summary before closing the case.");
-    }
+    const note        = document.getElementById('caseResolutionNote')?.value?.trim();
 
-    await fetch(`${API_BASE_URL}/Complaints/${currentAdminCaseId}`, {
+    const res = await fetch(`${API_BASE_URL}/Complaints/${currentAdminCaseId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             status: newStatus,
             priority: newPriority || undefined,
-            resolutionNote: note 
+            resolutionNote: note || undefined
         })
     });
-    closeAdvancedPanel();
-    loadAdminComplaints();
+
+    if (res.ok || res.status === 204) {
+        closeAdvancedPanel();
+        loadAdminComplaints();
+    } else {
+        alert('Failed to save changes. Please try again.');
+    }
 }
 
 // ==========================================
