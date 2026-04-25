@@ -133,6 +133,8 @@ public class ComplaintsController : ControllerBase
             Sector = dto.Sector,
             Cell = dto.Cell,
             Village = dto.Village,
+            Latitude = dto.Latitude,
+            Longitude = dto.Longitude,
             CategoryId = dto.CategoryId,
             Priority = Enum.TryParse<ComplaintPriority>(dto.Priority, out var priority)
                 ? priority : ComplaintPriority.Medium,
@@ -308,6 +310,8 @@ public class ComplaintsController : ControllerBase
         FeedbackComment = c.FeedbackComment,
         FeedbackSubmittedAt = c.FeedbackSubmittedAt,
         EstimatedResolutionDate = c.EstimatedResolutionDate,
+        Latitude = c.Latitude,
+        Longitude = c.Longitude,
         StatusHistory = c.StatusHistory.OrderBy(sh => sh.ChangedAt).Select(sh => new ComplaintStatusHistoryDto
         {
             Status = sh.Status.ToString(),

@@ -15,17 +15,21 @@
             <span>CivicTrack</span>
             <span class="gov-label" data-i18n="official_gov">Republic of Rwanda</span>
         </div>
-        <div class="nav-profile">
-            <span id="userRoleLabel" data-i18n="role_citizen">Role: Citizen</span>
-            <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); padding:4px 10px; border-radius:4px;">
-                <span style="color:white; font-size:13px;">🌐</span>
-                <select class="lang-select" style="background:transparent; color:white; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none;" onchange="setLanguage(this.value)">
-                    <option value="en" style="color:black;">EN</option>
-                    <option value="rw" style="color:black;">RW</option>
-                    <option value="fr" style="color:black;">FR</option>
-                </select>
+        <div class="nav-profile" style="display:flex; align-items:center; gap:16px;">
+            <div style="display:flex; align-items:center; gap:10px; color:#e9efff; font-size:13px;">
+                <span id="userRoleLabel" data-i18n="role_citizen">Role: Citizen</span>
+                <span style="color:rgba(255,255,255,0.28);">|</span>
+                <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); padding:4px 8px; border-radius:4px;">
+                    <span style="color:white; font-size:13px;">🌐</span>
+                    <select class="lang-select" style="background:transparent; color:white; border:none; font-size:12px; font-weight:600; cursor:pointer; outline:none;" onchange="setLanguage(this.value)">
+                        <option value="en" style="color:black;">EN</option>
+                        <option value="rw" style="color:black;">RW</option>
+                        <option value="fr" style="color:black;">FR</option>
+                    </select>
+                </div>
+                <span style="color:rgba(255,255,255,0.28);">|</span>
+                <button class="btn-small" onclick="logoutUser()" data-i18n="sign_out">Sign out</button>
             </div>
-            <button class="btn-small" onclick="logoutUser()" data-i18n="sign_out">Sign out</button>
         </div>
     </nav>
 
@@ -37,7 +41,9 @@
                 <li id="tabLodge" onclick="switchCitizenTab('lodge')" data-role-visible="Citizen,Client" data-i18n="submit_new">Submit Complaint</li>
                 <li id="tabTrack" onclick="switchCitizenTab('track')" data-role-visible="Citizen,Client" data-i18n="my_complaints">My Complaints</li>
                 <li id="tabNotifications" onclick="switchCitizenTab('notifications')" data-role-visible="Citizen,Client">
-                    <span data-i18n="notifications">Notifications</span> <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
+                    <span data-i18n="notifications">Notifications</span>
+                    <span id="citizenNotifBadge" class="badge badge-pending" style="display:none; margin-left:6px;">0</span>
+                    <div id="citizenNotifSummary" class="notif-summary" style="display:none; margin-top:6px;">&nbsp;</div>
                 </li>
             </ul>
         </aside>
@@ -122,82 +128,96 @@
                 <h2 style="margin-bottom:8px;" data-i18n="lodge_title">Lodge New Complaint</h2>
                 <p style="margin-bottom:16px; color:var(--text-muted);" data-i18n="lodge_desc">Please provide accurate details. All information is handled securely according to government regulations.</p>
 
-                <!-- Submission Mode Toggle -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:24px; border:2px solid var(--border-color);">
-                    <button id="modeStandard" onclick="setSubmissionMode('standard')"
-                        style="padding:14px; border:none; background:#1E4FA1; color:#fff; font-size:13px; font-weight:700; cursor:pointer; border-right:1px solid rgba(255,255,255,0.2);">
-                        &#128203; Standard Report
-                        <div style="font-size:11px; font-weight:400; margin-top:2px; opacity:0.85;">Full details &mdash; processed formally</div>
-                    </button>
-                    <button id="modeEmergency" onclick="setSubmissionMode('emergency')"
-                        style="padding:14px; border:none; background:#f9fafb; color:#6b7280; font-size:13px; font-weight:700; cursor:pointer;">
-                        &#128680; Emergency
-                        <div style="font-size:11px; font-weight:400; margin-top:2px;">Immediate threat &mdash; fast submission</div>
-                    </button>
+                <div style="margin-bottom:12px;">
+                    <label class="form-label">Report Type</label>
+                    <div class="report-type" role="tablist" aria-label="Report Type">
+                        <button id="modeStandard" class="rt-btn selected" onclick="setSubmissionMode('standard')" aria-pressed="true">
+                            <span style="font-size:16px; margin-right:8px;">&#128203;</span>
+                            <div style="text-align:left;"><div style="font-weight:700;">Standard Report</div><div style="font-size:12px; color:var(--text-muted);">Processed through normal review</div></div>
+                        </button>
+                        <button id="modeEmergency" class="rt-btn" onclick="setSubmissionMode('emergency')" aria-pressed="false">
+                            <span style="font-size:16px; margin-right:8px;">&#128680;</span>
+                            <div style="text-align:left;"><div style="font-weight:700;">Emergency Report <span class="emg-badge" style="display:none;">EMERGENCY</span></div><div style="font-size:12px; color:var(--text-muted);">Immediate attention required</div></div>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- EMERGENCY FORM -->
                 <div id="emergencyForm"  style="display:none;">
-                    <div style="background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #dc2626; padding:12px 16px; margin-bottom:20px;">
-                        <div style="font-weight:700; color:#991b1b; font-size:13px;">&#128680; EMERGENCY SUBMISSION</div>
-                        <div style="font-size:12px; color:#7f1d1d; margin-top:2px;">This will be flagged as Critical priority and immediately escalated to the nearest available officer.</div>
+                    <div style="background:#fff5f5; border:1px solid #fdecea; padding:12px 16px; margin-bottom:20px; border-radius:4px;">
+                        <div style="font-weight:700; color:#991b1b; font-size:13px; display:flex; align-items:center; gap:10px;">&#128680; <span>Emergency submission</span></div>
+                        <div style="font-size:12px; color:#7f1d1d; margin-top:6px;">This will be flagged as Critical priority and immediately escalated to the nearest available officer.</div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">What is happening? <span style="color:#dc2626;">*</span></label>
+                        <label class="form-label">Incident Description <span class="required">*</span></label>
                         <textarea id="emergencyDescription" rows="4" class="form-control"
-                            placeholder="Describe the emergency briefly. e.g. Armed robbery in progress at Kimironko market..."
+                            placeholder="Describe the incident briefly and clearly. Include location details and immediate risks."
                             oninput="autoDetectCategory(this.value)"></textarea>
-                        <div id="categorysuggestion" style="display:none; margin-top:8px; padding:10px 12px; background:#f0f9ff; border:1px solid #bae6fd; font-size:13px;">
-                            <span style="color:#0369a1; font-weight:600;">&#129302; Detected Category:</span>
-                            <span id="suggestedCategoryName" style="font-weight:700; color:#1e4fa1; margin-left:6px;"></span>
-                            <span style="color:#6b7280; font-size:12px; margin-left:8px;">(auto-selected)</span>
+                        <div id="categorysuggestion" style="display:none; margin-top:8px; padding:8px 10px; background:#f7fbff; border:1px solid #e6f3ff; font-size:13px; border-radius:4px;">
+                            <span data-i18n="detected_category" style="color:#0369a1; font-weight:600; font-size:13px;"></span>
+                            <span id="suggestedCategoryName" style="font-weight:700; color:var(--primary-blue); margin-left:6px;"></span>
+                            <span data-i18n="auto_selected" style="color:#6b7280; font-size:12px; margin-left:8px;"></span>
+                        </div>
+                        <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+                            <select id="emergencyCategory" class="form-control" style="max-width:320px;">
+                                <option value="">-- Select Category --</option>
+                                <option value="Theft">Theft</option>
+                                <option value="Corruption">Corruption</option>
+                                <option value="Violence">Violence</option>
+                                <option value="Public Service Issue">Public Service Issue</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div style="font-size:12px; color:var(--text-muted);">No evidence required for emergency reports. Share live location if possible.</div>
                         </div>
                         <input type="hidden" id="categoryDropdown">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Your Location <span style="color:#dc2626;">*</span></label>
-                        <input type="text" id="emergencyLocation" class="form-control"
-                            placeholder="e.g. Kimironko Market, near the main gate">
+                        <label class="form-label">Share Live Location</label>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <button type="button" id="shareLocationBtn" class="btn-secondary" onclick="toggleShareLocation()">Share Location</button>
+                            <div id="shareLocationStatus" style="color:var(--text-muted); font-size:13px;">Location not shared</div>
+                        </div>
+                        <input type="hidden" id="reporterLatitude">
+                        <input type="hidden" id="reporterLongitude">
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Your Phone Number (optional)</label>
-                        <input type="tel" id="emergencyPhone" class="form-control" placeholder="+250 7XX XXX XXX">
-                        <div style="font-size:11px; color:#6b7280; margin-top:4px;">So an officer can call you back. Leave blank to stay anonymous.</div>
+                    <div style="display:flex; gap:12px;">
+                        <button type="button" id="emergencySubmitBtn" class="btn-primary"
+                            style="flex:1; padding:1rem; font-size:15px; font-weight:700; border:none; cursor:pointer;"
+                            onclick="submitEmergency()">
+                            &#128680; <span>Submit Emergency Report</span>
+                        </button>
                     </div>
-
-                    <button type="button" id="emergencySubmitBtn" class="btn-primary"
-                        style="width:100%; padding:1rem; font-size:15px; font-weight:700; background:#dc2626; border:none; cursor:pointer;"
-                        onclick="submitEmergency()">
-                        &#128680; SUBMIT EMERGENCY NOW
-                    </button>
                 </div>
 
-                <!-- STANDARD FORM -->
+
                 <div id="standardForm">
                     <form id="complaintForm">
                         <div class="form-group">
-                            <label class="form-label" for="complaintTitle" data-i18n="comp_title_label">Complaint Title</label>
+                            <label class="form-label" for="complaintTitle" data-i18n="comp_title_label">Complaint Title <span class="required">*</span></label>
                             <input type="text" id="complaintTitle" class="form-control" placeholder="e.g., Damaged Infrastructure in Gasabo">
+                            <div class="field-error" id="titleError" style="display:none;">Please enter a short descriptive title.</div>
                         </div>
 
-                        <!-- AI Auto-Category -->
+
                         <div class="form-group">
-                            <label class="form-label" for="complaintDescription" data-i18n="description_label">Detailed Incident Description</label>
+                        <div class="section-header" data-i18n="section_complaint_details"></div>
+                            <label class="form-label" for="complaintDescription" data-i18n="description_label">Detailed Incident Description <span class="required">*</span></label>
                             <textarea id="complaintDescription" rows="5" class="form-control"
                                 placeholder="Describe the incident in detail. The system will automatically detect the category..."
                                 oninput="autoDetectCategory(this.value)"></textarea>
-                            <div id="categorysuggestion" style="display:none; margin-top:8px; padding:10px 12px; background:#f0f9ff; border:1px solid #bae6fd; font-size:13px;">
-                                <span style="color:#0369a1; font-weight:600;">&#129302; Detected Category:</span>
-                                <span id="suggestedCategoryName" style="font-weight:700; color:#1e4fa1; margin-left:6px;"></span>
-                                <span style="color:#6b7280; font-size:12px; margin-left:8px;">(auto-selected)</span>
+                            <div id="categorysuggestion" style="display:none; margin-top:8px; padding:8px 10px; background:#f7fbff; border:1px solid #e6f3ff; font-size:13px; border-radius:4px;">
+                                <span data-i18n="detected_category" style="color:#0369a1; font-weight:600;"></span>
+                                <span id="suggestedCategoryName" style="font-weight:700; color:var(--primary-blue); margin-left:6px;"></span>
+                                <span data-i18n="auto_selected" style="color:#6b7280; font-size:12px; margin-left:8px;"></span>
                             </div>
                             <input type="hidden" id="categoryDropdown">
                         </div>
 
                         <div class="grid-2">
+                            <div class="section-header" style="grid-column: 1 / -1; margin-top: 8px;" data-i18n="section_location_information"></div>
                             <div class="form-group">
                                 <label class="form-label" for="incidentDistrict" data-i18n="district_label">District</label>
                                 <select id="incidentDistrict" class="form-control" data-i18n-placeholder="select_district">
@@ -271,6 +291,7 @@
                         <div class="form-group">
                             <label class="form-label" for="evidenceFile" data-i18n="evidence_label">Upload Evidence Document (Optional)</label>
                             <input type="file" id="evidenceFile" accept="image/*,.pdf" class="form-control" style="background-color: transparent; border: none; padding-left: 0;">
+                            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;" data-i18n="accepted_files"></div>
                         </div>
                         <button type="button" id="submitBtn" class="btn-primary" style="width:100%; padding: 1rem; font-weight: 700;" data-i18n="submit_request">Submit Investigation Request</button>
                     </form>

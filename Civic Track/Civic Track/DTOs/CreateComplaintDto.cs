@@ -18,6 +18,9 @@ public class CreateComplaintDto
     public string? Sector { get; set; }
     public string? Cell { get; set; }
     public string? Village { get; set; }
+    // Optional GPS coordinates when a reporter shares live location (emergency reports)
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     
     [Required]
     public Guid CategoryId { get; set; }

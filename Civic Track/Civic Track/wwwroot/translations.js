@@ -117,7 +117,6 @@ const translations = {
         new_password: 'New Password',
         reset_password: 'Reset Password',
         back_btn: '← Back',
-        // Select placeholders
         select_category: '-- Select a Category --',
         select_district: '-- Select District --',
         select_sector: '-- Select Sector --',
@@ -129,7 +128,32 @@ const translations = {
         role_admin_short: 'Admin',
         lang_en: 'English',
         lang_rw: 'Kinyarwanda',
-        lang_fr: 'Français'
+        lang_fr: 'Français',
+        preview: 'Preview',
+        detected_category: 'Detected category:',
+        auto_selected: '(auto-selected)',
+        section_complaint_details: 'Complaint Details',
+        section_location_information: 'Location Information',
+        emergency_submit: 'SUBMIT EMERGENCY NOW',
+        accepted_files: 'Accepted: JPG, PNG, PDF. Max 10MB.'
+        ,
+        superadmin_title: 'Superadmin Command Center',
+        superadmin_desc: 'Centralized oversight of national complaints, user identities, and system security.',
+        active_users: 'Active Users',
+        suspended_users: 'Suspended Users',
+        admin_accounts: 'Admin Accounts',
+        admin_policy_title: 'Administrative Policy',
+        admin_policy_text: 'As a System Administrator, you are responsible for maintaining the integrity of the CivicTrack user registry. Suspension of an account is immediate and revokes all access to internal modules.',
+        search_codes_titles: 'Search codes/titles',
+        search_by_name_email: 'Search by name or email',
+        all_statuses: 'All Statuses',
+        all_categories: 'All Categories',
+        export_pdf: 'Export PDF',
+        export_excel: 'Export Excel',
+        national_registry_title: 'National Case Registry',
+        national_registry_desc: 'Oversee all submitted reports and assign them to Investigation Officers.',
+        add_official_note: 'Add official note',
+        case_resolution_placeholder: 'Add official notes, updates, or final resolution summary...'
     },
     rw: {
         portal_title: 'CivicTrack Portal',
@@ -259,7 +283,15 @@ const translations = {
         role_admin_short: 'Ubuyobozi',
         lang_en: 'Icyongereza',
         lang_rw: 'Ikinyarwanda',
-        lang_fr: 'Igifaransa'
+        lang_fr: 'Igifaransa',
+        // small UI additions
+        preview: 'Icyitegererezo',
+        detected_category: 'Icyiciro cyabonetse:',
+        auto_selected: '(byatoranyijwe na sisitemu)',
+        section_complaint_details: "Ibisobanuro by'ikirego",
+        section_location_information: "Amakuru y'aho byabereye",
+        emergency_submit: 'OHEREZA BYIHUTIRA UKO BURI',
+        accepted_files: 'Byemerewe: JPG, PNG, PDF. Max 10MB.'
     },
     fr: {
         portal_title: 'Portail CivicTrack',

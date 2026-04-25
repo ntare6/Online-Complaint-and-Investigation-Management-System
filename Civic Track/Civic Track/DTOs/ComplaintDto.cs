@@ -11,6 +11,8 @@ public class ComplaintDto
     public string? Sector { get; set; }
     public string? Cell { get; set; }
     public string? Village { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public string Priority { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;

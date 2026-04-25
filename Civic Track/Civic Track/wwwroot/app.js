@@ -1,11 +1,49 @@
 const API_BASE_URL = 'http://localhost:5079/api'; 
 let currentAdminCaseId = null; 
+let _geoWatchId = null;
 
-// --- Local User Session ---
 function getCurrentUser() {
     const session = localStorage.getItem('civicUser');
     if (!session) return null;
     try { return JSON.parse(session); } catch { return null; }
+}
+
+function toggleShareLocation() {
+    const btn = document.getElementById('shareLocationBtn');
+    const status = document.getElementById('shareLocationStatus');
+    if (!_geoWatchId) {
+        startGeoWatch();
+        if (btn) btn.textContent = 'Stop sharing';
+        if (status) status.textContent = 'Sharing live location';
+    } else {
+        stopGeoWatch();
+        if (btn) btn.textContent = 'Share Location';
+        if (status) status.textContent = 'Location not shared';
+    }
+}
+
+function startGeoWatch() {
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by this browser.');
+        return;
+    }
+    _geoWatchId = navigator.geolocation.watchPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const latEl = document.getElementById('reporterLatitude');
+        const lngEl = document.getElementById('reporterLongitude');
+        if (latEl) latEl.value = lat;
+        if (lngEl) lngEl.value = lng;
+    }, err => {
+        console.error('Geolocation error', err);
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 });
+}
+
+function stopGeoWatch() {
+    if (_geoWatchId && navigator.geolocation) {
+        navigator.geolocation.clearWatch(_geoWatchId);
+        _geoWatchId = null;
+    }
 }
 
 function getCurrentUserId() {
@@ -39,11 +77,10 @@ function applyRoleNavigation() {
 function enforceRoleAccess() {
     const user = getCurrentUser();
     const path = window.location.pathname.split('/').pop() || 'index.html';
-    
+
     const roleRequirements = {
         'admin.html':      ['Officer'],
         'superadmin.html': ['Admin']
-        // dashboard.html intentionally omitted — citizens can access without login for anonymous submissions
     };
 
     const allowedRoles = roleRequirements[path];
@@ -107,7 +144,6 @@ function setupLocationHierarchy() {
 
     if (!districtSel) return;
 
-    // Rwanda geographical data — 10 key districts
     const rwandaData = {
         'Gasabo': {
             'Bumbogo':   ['Bibare', 'Gasagara', 'Kabukuba', 'Nyamugari', 'Rugarama'],
@@ -434,9 +470,20 @@ async function loadNotifications() {
         if (!response.ok) return;
         const unread = await response.json();
         const count = unread.length;
+        // count unique affected cases (complaintId) among unread notifications
+        const caseIds = new Set(unread.filter(n => n.complaintId).map(n => n.complaintId));
+        const uniqueCases = caseIds.size;
         if (count > 0) {
             if (citizenBadge) { citizenBadge.innerText = count; citizenBadge.style.display = 'inline-block'; }
             if (officerBadge) { officerBadge.innerText = count; officerBadge.style.display = 'inline-block'; }
+            const summary = document.getElementById('citizenNotifSummary');
+            if (summary) {
+                summary.style.display = 'block';
+                summary.innerText = `Unread: ${count} (${uniqueCases} case${uniqueCases === 1 ? '' : 's'})`;
+            }
+        } else {
+            const summary = document.getElementById('citizenNotifSummary');
+            if (summary) summary.style.display = 'none';
         }
     } catch (e) { console.error(e); }
 
@@ -469,14 +516,8 @@ function setSubmissionMode(mode) {
     // Toggle button styles
     const btnStd = document.getElementById('modeStandard');
     const btnEmg = document.getElementById('modeEmergency');
-    if (btnStd) {
-        btnStd.style.background = isEmergency ? '#f9fafb' : '#1E4FA1';
-        btnStd.style.color      = isEmergency ? '#6b7280' : '#fff';
-    }
-    if (btnEmg) {
-        btnEmg.style.background = isEmergency ? '#dc2626' : '#f9fafb';
-        btnEmg.style.color      = isEmergency ? '#fff'    : '#6b7280';
-    }
+    if (btnStd) btnStd.classList.toggle('selected', !isEmergency);
+    if (btnEmg) btnEmg.classList.toggle('selected', isEmergency);
 
     // Show/hide forms
     const stdForm = document.getElementById('standardForm');
@@ -493,20 +534,16 @@ function setSubmissionMode(mode) {
 
 async function submitEmergency() {
     const description = document.getElementById('emergencyDescription')?.value?.trim();
-    const location    = document.getElementById('emergencyLocation')?.value?.trim();
-    const phone       = document.getElementById('emergencyPhone')?.value?.trim();
-    const categoryId  = document.getElementById('categoryDropdown')?.value;
+    const categoryId  = document.getElementById('emergencyCategory')?.value || document.getElementById('categoryDropdown')?.value;
+    const lat         = document.getElementById('reporterLatitude')?.value;
+    const lng         = document.getElementById('reporterLongitude')?.value;
 
     if (!description || description.length < 10) {
         alert('Please describe the emergency (at least 10 characters).');
         return;
     }
-    if (!location) {
-        alert('Please provide your location so officers can respond.');
-        return;
-    }
 
-    // Use first available category if AI didn't detect one
+
     const finalCategoryId = categoryId || (_allCategories[0]?.id ?? null);
     if (!finalCategoryId) {
         alert('Categories not loaded. Please try again in a moment.');
@@ -516,15 +553,17 @@ async function submitEmergency() {
     const user = getCurrentUser();
     const payload = {
         title:       'EMERGENCY: ' + description.substring(0, 60),
-        description: description + (phone ? `\n\nContact: ${phone}` : ''),
-        location,
+        description: description,
+        // ensure numeric values are sent for latitude/longitude
+        latitude:    lat ? Number(lat) : undefined,
+        longitude:   lng ? Number(lng) : undefined,
         district:    '',
         sector:      '',
         cell:        '',
         village:     '',
         categoryId:  finalCategoryId,
         priority:    'Critical',
-        isAnonymous: !phone,          // anonymous if no phone given
+        isAnonymous: user ? false : true,
         citizenId:   user?.id ?? null
     };
 
@@ -548,8 +587,8 @@ async function submitEmergency() {
                 `Save your tracking code to follow up.`
             );
             document.getElementById('emergencyDescription').value = '';
-            document.getElementById('emergencyLocation').value    = '';
-            document.getElementById('emergencyPhone').value       = '';
+            document.getElementById('reporterLatitude').value = '';
+            document.getElementById('reporterLongitude').value = '';
             document.getElementById('categorysuggestion').style.display = 'none';
             document.getElementById('categoryDropdown').value = '';
             switchCitizenTab('track');
@@ -564,12 +603,13 @@ async function submitEmergency() {
         alert('Unable to connect to server. Please try again.');
     } finally {
         btn.disabled    = false;
-        btn.textContent = '\u{1F6A8} SUBMIT EMERGENCY NOW';
+        btn.textContent = '\u{1F6A8} Submit Emergency Report';
     }
 }
 async function submitComplaint() {
     const title       = document.getElementById('complaintTitle')?.value?.trim();
-    const categoryId  = document.getElementById('categoryDropdown')?.value;
+    const rawCategory  = document.getElementById('complaintCategory')?.value;
+    const hiddenCat    = document.getElementById('categoryDropdown')?.value;
     const district    = document.getElementById('incidentDistrict')?.value;
     const sector      = document.getElementById('incidentSector')?.value;
     const cell        = document.getElementById('incidentCell')?.value;
@@ -582,12 +622,19 @@ async function submitComplaint() {
 
     if (!title)                                  { alert('Please enter a complaint title.'); return; }
     if (!description || description.length < 20) { alert('Please provide a detailed description (at least 20 characters). The system needs this to auto-detect the category.'); return; }
-    if (!categoryId)                             { alert('The system could not detect a category from your description. Please add more detail about the type of issue.'); return; }
+    // Resolve category: prefer explicit selection, fallback to AI-detected hidden id, then server default
+    let resolvedCategoryId = null;
+    if (rawCategory) {
+        const matched = (_allCategories || []).find(c => (c.name || '').toLowerCase() === rawCategory.toLowerCase());
+        if (matched) resolvedCategoryId = matched.id;
+    }
+    if (!resolvedCategoryId && hiddenCat) resolvedCategoryId = hiddenCat;
+    if (!resolvedCategoryId) { alert('Please select a category or provide more detail so the system can suggest one.'); return; }
     if (!district)                               { alert('Please select a district.'); return; }
 
     const payload = {
         title, description, location, district, sector, cell, village,
-        categoryId, priority, isAnonymous,
+        categoryId: resolvedCategoryId, priority, isAnonymous,
         citizenId: isAnonymous ? null : (getCurrentUser()?.id ?? null)
     };
 
@@ -603,8 +650,7 @@ async function submitComplaint() {
 
         if (response.ok) {
             const result = await response.json();
-            const fileInput = document.getElementById('evidenceFile');
-            if (fileInput && fileInput.files.length > 0) { await uploadEvidence(result.id, fileInput.files[0]); }
+            // No evidence required for emergency submissions (live location is primary)
             alert(`Complaint submitted successfully.\n\nYour tracking code is:\n${result.trackingCode}\n\nSave this code to track your case.`);
             document.getElementById('complaintForm').reset();
             document.getElementById('categorysuggestion').style.display = 'none';
@@ -882,6 +928,7 @@ async function loadAdminComplaints() {
                 <td><strong>${c.trackingCode}</strong></td>
                 <td>${c.title}</td>
                 <td>${c.categoryName ?? 'Other'}</td>
+                <td>${(c.latitude && c.longitude) ? `${Number(c.latitude).toFixed(6)}, ${Number(c.longitude).toFixed(6)}` : (c.location || '')}</td>
                 <td>${getPriorityBadge(c.priority)}</td>
                 <td><span class="badge ${getStatusBadgeClass(c.status)}">${c.status}</span></td>
                 <td style="font-size:0.85rem; font-weight:600;">${c.assignedOfficerName || '<span style="color:#94a3b8; font-weight:400;">Unassigned</span>'}</td>
@@ -984,6 +1031,17 @@ function openAdvancedPanel(caseData) {
     document.getElementById('panelTrackingCode').innerText = caseData.trackingCode;
     document.getElementById('panelTitle').innerText = caseData.title;
     document.getElementById('panelDescription').innerText = caseData.description;
+    // Show coordinates and map link when available (be defensive about types)
+    const locEl = document.getElementById('panelLocation');
+    if (locEl) {
+        const lat = Number(caseData.latitude);
+        const lng = Number(caseData.longitude);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            locEl.innerHTML = `${lat.toFixed(6)}, ${lng.toFixed(6)} <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" style="margin-left:8px; font-weight:700; color:var(--primary-blue);">View on map</a>`;
+        } else {
+            locEl.innerText = caseData.location || 'Not provided';
+        }
+    }
     const badge = document.getElementById('panelStatusBadge');
     badge.innerText = caseData.status;
     badge.className = 'badge ' + (caseData.status === 'Investigating' ? 'badge-investigating' : caseData.status === 'Resolved' ? 'badge-resolved' : 'badge-pending');

@@ -1,16 +1,12 @@
 using Civic_Track.Data;
 using Civic_Track.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllers();
-
-// Add scoped services
+builder.Services.AddControllers()
+    .AddJsonOptions(opts => opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddScoped<NotificationService>();
-
-// ADD THIS CORS POLICY:
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -30,7 +26,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// --- Seed Official Accounts ---
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -38,17 +34,17 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.SeedData(context);
 }
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-// Serve HTML natively from wwwroot
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// ACTIVATE THE CORS POLICY HERE (Must be BEFORE UseAuthorization)
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthorization();

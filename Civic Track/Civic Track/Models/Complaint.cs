@@ -16,6 +16,10 @@ public class Complaint
     public string? Cell { get; set; }
     public string? Village { get; set; }
 
+    // Stored GPS coordinates for emergency reports (nullable)
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+
     public Guid CategoryId { get; set; }
 
     public Category Category { get; set; } = null!;
@@ -35,14 +39,12 @@ public class Complaint
     public DateTime? ResolvedAt { get; set; }
     public string? ResolutionNote { get; set; }
 
-    // Escalation properties
     public bool IsEscalated { get; set; } = false;
     public string? EscalationReason { get; set; }
     public DateTime? EscalatedAt { get; set; }
     public DateTime? EstimatedResolutionDate { get; set; }
 
-    // Feedback properties
-    public int? Rating { get; set; } // 1-5
+    public int? Rating { get; set; }
     public string? FeedbackComment { get; set; }
     public DateTime? FeedbackSubmittedAt { get; set; }
 
