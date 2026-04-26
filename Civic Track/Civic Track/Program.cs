@@ -25,29 +25,33 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Database Configuration: Forced check for Render/PostgreSQL
+// Database Configuration: Updated to handle 'postgresql://'
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-    // If the string contains 'postgres', we MUST use Npgsql
-    if (!string.IsNullOrEmpty(connectionString) && 
-        (connectionString.Contains("postgres://") || connectionString.Contains("Host=")))
+    
+    if (string.IsNullOrEmpty(connectionString))
     {
-        Console.WriteLine("SYSTEM CHECK: Connecting to PostgreSQL...");
+        connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+    }
+
+    // This check now catches 'postgres://' and 'postgresql://'
+    if (!string.IsNullOrEmpty(connectionString) && connectionString.Contains("postgres"))
+    {
+        Console.WriteLine("SYSTEM CHECK: PostgreSQL link detected. Parsing...");
         
-        if (connectionString.Contains("postgres://"))
-        {
-            var databaseUri = new Uri(connectionString);
-            var userInfo = databaseUri.UserInfo.Split(':');
-            connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
-        }
+        // Clean the URL for the Uri parser (standardizes postgresql to postgres)
+        var formattedUrl = connectionString.Replace("postgresql://", "postgres://");
+        var databaseUri = new Uri(formattedUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
         
         options.UseNpgsql(connectionString);
     }
     else
     {
-        Console.WriteLine("SYSTEM CHECK: Connecting to SQL Server...");
+        Console.WriteLine("SYSTEM CHECK: Defaulting to SQL Server...");
         options.UseSqlServer(connectionString);
     }
 });
@@ -57,12 +61,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Automated Database Seeding
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    // This was failing before because of the connection string format
     await DbInitializer.SeedData(context);
 }
 
