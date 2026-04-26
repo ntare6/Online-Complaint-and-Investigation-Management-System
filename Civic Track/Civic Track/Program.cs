@@ -10,7 +10,6 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<NotificationService>();
 
-// Configure CORS to support both local development and your live Netlify frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -26,15 +25,20 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Database Configuration: Switches between SQL Server (Local) and PostgreSQL (Render)
+// Database Configuration with Render URL Parser
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     
-    // Render uses PostgreSQL; this check detects the 'postgres' keyword in your Render Environment Variable
-    if (connectionString != null && connectionString.Contains("postgres"))
+    if (connectionString != null && connectionString.Contains("postgres://"))
     {
-        options.UseNpgsql(connectionString);
+        // Convert postgres://user:pass@host:port/db to Key=Value format
+        var databaseUri = new Uri(connectionString);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        var pgConnectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+        
+        options.UseNpgsql(pgConnectionString);
     }
     else
     {
@@ -52,6 +56,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
+    // This was failing before because of the connection string format
     await DbInitializer.SeedData(context);
 }
 
@@ -63,11 +68,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
 app.UseCors("AllowFrontend");
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
