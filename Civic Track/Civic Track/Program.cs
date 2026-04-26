@@ -25,23 +25,29 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Database Configuration with Render URL Parser
+// Database Configuration: Forced check for Render/PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    
-    if (connectionString != null && connectionString.Contains("postgres://"))
-    {
-        // Convert postgres://user:pass@host:port/db to Key=Value format
-        var databaseUri = new Uri(connectionString);
-        var userInfo = databaseUri.UserInfo.Split(':');
 
-        var pgConnectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    // If the string contains 'postgres', we MUST use Npgsql
+    if (!string.IsNullOrEmpty(connectionString) && 
+        (connectionString.Contains("postgres://") || connectionString.Contains("Host=")))
+    {
+        Console.WriteLine("SYSTEM CHECK: Connecting to PostgreSQL...");
         
-        options.UseNpgsql(pgConnectionString);
+        if (connectionString.Contains("postgres://"))
+        {
+            var databaseUri = new Uri(connectionString);
+            var userInfo = databaseUri.UserInfo.Split(':');
+            connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+        }
+        
+        options.UseNpgsql(connectionString);
     }
     else
     {
+        Console.WriteLine("SYSTEM CHECK: Connecting to SQL Server...");
         options.UseSqlServer(connectionString);
     }
 });
