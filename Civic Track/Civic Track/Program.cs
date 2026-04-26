@@ -25,7 +25,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Database Configuration: Updated to handle 'postgresql://'
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -35,17 +34,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
     }
 
-    // This check now catches 'postgres://' and 'postgresql://'
     if (!string.IsNullOrEmpty(connectionString) && connectionString.Contains("postgres"))
     {
         Console.WriteLine("SYSTEM CHECK: PostgreSQL link detected. Parsing...");
         
-        // Clean the URL for the Uri parser (standardizes postgresql to postgres)
-        var formattedUrl = connectionString.Replace("postgresql://", "postgres://");
-        var databaseUri = new Uri(formattedUrl);
-        var userInfo = databaseUri.UserInfo.Split(':');
+        // Robust Parsing for postgresql://user:pass@host:port/db
+        var uri = new Uri(connectionString.Replace("postgresql://", "https://").Replace("postgres://", "https://"));
+        var userInfo = uri.UserInfo.Split(':');
+        var user = userInfo[0];
+        var password = userInfo[1];
+        var host = uri.Host;
+        var port = uri.Port == -1 ? 5432 : uri.Port; // Default to 5432 if port is missing
+        var database = uri.AbsolutePath.TrimStart('/');
 
-        connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+        connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
         
         options.UseNpgsql(connectionString);
     }
