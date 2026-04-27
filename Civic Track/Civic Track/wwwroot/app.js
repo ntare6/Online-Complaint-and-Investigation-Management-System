@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5079/api'; 
+const API_BASE_URL = 'https://online-complaint-and-investigation.onrender.com'; 
 let currentAdminCaseId = null; 
 let _geoWatchId = null;
 
