@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Administrator | CivicTrack</title>
+    <link rel="icon" type="image/jpeg" href="assets/coat%20of%20arms.jpg">
     <link rel="stylesheet" href="styles.css">
+    
+    <script src="config.js"></script>
     <script src="translations.js"></script>
 </head>
 <body>
@@ -75,11 +78,10 @@
             <div id="adminComplaintsView" class="admin-view" style="display:none;">
                 <div class="card">
                     <h3 data-i18n="national_registry_title">National Case Registry</h3>
-                    <p style="color:var(--text-muted);" data-i18n="national_registry_desc">Oversee all submitted reports and assign them to Investigation Officers.</p>
                     <div class="toolbar" style="margin-top:10px;">
-                        <input type="text" id="adminSearchCaseInput" class="form-control" style="max-width:300px;" placeholder="Search codes/titles" data-i18n-placeholder="search_codes_titles" onkeyup="loadAdminComplaints()">
+                        <input type="text" id="adminSearchCaseInput" class="form-control" style="max-width:300px;" placeholder="Search codes/titles" onkeyup="loadAdminComplaints()">
                         <select id="adminStatusCaseFilter" class="form-control" style="width:auto;" onchange="loadAdminComplaints()">
-                            <option value="" data-i18n="all_statuses">All Statuses</option>
+                            <option value="">All Statuses</option>
                             <option value="Pending">Pending</option>
                             <option value="Investigating">Investigating</option>
                             <option value="Resolved">Resolved</option>
@@ -111,11 +113,10 @@
             <div id="adminUsersView" class="admin-view" style="display:none;">
                 <div class="card">
                     <div class="toolbar">
-                        <input type="text" id="userSearchInput" class="form-control" style="max-width:280px;" placeholder="Search by name or email" data-i18n-placeholder="search_by_name_email" onkeyup="loadUsers()">
+                        <input type="text" id="userSearchInput" class="form-control" style="max-width:280px;" placeholder="Search by name or email" onkeyup="loadUsers()">
                         <button class="btn-primary" onclick="loadUsers()">Refresh Registry</button>
                     </div>
                 </div>
-
                 <div class="card" style="padding: 0;">
                     <div class="table-container">
                         <table>
@@ -130,60 +131,9 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="usersTableBody">
-                                <tr><td colspan="7" style="text-align:center; padding:24px; color: var(--text-muted);">Loading users...</td></tr>
-                            </tbody>
+                            <tbody id="usersTableBody"></tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-
-            <div id="adminReportsView" class="admin-view" style="display:none;">
-                <div class="card">
-                    <h3 style="margin-bottom: 8px;">Reporting Module</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 12px;">Filter reports by date, category, and user. Export in PDF or Excel format.</p>
-                    <div class="toolbar" style="margin-bottom: 12px;">
-                        <input type="date" id="reportStartDate" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
-                        <input type="date" id="reportEndDate" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
-                        <select id="reportCategoryFilter" class="form-control" style="width:auto;" onchange="refreshReportingModule()">
-                            <option value="" data-i18n="all_categories">All Categories</option>
-                        </select>
-                        <button class="btn-secondary" onclick="window.print()" data-i18n="export_pdf">Export PDF</button>
-                        <button class="btn-secondary" onclick="exportDataToCSV()" data-i18n="export_excel">Export Excel</button>
-                    </div>
-                    <div class="grid-2">
-                        <div class="card" style="margin:0;">
-                            <div class="stat-title">Complaints by Status</div>
-                            <div id="statusBarsContainer" style="margin-top:10px;">
-                                <div style="margin-bottom:8px;">Pending <div style="height:10px;background:#fff9e6;border:1px solid #f2e3a8;width:0%; transition: width 0.5s;" id="barPending"></div></div>
-                                <div style="margin-bottom:8px;">In Progress <div style="height:10px;background:#e6f0ff;border:1px solid #c8daf8;width:0%; transition: width 0.5s;" id="barInProgress"></div></div>
-                                <div>Resolved <div style="height:10px;background:#e9f5ea;border:1px solid #c7e5c9;width:0%; transition: width 0.5s;" id="barResolved"></div></div>
-                            </div>
-                        </div>
-                        <div class="card" style="margin:0;">
-                            <div class="stat-title">Report Summary Table</div>
-                            <table style="margin-top:10px;">
-                                <thead><tr><th>Metric</th><th>Value</th></tr></thead>
-                                <tbody id="reportSummaryTable">
-                                    <tr><td>Total Complaints</td><td id="repTotal">0</td></tr>
-                                    <tr><td>Pending Cases</td><td id="repPending">0</td></tr>
-                                    <tr><td>Resolved Cases</td><td id="repResolved">0</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="adminLogsView" class="admin-view" style="display:none;">
-                <div class="card">
-                    <h3>Security Logs</h3>
-                    <p style="color:var(--text-muted);">Real-time monitoring of system-wide access and role-escalation events.</p>
-                </div>
-                <div class="card" style="text-align:center; padding: 3rem;">
-                    <div style="font-size:3rem; margin-bottom:1rem;">🛡️</div>
-                    <div style="font-weight:600; color:var(--primary-blue); margin-bottom:0.5rem;">System Secure</div>
-                    <p style="color:var(--text-muted);">No unauthorized access attempts or suspicious activities detected in the last 24 hours.</p>
                 </div>
             </div>
         </main>
@@ -194,7 +144,6 @@
         <div class="slide-header">
             <div>
                 <h3 id="panelTrackingCode" class="tracking-code">CT-XXXXXX</h3>
-                <div id="panelDate" style="font-size:12px; color: var(--text-muted);">Bureau Registry Log</div>
             </div>
             <button class="btn-close" onclick="closeAdvancedPanel()">&times;</button>
         </div>
@@ -210,10 +159,7 @@
             </div>
             <div class="detail-group">
                 <div class="detail-label">Current Status</div>
-                <div>
-                    <span id="panelStatusBadge" class="badge">--</span>
-                    <span id="panelOfficer" style="margin-left: 10px; font-weight:600; font-size: 0.85rem;"></span>
-                </div>
+                <span id="panelStatusBadge" class="badge">--</span>
             </div>
             <div class="detail-group">
                 <div class="detail-label">Case Title</div>
@@ -223,52 +169,12 @@
                 <div class="detail-label">Detailed Description</div>
                 <div class="detail-value" id="panelDescription" style="background:#f9fafb; padding:10px; border:1px solid var(--border-color); white-space:pre-wrap;">--</div>
             </div>
-            <div class="detail-group">
-                <div class="detail-label">Communication Notes</div>
-                <div id="panelComments" style="max-height:150px; overflow-y:auto; background:#f9fafb; padding:10px; border:1px solid var(--border-color); margin-bottom:10px;">--</div>
-                <div class="toolbar">
-                    <input type="text" id="newCommentInput" class="form-control" placeholder="Add official note">
-                    <button class="btn-secondary" onclick="postComment()">Post</button>
-                </div>
-            </div>
-            <!-- Formal Resolution Box — always visible -->
-            <div class="detail-group" style="background: #f0fdf4; padding: 12px; border: 1px solid #bbf7d0;">
-                <div class="detail-label" style="color:#166534; font-weight:700;">OFFICIAL NOTES / RESOLUTION SUMMARY</div>
-                <div id="resolutionDisplay" style="font-size: 14px; margin-bottom: 8px; color:#166534; display:none;"></div>
-                <textarea id="caseResolutionNote" class="form-control" rows="3" placeholder="Add official notes, updates, or final resolution summary..."></textarea>
-            </div>
         </div>
         <div class="slide-footer">
-            <select id="updateStatusSelect" class="form-control" style="flex:1;" onchange="toggleResolutionField()">
-                <option value="Pending">Pending</option>
-                <option value="Investigating">Investigating</option>
-                <option value="Escalated">Escalated</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-            <select id="updatePrioritySelect" class="form-control" style="flex:1;">
-                <option value="Low">&#9679; Low</option>
-                <option value="Medium">&#9679; Medium</option>
-                <option value="High">&#9679; High</option>
-                <option value="Critical">&#9679; Critical</option>
-            </select>
             <button class="btn-primary" style="flex:1" onclick="updateCaseStatus()">Save Updates</button>
-            <button class="btn-secondary" onclick="loadCaseEvidence()">Files</button>
         </div>
     </div>
 
-    <style>
-        @media print {
-            .sidebar, .top-navbar, .toolbar, .nav-profile, button { display: none !important; }
-            .content-area { margin: 0; padding: 0; width: 100%; }
-            .card { border: none; box-shadow: none; }
-            .dashboard-layout { display: block; }
-            body::before {
-                content: "OFFICIAL CIVICTRACK INVESTIGATION REPORT - REPUBLIC OF RWANDA";
-                display: block; text-align: center; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #000;
-            }
-        }
-    </style>
     <script src="app.js"></script>
 </body>
 </html>

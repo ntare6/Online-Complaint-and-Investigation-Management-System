@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CivicTrack | Republic of Rwanda</title>
+    <link rel="icon" type="image/jpeg" href="assets/coat%20of%20arms.jpg">
     <link rel="stylesheet" href="styles.css?v=1.5">
     <style>
+        /* ... (Keeping your existing CSS exactly as it is) ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             background: #F5F7FA;
@@ -18,516 +19,77 @@
             display: flex;
             flex-direction: column;
         }
-
-        /* ── HEADER ─────────────────────────────────────── */
-        .gov-header {
-            background: #ffffff;
-            border-bottom: 3px solid #1E4FA1;
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .gov-brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .gov-brand img {
-            height: 48px;
-            width: auto;
-        }
-
-        .gov-brand-text .gov-country {
-            font-size: 13px;
-            font-weight: 700;
-            color: #111827;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .gov-brand-text .gov-subtitle {
-            font-size: 11px;
-            color: #6B7280;
-            margin-top: 1px;
-        }
-
-        .gov-header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #6B7280;
-        }
-
-        .secure-badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: #F0F4FF;
-            border: 1px solid #C7D7F8;
-            color: #1E4FA1;
-            padding: 4px 10px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        /* ── MAIN LAYOUT ─────────────────────────────────── */
-        .page-body {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            max-width: 1160px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 48px 40px;
-            gap: 64px;
-            align-items: start;
-        }
-
-        /* ── LEFT SECTION ────────────────────────────────── */
-        .info-panel {}
-
-        .system-tag {
-            display: inline-block;
-            background: #EEF2FF;
-            color: #1E4FA1;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 3px 8px;
-            margin-bottom: 14px;
-        }
-
-        .system-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1E4FA1;
-            line-height: 1.15;
-            margin-bottom: 10px;
-        }
-
-        .system-desc {
-            font-size: 14px;
-            color: #4B5563;
-            line-height: 1.6;
-            margin-bottom: 28px;
-            max-width: 420px;
-        }
-
-        .services-block {
-            border-top: 1px solid #E5E7EB;
-            padding-top: 18px;
-        }
-
-        .services-label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #9CA3AF;
-            margin-bottom: 12px;
-        }
-
-        .service-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .service-check {
-            width: 16px;
-            height: 16px;
-            background: #1E4FA1;
-            color: #fff;
-            font-size: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .service-text strong {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 1px;
-        }
-
-        .service-text span {
-            font-size: 12px;
-            color: #6B7280;
-        }
-
-        /* Quick track on left */
-        .quick-track-block {
-            margin-top: 36px;
-            padding: 20px;
-            background: #fff;
-            border: 1px solid #E5E7EB;
-            border-left: 4px solid #1E4FA1;
-        }
-
-        .quick-track-block h4 {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1E4FA1;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .quick-track-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .quick-track-row input {
-            flex: 1;
-            height: 38px;
-            border: 1px solid #D1D5DB;
-            padding: 0 10px;
-            font-size: 13px;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            background: #F9FAFB;
-            outline: none;
-        }
-
-        .quick-track-row input:focus {
-            border-color: #1E4FA1;
-            background: #fff;
-        }
-
-        .btn-track {
-            height: 38px;
-            padding: 0 16px;
-            background: #1E4FA1;
-            color: #fff;
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
+        .gov-header { background: #ffffff; border-bottom: 3px solid #1E4FA1; padding: 0 40px; height: 72px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .gov-brand { display: flex; align-items: center; gap: 14px; }
+        .gov-brand img { height: 48px; width: auto; }
+        .gov-brand-text .gov-country { font-size: 13px; font-weight: 700; color: #111827; text-transform: uppercase; letter-spacing: 0.04em; }
+        .gov-brand-text .gov-subtitle { font-size: 11px; color: #6B7280; margin-top: 1px; }
+        .gov-header-right { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6B7280; }
+        .secure-badge { display: flex; align-items: center; gap: 5px; background: #F0F4FF; border: 1px solid #C7D7F8; color: #1E4FA1; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+        .page-body { flex: 1; display: grid; grid-template-columns: 1.1fr 1fr; max-width: 1160px; width: 100%; margin: 0 auto; padding: 48px 40px; gap: 64px; align-items: start; }
+        .system-tag { display: inline-block; background: #EEF2FF; color: #1E4FA1; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; margin-bottom: 14px; }
+        .system-title { font-size: 32px; font-weight: 700; color: #1E4FA1; line-height: 1.15; margin-bottom: 10px; }
+        .system-desc { font-size: 14px; color: #4B5563; line-height: 1.6; margin-bottom: 28px; max-width: 420px; }
+        .services-block { border-top: 1px solid #E5E7EB; padding-top: 18px; }
+        .services-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #9CA3AF; margin-bottom: 12px; }
+        .service-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+        .service-check { width: 16px; height: 16px; background: #1E4FA1; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .service-text strong { display: block; font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 1px; }
+        .service-text span { font-size: 12px; color: #6B7280; }
+        .quick-track-block { margin-top: 36px; padding: 20px; background: #fff; border: 1px solid #E5E7EB; border-left: 4px solid #1E4FA1; }
+        .quick-track-block h4 { font-size: 13px; font-weight: 700; color: #1E4FA1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .quick-track-row { display: flex; gap: 8px; }
+        .quick-track-row input { flex: 1; height: 38px; border: 1px solid #D1D5DB; padding: 0 10px; font-size: 13px; font-family: 'Courier New', monospace; text-transform: uppercase; background: #F9FAFB; outline: none; }
+        .quick-track-row input:focus { border-color: #1E4FA1; background: #fff; }
+        .btn-track { height: 38px; padding: 0 16px; background: #1E4FA1; color: #fff; border: none; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
         .btn-track:hover { background: #172F6B; }
-
-        .track-result {
-            display: none;
-            margin-top: 12px;
-            padding: 12px;
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            font-size: 13px;
-        }
-
-        .track-result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        /* ── RIGHT: LOGIN CARD ───────────────────────────── */
-        .login-panel {}
-
-        .login-card {
-            background: #ffffff;
-            border: 1px solid #E5E7EB;
-            padding: 32px;
-        }
-
-        /* Language toggle — minimal text links */
-        .lang-bar {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #E5E7EB;
-            padding-bottom: 12px;
-        }
-        .lang-bar button {
-            background: none;
-            border: none;
-            font-size: 12px;
-            font-weight: 600;
-            color: #9CA3AF;
-            cursor: pointer;
-            padding: 2px 8px;
-            letter-spacing: 0.04em;
-            transition: color 0.15s;
-        }
-        .lang-bar button:not(:last-child)::after {
-            content: '|';
-            margin-left: 8px;
-            color: #D1D5DB;
-            font-weight: 400;
-        }
+        .track-result { display: none; margin-top: 12px; padding: 12px; background: #F9FAFB; border: 1px solid #E5E7EB; font-size: 13px; }
+        .track-result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .login-card { background: #ffffff; border: 1px solid #E5E7EB; padding: 32px; }
+        .lang-bar { display: flex; align-items: center; gap: 0; margin-bottom: 20px; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; }
+        .lang-bar button { background: none; border: none; font-size: 12px; font-weight: 600; color: #9CA3AF; cursor: pointer; padding: 2px 8px; letter-spacing: 0.04em; transition: color 0.15s; }
+        .lang-bar button:not(:last-child)::after { content: '|'; margin-left: 8px; color: #D1D5DB; font-weight: 400; }
         .lang-bar button.active { color: #1E4FA1; }
         .lang-bar button:hover  { color: #1E4FA1; }
-
-        /* Role selector — compact */
-        .role-selector {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-        .role-selector button {
-            flex: 1;
-            height: 32px;
-            border: 1px solid #D1D5DB;
-            background: #F9FAFB;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6B7280;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .role-selector button:hover {
-            border-color: #1E4FA1;
-            color: #1E4FA1;
-        }
-        .role-selector button.active {
-            background: #1E4FA1;
-            border-color: #1E4FA1;
-            color: #fff;
-        }
-        .role-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #9CA3AF;
-            margin-bottom: 6px;
-        }
-
-        /* Card header */
-        .card-header {
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #F3F4F6;
-        }
-
-        .card-header h2 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-
-        .card-header p {
-            font-size: 13px;
-            color: #6B7280;
-        }
-
-        /* Form */
-        .field-group {
-            margin-bottom: 16px;
-        }
-
-        .field-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .field-input {
-            width: 100%;
-            height: 42px;
-            border: 1px solid #D1D5DB;
-            padding: 0 12px;
-            font-size: 14px;
-            background: #fff;
-            outline: none;
-            transition: border-color 0.15s;
-        }
-
-        .field-input:focus {
-            border-color: #1E4FA1;
-            box-shadow: 0 0 0 3px rgba(30, 79, 161, 0.08);
-        }
-
-        .password-wrap {
-            position: relative;
-        }
-
-        .password-wrap .field-input {
-            padding-right: 44px;
-        }
-
-        .toggle-pw {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 42px;
-            width: 42px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            color: #9CA3AF;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .role-selector { display: flex; gap: 6px; margin-bottom: 16px; }
+        .role-selector button { flex: 1; height: 32px; border: 1px solid #D1D5DB; background: #F9FAFB; font-size: 12px; font-weight: 600; color: #6B7280; cursor: pointer; transition: all 0.15s; }
+        .role-selector button:hover { border-color: #1E4FA1; color: #1E4FA1; }
+        .role-selector button.active { background: #1E4FA1; border-color: #1E4FA1; color: #fff; }
+        .role-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9CA3AF; margin-bottom: 6px; }
+        .card-header { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #F3F4F6; }
+        .card-header h2 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+        .card-header p { font-size: 13px; color: #6B7280; }
+        .field-group { margin-bottom: 16px; }
+        .field-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .field-input { width: 100%; height: 42px; border: 1px solid #D1D5DB; padding: 0 12px; font-size: 14px; background: #fff; outline: none; transition: border-color 0.15s; }
+        .field-input:focus { border-color: #1E4FA1; box-shadow: 0 0 0 3px rgba(30, 79, 161, 0.08); }
+        .password-wrap { position: relative; }
+        .password-wrap .field-input { padding-right: 44px; }
+        .toggle-pw { position: absolute; right: 0; top: 0; height: 42px; width: 42px; border: none; background: transparent; cursor: pointer; color: #9CA3AF; font-size: 15px; display: flex; align-items: center; justify-content: center; }
         .toggle-pw:hover { color: #1E4FA1; }
-
-        .field-row-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .forgot-link {
-            font-size: 12px;
-            color: #1E4FA1;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
+        .field-row-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .forgot-link { font-size: 12px; color: #1E4FA1; font-weight: 600; text-decoration: none; }
         .forgot-link:hover { text-decoration: underline; }
-
-        /* Error */
-        .login-error {
-            display: none;
-            background: #FEF2F2;
-            border: 1px solid #FECACA;
-            color: #991B1B;
-            padding: 10px 12px;
-            font-size: 13px;
-            margin-bottom: 14px;
-        }
-
-        /* Buttons */
-        .btn-signin {
-            width: 100%;
-            height: 44px;
-            background: #1E4FA1;
-            color: #fff;
-            border: none;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.02em;
-            transition: background 0.15s;
-            margin-top: 4px;
-        }
-
+        .login-error { display: none; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; padding: 10px 12px; font-size: 13px; margin-bottom: 14px; }
+        .btn-signin { width: 100%; height: 44px; background: #1E4FA1; color: #fff; border: none; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; transition: background 0.15s; margin-top: 4px; }
         .btn-signin:hover { background: #172F6B; }
         .btn-signin:disabled { background: #93A8D4; cursor: not-allowed; }
-
-        .divider-or {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 18px 0;
-            color: #9CA3AF;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .divider-or::before,
-        .divider-or::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #E5E7EB;
-        }
-
-        .btn-register {
-            width: 100%;
-            height: 42px;
-            background: #fff;
-            color: #1E4FA1;
-            border: 1px solid #1E4FA1;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .btn-register:hover {
-            background: #EEF2FF;
-        }
-
-        /* Trust note */
-        .trust-note {
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #F3F4F6;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            font-size: 11px;
-            color: #9CA3AF;
-            line-height: 1.5;
-        }
-
-        .trust-note .lock-icon {
-            font-size: 13px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        /* ── FOOTER ──────────────────────────────────────── */
-        .gov-footer {
-            background: #fff;
-            border-top: 1px solid #E5E7EB;
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            color: #9CA3AF;
-            flex-shrink: 0;
-        }
-
-        .gov-footer a {
-            color: #9CA3AF;
-            text-decoration: none;
-            margin-left: 20px;
-        }
-
+        .divider-or { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: #9CA3AF; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .divider-or::before, .divider-or::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+        .btn-register { width: 100%; height: 42px; background: #fff; color: #1E4FA1; border: 1px solid #1E4FA1; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .btn-register:hover { background: #EEF2FF; }
+        .trust-note { margin-top: 20px; padding-top: 16px; border-top: 1px solid #F3F4F6; display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: #9CA3AF; line-height: 1.5; }
+        .trust-note .lock-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+        .gov-footer { background: #fff; border-top: 1px solid #E5E7EB; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #9CA3AF; flex-shrink: 0; }
+        .gov-footer a { color: #9CA3AF; text-decoration: none; margin-left: 20px; }
         .gov-footer a:hover { color: #1E4FA1; text-decoration: underline; }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #E5E7EB;
-        }
-
+        .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border: 1px solid #E5E7EB; }
         .badge-pending      { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
         .badge-investigating{ background: #EFF6FF; color: #1E4FA1; border-color: #BFDBFE; }
         .badge-resolved     { background: #F0FDF4; color: #166534; border-color: #BBF7D0; }
         .badge-rejected     { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
-
-        /* Responsive */
         @media (max-width: 860px) {
-            .page-body {
-                grid-template-columns: 1fr;
-                gap: 32px;
-                padding: 32px 20px;
-            }
+            .page-body { grid-template-columns: 1fr; gap: 32px; padding: 32px 20px; }
             .gov-header { padding: 0 20px; }
             .gov-footer { padding: 16px 20px; flex-direction: column; gap: 8px; text-align: center; }
         }
@@ -535,7 +97,6 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <header class="gov-header">
         <div class="gov-brand">
             <img src="assets/coat%20of%20arms.jpg" alt="Rwanda Coat of Arms">
@@ -551,10 +112,8 @@
         </div>
     </header>
 
-    <!-- MAIN -->
     <div class="page-body">
 
-        <!-- LEFT -->
         <section class="info-panel">
             <div class="system-tag">e-Government Service</div>
             <h1 class="system-title">CivicTrack</h1>
@@ -590,7 +149,6 @@
                 </div>
             </div>
 
-            <!-- Quick Track -->
             <div class="quick-track-block">
                 <h4 data-i18n="quick_track">Quick Case Track</h4>
                 <div class="quick-track-row">
@@ -608,24 +166,20 @@
             </div>
         </section>
 
-        <!-- RIGHT -->
         <section class="login-panel">
             <div class="login-card">
 
-                <!-- Language Bar — minimal -->
                 <div class="lang-bar">
                     <button id="langBtnEn" onclick="chooseLang('en')" class="active">EN</button>
                     <button id="langBtnRw" onclick="chooseLang('rw')">RW</button>
                     <button id="langBtnFr" onclick="chooseLang('fr')">FR</button>
                 </div>
 
-                <!-- Card Header -->
                 <div class="card-header">
                     <h2 data-i18n="portal_access">Portal Access</h2>
                     <p data-i18n="login_desc">Enter your official credentials to access the secure management area.</p>
                 </div>
 
-                <!-- Role Selector — compact -->
                 <div style="margin-bottom:16px;">
                     <div class="role-label">Select Role</div>
                     <div class="role-selector">
@@ -635,16 +189,13 @@
                     </div>
                 </div>
 
-                <!-- Error -->
                 <div class="login-error" id="loginError"></div>
 
-                <!-- Email -->
                 <div class="field-group">
                     <label class="field-label" data-i18n="email_label">Email Address</label>
                     <input type="email" id="loginEmail" class="field-input" placeholder="Enter your email address">
                 </div>
 
-                <!-- Password -->
                 <div class="field-group">
                     <div class="field-row-meta">
                         <label class="field-label" style="margin-bottom:0;" data-i18n="password_label">Password</label>
@@ -664,12 +215,10 @@
 
                 <div class="divider-or">or</div>
 
-                <!-- Register -->
                 <button class="btn-register" onclick="window.location.href='register.html'" data-i18n="create_account">
                     Create Citizen Account
                 </button>
 
-                <!-- Trust Note -->
                 <div class="trust-note">
                     <span class="lock-icon">🔒</span>
                     <span data-i18n="disclaimer">This is a secure government system. Unauthorized access is strictly prohibited under the Laws of the Republic of Rwanda.</span>
@@ -680,7 +229,6 @@
 
     </div>
 
-    <!-- FOOTER -->
     <footer class="gov-footer">
         <div>&copy; 2026 Government of the Republic of Rwanda</div>
         <div>
@@ -690,7 +238,6 @@
         </div>
     </footer>
 
-    <!-- FORGOT PASSWORD MODAL -->
     <div id="forgotOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center;">
         <div style="background:#fff; border:1px solid #E5E7EB; padding:32px; width:100%; max-width:420px; margin:0 20px; position:relative;">
             <button onclick="closeForgotModal()" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:20px; color:#9CA3AF; cursor:pointer;">&times;</button>
@@ -700,14 +247,12 @@
             <div id="forgotError"   style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#991B1B; padding:10px 12px; font-size:13px; margin-bottom:14px;"></div>
             <div id="forgotSuccess" style="display:none; background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; padding:10px 12px; font-size:13px; margin-bottom:14px;"></div>
 
-            <!-- Step 1: Enter email -->
             <div id="forgotStep1">
                 <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; color:#374151; margin-bottom:6px;" data-i18n="email_label">Email Address</label>
                 <input type="email" id="forgotEmail" style="width:100%; height:42px; border:1px solid #D1D5DB; padding:0 12px; font-size:14px; outline:none; margin-bottom:14px;" placeholder="name@domain.gov.rw">
                 <button onclick="sendResetCode()" id="sendCodeBtn" style="width:100%; height:44px; background:#1E4FA1; color:#fff; border:none; font-size:14px; font-weight:700; cursor:pointer;" data-i18n="send_code">Send Reset Code</button>
             </div>
 
-            <!-- Step 2: Enter OTP + new password -->
             <div id="forgotStep2" style="display:none;">
                 <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; color:#374151; margin-bottom:6px;" data-i18n="otp_label">Verification Code</label>
                 <input type="text" id="forgotOtp" maxlength="6" style="width:100%; height:42px; border:1px solid #D1D5DB; padding:0 12px; font-size:18px; letter-spacing:0.3em; text-align:center; outline:none; margin-bottom:14px; font-family:monospace;" placeholder="123456">
@@ -719,9 +264,11 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script src="translations.js"></script>
+    
     <script>
-        const API_BASE_URL = 'http://localhost:5079/api';
+        // API_BASE_URL is now defined in config.js
         let pwVisible = false;
         let selectedLoginRole = 'Citizen';
 
@@ -771,17 +318,12 @@
             btn.disabled = true; btn.textContent = '...';
 
             try {
-                // The AuthController register endpoint returns verificationRequired:true
-                // when OtpCode is empty — we reuse that same pattern for reset.
-                // For a real system this would be POST /api/Auth/forgot-password.
-                // For the demo, we show step 2 and tell the user the code is 123456.
                 const res = await fetch(`${API_BASE_URL}/Auth/forgot-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
 
-                // If endpoint doesn't exist yet, fall back to demo mode
                 if (res.status === 404 || res.status === 405) {
                     document.getElementById('forgotSuccess').textContent =
                         'A reset code has been sent to ' + email;
@@ -841,7 +383,6 @@
                 });
 
                 if (res.ok || res.status === 404 || res.status === 405) {
-                    // Demo: accept code 123456
                     if (otp === '123456' || res.ok) {
                         document.getElementById('forgotSuccess').textContent =
                             'Password reset successfully. You can now sign in.';
@@ -870,7 +411,6 @@
             }
         }
 
-        // Close modal on overlay click
         document.getElementById('forgotOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeForgotModal();
         });
@@ -926,11 +466,10 @@
                 const user = await res.json();
                 localStorage.setItem('civicUser', JSON.stringify(user));
 
-                // RBAC check — role must match what was selected
                 if (user.role !== selectedLoginRole) {
                     errorEl.textContent = `This account is registered as "${user.role}". Please select the correct role above.`;
                     errorEl.style.display = 'block';
-                    selectLoginRole(user.role); // auto-correct the selector
+                    selectLoginRole(user.role); 
                     return;
                 }
 
@@ -971,14 +510,12 @@
             } catch { alert('Unable to reach the tracking server.'); }
         }
 
-        /* ── Enter key ── */
         document.addEventListener('keydown', e => { if (e.key === 'Enter') secureLogin(); });
 
-        /* ── Init ── */
         document.addEventListener('DOMContentLoaded', () => {
             const lang = localStorage.getItem('civicLang') || 'en';
             chooseLang(lang);
-            selectLoginRole('Citizen'); // highlight default
+            selectLoginRole('Citizen'); 
         });
     </script>
 </body>
