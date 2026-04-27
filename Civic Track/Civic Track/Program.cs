@@ -16,13 +16,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins(
-                    .AllowAnyOrigin() // This allows all websites (Netlify, Vercel, Localhost)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    //"http://127.0.0.1:5500", 
-                    //"http://localhost:5500", 
-                    //"https://online-complaint-management.netlify.app"
-                    //"https://online-complaint-and-investigation.vercel.app"
+                    "http://127.0.0.1:5500", 
+                    "http://localhost:5500", 
+                    "https://online-complaint-management.netlify.app"
+                    "https://online-complaint-and-investigation.vercel.app"
                   )
                   .AllowAnyHeader()
                   .AllowAnyMethod();
