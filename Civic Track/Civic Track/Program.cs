@@ -19,6 +19,7 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                     "http://127.0.0.1:5500", 
                     "http://localhost:5500", 
+                    //solve the comman issue
                     "https://online-complaint-management.netlify.app",
                     "https://online-complaint-and-investigation.vercel.app"
                   )
